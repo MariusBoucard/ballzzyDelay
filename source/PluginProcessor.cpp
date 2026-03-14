@@ -236,6 +236,6 @@ AudioPluginAudioProcessor::createParameterLayout(
 
 // This creates new instances of the plugin.
 // This function definition must be in the global namespace.
-juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
+/*juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
   return new webview_plugin::AudioPluginAudioProcessor();
-}
+}*/

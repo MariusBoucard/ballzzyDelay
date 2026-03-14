@@ -37,6 +37,34 @@ set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/JuceWebViewTutorial")
 target_sources(${PROJECT_NAME}
     PRIVATE
         ${SOURCES}
+        source/Main.cpp
+        source/PluginAudioProcessor.cpp
+        source/PluginAudioProcessor.h
+        source/PluginAudioProcessor.hpp
+
+        # DSP files
+        source/dsp/Mappers.cpp
+        source/dsp/Mappers.h
+        source/dsp/ParameterSetup.h
+        source/dsp/ParameterSetup.cpp
+        source/dsp/Processor.cpp
+        source/dsp/Processor.h
+        source/dsp/Processor.hpp
+        source/dsp/ParameterIDs.hpp
+        source/dsp/paramsDeclaration.h
+
+        # DSP Bones
+        source/dsp/Bones/FaustMultiheadFeedback.h
+
+
+        # UI
+        source/ui/gui.cpp
+        source/ui/gui.h
+        source/ui/gui.hpp
+
+
+
+        # UI Compon
         ${INCLUDE_DIR}/PluginEditor.h
         ${INCLUDE_DIR}/PluginProcessor.h
 )

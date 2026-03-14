@@ -177,10 +177,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
   // webView.goToURL("https://juce.com");
 
   // This is necessary if we want to use a ResourceProvider
-  // webView.goToURL(juce::WebBrowserComponent::getResourceProviderRoot());
+   //webView.goToURL(juce::WebBrowserComponent::getResourceProviderRoot());
 
   // This can be used for hot reloading (requires npm run dev in another terminal)
-  webView.goToURL(LOCAL_DEV_SERVER_ADDRESS);
+   webView.goToURL(LOCAL_DEV_SERVER_ADDRESS);
 
   runJavaScriptButton.onClick = [this] {
     constexpr auto JAVASCRIPT_TO_RUN{"console.log(\"Hello from C++!\");"};
@@ -196,20 +196,20 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
           }
         });
   };
-  addAndMakeVisible(runJavaScriptButton);
+ // addAndMakeVisible(runJavaScriptButton);
 
   emitJavaScriptEventButton.onClick = [this] {
     static const juce::var valueToEmit{42.0};
     webView.emitEventIfBrowserIsVisible(getExampleEventId(), valueToEmit);
   };
-  addAndMakeVisible(emitJavaScriptEventButton);
+ // addAndMakeVisible(emitJavaScriptEventButton);
 
-  addAndMakeVisible(labelUpdatedFromJavaScript);
+//  addAndMakeVisible(labelUpdatedFromJavaScript);
 
   gainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBar);
-  addAndMakeVisible(gainSlider);
+//  addAndMakeVisible(gainSlider);
 
-  addAndMakeVisible(bypassButton);
+ // addAndMakeVisible(bypassButton);
 
   addAndMakeVisible(distortionTypeLabel);
 
@@ -221,6 +221,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
   addAndMakeVisible(distortionTypeComboBox);
 
   setResizable(true, true);
+
   setSize(800, 600);
 
   startTimer(60);
@@ -230,14 +231,14 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {}
 
 void AudioPluginAudioProcessorEditor::resized() {
   auto bounds = getBounds();
-  webView.setBounds(bounds.removeFromRight(getWidth() / 2));
-  runJavaScriptButton.setBounds(bounds.removeFromTop(50).reduced(5));
+  webView.setBounds(bounds.removeFromRight(getWidth()));
+ /* runJavaScriptButton.setBounds(bounds.removeFromTop(50).reduced(5));
   emitJavaScriptEventButton.setBounds(bounds.removeFromTop(50).reduced(5));
   labelUpdatedFromJavaScript.setBounds(bounds.removeFromTop(50).reduced(5));
   gainSlider.setBounds(bounds.removeFromTop(50).reduced(5));
   bypassButton.setBounds(bounds.removeFromTop(50).reduced(10));
   distortionTypeLabel.setBounds(bounds.removeFromTop(50).reduced(5));
-  distortionTypeComboBox.setBounds(bounds.removeFromTop(50).reduced(5));
+  distortionTypeComboBox.setBounds(bounds.removeFromTop(50).reduced(5));*/
 }
 
 void AudioPluginAudioProcessorEditor::timerCallback() {
