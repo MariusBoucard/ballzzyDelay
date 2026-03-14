@@ -50,6 +50,7 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
     const int numSamples = inBuffer.getNumSamples();
     const int numIn = getTotalNumInputChannels();
     const int numOut = getTotalNumOutputChannels();
+    juce::RangedAudioParameter *name = mParameters.getParameter("GAIN");
 
     // 1. Sécurité : Vérifiez que vos buffers internes sont assez grands
     // Ces vérifications devraient idéalement être faites dans prepareToPlay

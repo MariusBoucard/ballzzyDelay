@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 set(CMAKE_CXX_STANDARD 20)
 # Version is needed by JUCE.
-project(BallzyDelay VERSION 0.1.0)
+project(BallzzyDelay VERSION 0.1.0)
 
 # Adds a plugin target (that's basically what the Projucer does).
-juce_add_plugin(BallzyDelay
+juce_add_plugin(BallzzyDelay
     COMPANY_NAME WolfSound
     IS_SYNTH FALSE
     NEEDS_MIDI_INPUT FALSE
@@ -12,7 +12,7 @@ juce_add_plugin(BallzyDelay
     PLUGIN_MANUFACTURER_CODE WFSD
     PLUGIN_CODE JWVT
     FORMATS AU VST3 Standalone
-    PRODUCT_NAME "BallzyDelay"
+    PRODUCT_NAME "BallzzyDelay"
     # WebViews use web browser features: find necessary packages in the system to link against
     NEEDS_WEB_BROWSER TRUE
     # This will force JUCE to look for the WebView2 NuGet package on Windows
@@ -65,8 +65,8 @@ target_sources(${PROJECT_NAME}
 
 
         # UI Compon
-        ${INCLUDE_DIR}/PluginEditor.h
-        ${INCLUDE_DIR}/PluginProcessor.h
+     #  ${INCLUDE_DIR}/PluginEditor.h
+     #   ${INCLUDE_DIR}/PluginProcessor.h
 )
 
 # Sets the include directories of the plugin project.
@@ -141,6 +141,19 @@ target_compile_definitions(${PROJECT_NAME}
 )
 
 set_source_files_properties(${SOURCES} PROPERTIES COMPILE_OPTIONS "${CXX_PROJECT_WARNINGS}")
+if(WIN32)
+    set(VST3_DESTINATION_PATH "D:/vstcreation/BallzzyDelay.vst3/Contents/x86_64-win")
 
+    add_custom_command(TARGET BallzzyDelay_VST3 POST_BUILD
+            # Create the necessary internal folder structure
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${VST3_DESTINATION_PATH}"
+
+            # Copy the VST3 file
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "$<TARGET_FILE:BallzzyDelay_VST3>"
+            "${VST3_DESTINATION_PATH}/$<TARGET_FILE_NAME:BallzzyDelay_VST3>"
+            COMMENT "Creating VST3 Bundle structure in D:/vstcreation"
+    )
+endif()
 # In Visual Studio this command provides a nice grouping of source files in "filters".
 #source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/..)

@@ -44,37 +44,93 @@ public:
 
     PluginAudioProcessor();
     ~PluginAudioProcessor() override;
-    juce::AudioProcessorValueTreeState::ParameterLayout
- createParameterLayout(
-     parametersDeclaration::Parameters& parameters) {
-        using namespace juce;
-        AudioProcessorValueTreeState::ParameterLayout layout;
+//#include "PluginAudioProcessor.hpp"
 
-        {
-            auto parameter = std::make_unique<AudioParameterFloat>(
-                id::GAIN, "gain", NormalisableRange<float>{0.f, 1.f, 0.01f, 0.9f}, 1.f);
-            parameters.gain = parameter.get();
-            layout.add(std::move(parameter));
-        }
 
-        {
-            auto parameter = std::make_unique<AudioParameterBool>(
-                id::BYPASS, "bypass", false,
-                AudioParameterBoolAttributes{}.withLabel("Bypass"));
-            parameters.bypass = parameter.get();
-            layout.add(std::move(parameter));
-        }
 
-        {
-            auto parameter = std::make_unique<AudioParameterChoice>(
-                id::DISTORTION_TYPE, "distortion type",
-                StringArray{"none", "tanh(kx)/tanh(k)", "sigmoid"}, 0);
-            parameters.distortionType = parameter.get();
-            layout.add(std::move(parameter));
-        }
+void addFilterLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
+                     juce::String prefix,
+                     parametersDeclaration::Parameters::Lp& lp,
+                     parametersDeclaration::Parameters::Hp& hp)
+{
+    auto lpParam = std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{prefix + "_LP_FREQ", 1}, "LP Freq Head "+prefix, juce::NormalisableRange<float>{20.f, 20000.f, 1.f, 0.3f}, 20000.f);
+    lp.freq = lpParam.get();
+    layout.add(std::move(lpParam));
 
-        return layout;
-    }
+    auto hpParam = std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{prefix + "_HP_FREQ", 1}, "HP Freq Head "+prefix, juce::NormalisableRange<float>{20.f, 20000.f, 1.f, 0.3f}, 20.f);
+    hp.freq = hpParam.get();
+    layout.add(std::move(hpParam));
+}
+
+// Helper for Movement Function structures
+void addMovementLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
+                       juce::String prefix,
+                       parametersDeclaration::Parameters::MovementFunction& move)
+{
+    auto on = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{prefix + "_MOVE_ON", 1}, "Movement On Head "+prefix, false);
+    move.movementOn = on.get();
+    layout.add(std::move(on));
+
+    auto period = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_PERIOD", 1}, "Period"+prefix, 0.1f, 10.f, 1.f);
+    move.periodDuration = period.get();
+    layout.add(std::move(period));
+
+    auto func = std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{prefix + "_FUNC", 1}, "Function"+prefix, juce::StringArray{"Sine", "Saw", "Square"}, 0);
+    move.function = func.get();
+    layout.add(std::move(func));
+}
+
+// Helper for Head structures
+void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
+                  int headIndex,
+                  parametersDeclaration::Parameters::Head& head)
+{
+     juce::String prefix = "HEAD_" +  juce::String(headIndex);
+
+    auto bypass = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{prefix + "_BYPASS", 1}, "Bypass Head "+prefix, false);
+    head.bypass = bypass.get();
+    layout.add(std::move(bypass));
+
+    auto headGain = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_GAIN", 1}, "Gain Head "+prefix, 0.f, 1.f, 1.f);
+    head.gain = headGain.get();
+    layout.add(std::move(headGain));
+
+    // Nested calls
+    addFilterLayout(layout, prefix, head.lpFilter, head.hpFilter);
+    addMovementLayout(layout, prefix + "_MV", head.movementFunction);
+}
+juce::AudioProcessorValueTreeState::ParameterLayout
+createParameterLayout(parametersDeclaration::Parameters& parameters)
+{
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+
+    // 1. Global Parameters
+    auto gain = std::make_unique<juce::AudioParameterFloat>(id::GAIN, "Gain", 0.f, 1.f, 1.f);
+    parameters.gain = gain.get();
+    layout.add(std::move(gain));
+
+    auto bypass = std::make_unique<juce::AudioParameterBool>(id::BYPASS, "Bypass", false);
+    parameters.bypass = bypass.get();
+    layout.add(std::move(bypass));
+
+    auto dist = std::make_unique<juce::AudioParameterChoice>(id::DISTORTION_TYPE, "Distortion Type", juce::StringArray{"None", "Tanh", "Sigmoid"}, 0);
+    parameters.distortionType = dist.get();
+    layout.add(std::move(dist));
+
+    // 2. Main Filters
+    addFilterLayout(layout, "MAIN", parameters.lpFilter, parameters.hpFilter);
+
+    // 3. Heads
+    addHeadLayout(layout, 1, parameters.head1);
+    addHeadLayout(layout, 2, parameters.head2);
+    addHeadLayout(layout, 3, parameters.head3);
+    addHeadLayout(layout, 4, parameters.head4);
+
+    return layout;
+}
+
 
     void parameterChanged (const juce::String& parameterID, float newValue) override
     {

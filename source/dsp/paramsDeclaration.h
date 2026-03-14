@@ -3,8 +3,54 @@
 
 namespace parametersDeclaration{
     struct Parameters {
+        struct Hp {
+            juce::AudioParameterFloat* freq{nullptr};
+        };
+        struct Lp {
+            juce::AudioParameterFloat* freq{nullptr};
+        };
+        struct MovementFunction {
+            juce::AudioParameterFloat* periodDuration{nullptr};
+            juce::AudioParameterChoice* function{nullptr};
+            juce::AudioParameterFloat* width{nullptr};
+            juce::AudioParameterBool* movementOn{nullptr};
+            juce::AudioParameterBool* widthSlave{nullptr};
+        };
+        struct Head{
+            juce::AudioParameterBool* bypass{nullptr};
+            juce::AudioParameterFloat* feedBack{nullptr};
+            juce::AudioParameterFloat* pan{nullptr};
+            juce::AudioParameterFloat* gain{nullptr};
+            MovementFunction movementFunction;
+
+            Lp lpFilter;
+            Hp hpFilter;
+            juce::AudioParameterBool* feedbackSlave{nullptr};
+            juce::AudioParameterChoice * gainSlave{nullptr};
+            juce::AudioParameterBool* hpSlave{nullptr};
+            juce::AudioParameterBool* lpSlave{nullptr};
+        };
+
         juce::AudioParameterFloat* gain{nullptr};
         juce::AudioParameterBool* bypass{nullptr};
         juce::AudioParameterChoice* distortionType{nullptr};
+        juce::AudioParameterFloat* inputGain{nullptr};
+        juce::AudioParameterFloat* outputGain{nullptr};
+        juce::AudioParameterFloat* mix{nullptr};
+        juce::AudioParameterFloat* feedback{nullptr};
+        juce::AudioParameterBool* syncTempo{nullptr};
+        juce::AudioParameterFloat* ducking{nullptr};
+        juce::AudioParameterFloat* duckingAttack{nullptr};
+        juce::AudioParameterFloat* duckingRelease{nullptr};
+        juce::AudioParameterFloat* width{nullptr};
+
+        Lp lpFilter;
+        Hp hpFilter;
+
+        Head head1;
+        Head head2;
+        Head head3;
+        Head head4;
+
     };
 }

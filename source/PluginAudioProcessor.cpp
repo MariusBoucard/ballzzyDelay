@@ -25,5 +25,6 @@ PluginAudioProcessor::~PluginAudioProcessor() {
 }
 
 void PluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &a) {
+    juce::RangedAudioParameter *name = mParameters.getParameter("GAIN");
     mSkeletonProcessor.processBlock(buffer, a);
 }
