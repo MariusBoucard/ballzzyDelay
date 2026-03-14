@@ -85,7 +85,7 @@ std::vector<std::byte> getWebViewFileAsBytes(const juce::String& filepath) {
   return {};
 }
 
-constexpr auto LOCAL_DEV_SERVER_ADDRESS = "http://127.0.0.1:8080";
+constexpr auto LOCAL_DEV_SERVER_ADDRESS = "http://127.0.0.1:5173";
 }  // namespace
 
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
@@ -124,8 +124,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
               .withInitialisationData("vendor", JUCE_COMPANY_NAME)
               .withInitialisationData("pluginName", JUCE_PRODUCT_NAME)
               .withInitialisationData("pluginVersion", JUCE_PRODUCT_VERSION)
-              .withUserScript("console.log(\"C++ backend here: This is run "
-                              "before any other loading happens\");")
+              .withUserScript("console.log(\"C++ backend here: This is run before any other loading happens\");"
+                             )
               .withEventListener(
                   "exampleJavaScriptEvent",
                   [this](juce::var objectFromFrontend) {
@@ -141,6 +141,23 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
                          juce::WebBrowserComponent::NativeFunctionCompletion
                              completion) {
                     nativeFunction(args, std::move(completion));
+                  })
+              .withNativeFunction(
+                  juce::Identifier{"getLogs"},
+                  [this](const juce::Array<juce::var>& args,
+                         juce::WebBrowserComponent::NativeFunctionCompletion
+                             completion) {
+                    webView.evaluateJavascript(
+                        "JSON.stringify(window.__allLogs || [])",
+                        [completion](juce::WebBrowserComponent::EvaluationResult result) {
+                          if (const auto* resultPtr = result.getResult()) {
+                            const auto logsJson = resultPtr->toString();
+                            std::cout << "\n[BROWSER LOGS]\n" << logsJson << "\n" << std::endl;
+                            completion(logsJson);
+                          } else {
+                            completion("Error retrieving logs");
+                          }
+                        });
                   })
               .withOptionsFrom(webGainRelay)
               .withOptionsFrom(webBypassRelay)
@@ -160,10 +177,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(
   // webView.goToURL("https://juce.com");
 
   // This is necessary if we want to use a ResourceProvider
-  webView.goToURL(juce::WebBrowserComponent::getResourceProviderRoot());
+  // webView.goToURL(juce::WebBrowserComponent::getResourceProviderRoot());
 
-  // This can be used for hot reloading
-  // webView.goToURL(LOCAL_DEV_SERVER_ADDRESS);
+  // This can be used for hot reloading (requires npm run dev in another terminal)
+  webView.goToURL(LOCAL_DEV_SERVER_ADDRESS);
 
   runJavaScriptButton.onClick = [this] {
     constexpr auto JAVASCRIPT_TO_RUN{"console.log(\"Hello from C++!\");"};
@@ -225,11 +242,27 @@ void AudioPluginAudioProcessorEditor::resized() {
 
 void AudioPluginAudioProcessorEditor::timerCallback() {
   webView.emitEventIfBrowserIsVisible("outputLevel", juce::var{});
+  
+  // Periodically dump logs from the browser
+  static int logCounter = 0;
+  if (++logCounter % 60 == 0) {  // Every ~1 second at 60fps
+    webView.evaluateJavascript(
+        "JSON.stringify(window.__allLogs || [])",
+        [](juce::WebBrowserComponent::EvaluationResult result) {
+          if (const auto* resultPtr = result.getResult()) {
+            const auto logsJson = resultPtr->toString();
+            if (logsJson != "[]") {
+              std::cout << "\n═══ BROWSER CONSOLE LOGS ═══\n" << logsJson << "\n══════════════════════════════\n" << std::endl;
+            }
+          }
+        });
+  }
 }
 
 auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
     -> std::optional<Resource> {
-  std::cout << "ResourceProvider called with " << url << std::endl;
+  DBG("ResourceProvider called with: " << url);
+  std::cout << "[JUCE] ResourceProvider called with: " << url << std::endl;
 
   const auto resourceToRetrieve =
       url == "/" ? "index.html" : url.fromFirstOccurrenceOf("/", false, false);
@@ -248,9 +281,12 @@ auto AudioPluginAudioProcessorEditor::getResource(const juce::String& url) const
   if (!resource.empty()) {
     const auto extension =
         resourceToRetrieve.fromLastOccurrenceOf(".", false, false);
+    DBG("✓ Found resource: " << resourceToRetrieve << " (" << resource.size() << " bytes)");
     return Resource{std::move(resource), getMimeForExtension(extension)};
   }
 
+  DBG("✗ Resource NOT found: " << resourceToRetrieve);
+  std::cout << "[JUCE] ✗ Resource NOT FOUND: " << resourceToRetrieve << std::endl;
   return std::nullopt;
 }
 
