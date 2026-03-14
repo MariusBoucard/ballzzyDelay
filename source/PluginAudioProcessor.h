@@ -48,7 +48,7 @@ public:
 
 
 
-void addFilterLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
+void    addFilterLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
                      juce::String prefix,
                      parametersDeclaration::Parameters::Lp& lp,
                      parametersDeclaration::Parameters::Hp& hp)
@@ -114,6 +114,10 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
     auto bypass = std::make_unique<juce::AudioParameterBool>(id::BYPASS, "Bypass", false);
     parameters.bypass = bypass.get();
     layout.add(std::move(bypass));
+
+    auto mix = std::make_unique<juce::AudioParameterFloat>(id::MIX, "Mix", 0.f, 100.f, 100.f);
+    parameters.mix = mix.get();
+    layout.add(std::move(mix));
 
     auto dist = std::make_unique<juce::AudioParameterChoice>(id::DISTORTION_TYPE, "Distortion Type", juce::StringArray{"None", "Tanh", "Sigmoid"}, 0);
     parameters.distortionType = dist.get();
