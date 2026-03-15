@@ -86,7 +86,6 @@ std::vector<std::byte> getWebViewFileAsBytes(const juce::String& filepath) {
   return {};
 }
 
-constexpr auto LOCAL_DEV_SERVER_ADDRESS = "http://127.0.0.1:5173";
 }  // namespace
 
 VueProcessorEditor::VueProcessorEditor(
@@ -105,70 +104,18 @@ VueProcessorEditor::VueProcessorEditor(
       webGainRelay{id::GAIN.getParamID()},
       webBypassRelay{id::BYPASS.getParamID()},
       webDistortionTypeRelay{id::DISTORTION_TYPE.getParamID()},
-      webView{
-          juce::WebBrowserComponent::Options{}
-              .withBackend(
-                  juce::WebBrowserComponent::Options::Backend::webview2)
-              .withWinWebView2Options(
-                  juce::WebBrowserComponent::Options::WinWebView2{}
-                      .withBackgroundColour(juce::Colours::white)
-                      // this may be necessary for some DAWs; include for safety
-                      .withUserDataFolder(juce::File::getSpecialLocation(
-                          juce::File::SpecialLocationType::tempDirectory)))
-              .withNativeIntegrationEnabled()
-              .withResourceProvider(
-                  [this](const auto& url) { return getResource(url); },
-                  // allowedOriginIn parameter is necessary to
-                  // retrieve resources from the C++ backend even if
-                  // on live server
-                  juce::URL{LOCAL_DEV_SERVER_ADDRESS}.getOrigin())
-              .withInitialisationData("vendor", JUCE_COMPANY_NAME)
-              .withInitialisationData("pluginName", JUCE_PRODUCT_NAME)
-              .withInitialisationData("pluginVersion", JUCE_PRODUCT_VERSION)
-              .withUserScript("console.log(\"C++ backend here: This is run before any other loading happens\");"
-                             )
-              .withEventListener(
-                  "exampleJavaScriptEvent",
-                  [this](juce::var objectFromFrontend) {
-                    labelUpdatedFromJavaScript.setText(
-                        "example JavaScript event occurred with value " +
-                            objectFromFrontend.getProperty("emittedCount", 0)
-                                .toString(),
-                        juce::dontSendNotification);
-                  })
-              .withNativeFunction(
-                  juce::Identifier{"nativeFunction"},
-                  [this](const juce::Array<juce::var>& args,
-                         juce::WebBrowserComponent::NativeFunctionCompletion
-                             completion) {
-                    nativeFunction(args, std::move(completion));
-                  })
-              .withNativeFunction(
-                  juce::Identifier{"getLogs"},
-                  [this](const juce::Array<juce::var>& args,
-                         juce::WebBrowserComponent::NativeFunctionCompletion
-                             completion) {
-                    webView.evaluateJavascript(
-                        "JSON.stringify(window.__allLogs || [])",
-                        [completion](juce::WebBrowserComponent::EvaluationResult result) {
-                          if (const auto* resultPtr = result.getResult()) {
-                            const auto logsJson = resultPtr->toString();
-                            std::cout << "\n[BROWSER LOGS]\n" << logsJson << "\n" << std::endl;
-                            completion(logsJson);
-                          } else {
-                            completion("Error retrieving logs");
-                          }
-                        });
-                  })
-              .withOptionsFrom(webGainRelay)
-              .withOptionsFrom(webBypassRelay)
-              .withOptionsFrom(webDistortionTypeRelay)},
+        webMixRelay{id::MIX.getParamID()},
+      webView{ createWebBrowserOptions()
+      },
       webGainSliderAttachment{
           *processorRef.getState().getParameter(id::GAIN.getParamID()),
           webGainRelay, nullptr},
       webBypassToggleAttachment{
           *processorRef.getState().getParameter(id::BYPASS.getParamID()),
           webBypassRelay, nullptr},
+        webMixSliderAttachment{
+          *processorRef.getState().getParameter(id::MIX.getParamID()),
+          webMixRelay, nullptr},
       webDistortionTypeComboBoxAttachment{*processorRef.getState().getParameter(
                                               id::DISTORTION_TYPE.getParamID()),
                                           webDistortionTypeRelay, nullptr} {
