@@ -41,7 +41,6 @@ target_sources(${PROJECT_NAME}
         source/PluginAudioProcessor.cpp
         source/PluginAudioProcessor.h
         source/PluginAudioProcessor.hpp
-
         # DSP files
         source/dsp/Mappers.cpp
         source/dsp/Mappers.h
