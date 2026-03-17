@@ -44,6 +44,7 @@ namespace id {
     const juce::ParameterID HEAD_1_BYPASS                    {"HEAD_1_BYPASS", 1};
     const juce::ParameterID HEAD_1_FEEDBACK                  {"HEAD_1_FEEDBACK", 1};
     const juce::ParameterID HEAD_1_PAN                       {"HEAD_1_PAN", 1};
+    const juce::ParameterID HEAD_1_TIME                      {"HEAD_1_TIME", 1};
     const juce::ParameterID HEAD_1_GAIN                      {"HEAD_1_GAIN", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_PERIOD_DURATION  {"HEAD_1_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_FUNCTION         {"HEAD_1_MOVEMENT_FUNCTION", 1};
@@ -63,6 +64,7 @@ namespace id {
     const juce::ParameterID HEAD_2_BYPASS                    {"HEAD_2_BYPASS", 1};
     const juce::ParameterID HEAD_2_FEEDBACK                  {"HEAD_2_FEEDBACK", 1};
     const juce::ParameterID HEAD_2_PAN                       {"HEAD_2_PAN", 1};
+    const juce::ParameterID HEAD_2_TIME                      {"HEAD_2_TIME", 1};
     const juce::ParameterID HEAD_2_GAIN                      {"HEAD_2_GAIN", 1};
     const juce::ParameterID HEAD_2_MOVEMENT_PERIOD_DURATION  {"HEAD_2_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_2_MOVEMENT_FUNCTION         {"HEAD_2_MOVEMENT_FUNCTION", 1};
@@ -82,6 +84,7 @@ namespace id {
     const juce::ParameterID HEAD_3_BYPASS                    {"HEAD_3_BYPASS", 1};
     const juce::ParameterID HEAD_3_FEEDBACK                  {"HEAD_3_FEEDBACK", 1};
     const juce::ParameterID HEAD_3_PAN                       {"HEAD_3_PAN", 1};
+    const juce::ParameterID HEAD_3_TIME                      {"HEAD_3_TIME", 1};
     const juce::ParameterID HEAD_3_GAIN                      {"HEAD_3_GAIN", 1};
     const juce::ParameterID HEAD_3_MOVEMENT_PERIOD_DURATION  {"HEAD_3_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_3_MOVEMENT_FUNCTION         {"HEAD_3_MOVEMENT_FUNCTION", 1};
@@ -101,6 +104,8 @@ namespace id {
     const juce::ParameterID HEAD_4_BYPASS                    {"HEAD_4_BYPASS", 1};
     const juce::ParameterID HEAD_4_FEEDBACK                  {"HEAD_4_FEEDBACK", 1};
     const juce::ParameterID HEAD_4_PAN                       {"HEAD_4_PAN", 1};
+    const juce::ParameterID HEAD_4_TIME                      {"HEAD_4_TIME", 1};
+
     const juce::ParameterID HEAD_4_GAIN                      {"HEAD_4_GAIN", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_PERIOD_DURATION  {"HEAD_4_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_FUNCTION         {"HEAD_4_MOVEMENT_FUNCTION", 1};

@@ -1,3 +1,5 @@
+#include "../dsp/ParameterIDs.hpp"
+
 class WebSliderAttachments {
 public:
     WebSliderAttachments(SkeletonAudioProcessor& p) :
@@ -220,6 +222,10 @@ public:
     if (auto* param = state.getParameter(id::HEAD_2_PAN.getParamID()))
         webHead2PanSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
             *param, webHead2PanRelay, nullptr);
+
+        if (auto* param = state.getParameter(id::HEAD_2_TIME.getParamID()))
+            webHead2TimeSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2TimeRelay, nullptr);
 
     if (auto* param = state.getParameter(id::HEAD_2_GAIN.getParamID()))
         webHead2GainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(

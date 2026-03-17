@@ -98,6 +98,18 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     head.gain = headGain.get();
     layout.add(std::move(headGain));
 
+    auto headPan = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_PAN", 1}, "Pan Head "+prefix, 0.f, 1.f, 0.5f);
+    head.pan = headPan.get();
+    layout.add(std::move(headPan));
+
+    auto headFeed = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_FEEDBACK", 1}, "Pan Head "+prefix, 0.f, 1.f, 0.5f);
+    head.feedBack = headFeed.get();
+    layout.add(std::move(headFeed));
+
+    auto headTime = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_TIME", 1}, "Pan Head "+prefix, 0.f, 1.f, 0.5f);
+    head.feedBack = headTime.get();
+    layout.add(std::move(headTime));
+
     // Nested calls
     addFilterLayout(layout, prefix, head.lpFilter, head.hpFilter);
     addMovementLayout(layout, prefix + "_MV", head.movementFunction);
