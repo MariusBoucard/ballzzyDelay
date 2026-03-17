@@ -4,6 +4,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_extra/juce_gui_extra.h>
 #include "../dsp/Processor.h"
+#include "webSliderAttachments.h"
 
 
 class VueProcessorEditor : public juce::AudioProcessorEditor,
@@ -17,14 +18,12 @@ public:
 
   void timerCallback() override;
     juce::WebBrowserComponent::Options createWebBrowserOptions() {
-      
-       return juce::WebBrowserComponent::Options{}
+       juce::WebBrowserComponent::Options opts = juce::WebBrowserComponent::Options{}
               .withBackend(
                   juce::WebBrowserComponent::Options::Backend::webview2)
               .withWinWebView2Options(
                   juce::WebBrowserComponent::Options::WinWebView2{}
                       .withBackgroundColour(juce::Colours::white)
-                      // this may be necessary for some DAWs; include for safety
                       .withUserDataFolder(juce::File::getSpecialLocation(
                           juce::File::SpecialLocationType::tempDirectory)))
               .withNativeIntegrationEnabled()
@@ -71,11 +70,8 @@ public:
                             completion("Error retrieving logs");
                           }
                         });
-                  })
-              .withOptionsFrom(webGainRelay)
-              .withOptionsFrom(webBypassRelay)
-              .withOptionsFrom(webDistortionTypeRelay)
-              .withOptionsFrom(webMixRelay);
+                  });
+       return webSliderAtt.addSlidersOptions(opts);
     }
 private:
   using Resource = juce::WebBrowserComponent::Resource;
@@ -84,13 +80,14 @@ private:
       const juce::Array<juce::var>& args,
       juce::WebBrowserComponent::NativeFunctionCompletion completion);
 
+
   juce::TextButton runJavaScriptButton{"Run some JavaScript"};
   juce::TextButton emitJavaScriptEventButton{"Emit JavaScript event"};
   juce::Label labelUpdatedFromJavaScript{"label",
                                          "To be updated from JavaScript"};
 
   SkeletonAudioProcessor& processorRef;
-
+//------------------------ On va pouvoir tej
   juce::Slider gainSlider{"gain slider"};
   juce::SliderParameterAttachment gainSliderAttachment;
 
@@ -100,17 +97,10 @@ private:
   juce::Label distortionTypeLabel{"distortion type label", "Distortion"};
   juce::ComboBox distortionTypeComboBox{"distortion type combo box"};
   juce::ComboBoxParameterAttachment distortionTypeComboBoxAttachment;
-
-  juce::WebSliderRelay webGainRelay;
-  juce::WebToggleButtonRelay webBypassRelay;
-  juce::WebComboBoxRelay webDistortionTypeRelay;
-    juce::WebSliderRelay webMixRelay;
-
+//-------------------------
+  webSliderAttachments webSliderAtt;
   juce::WebBrowserComponent webView;
 
-  juce::WebSliderParameterAttachment webGainSliderAttachment;
-  juce::WebToggleButtonParameterAttachment webBypassToggleAttachment;
-  juce::WebComboBoxParameterAttachment webDistortionTypeComboBoxAttachment;
- juce::WebSliderParameterAttachment webMixSliderAttachment;
+
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VueProcessorEditor)
 };

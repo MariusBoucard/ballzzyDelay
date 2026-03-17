@@ -101,33 +101,16 @@ VueProcessorEditor::VueProcessorEditor(
       distortionTypeComboBoxAttachment{*processorRef.getState().getParameter(
                                            id::DISTORTION_TYPE.getParamID()),
                                        distortionTypeComboBox, nullptr},
-      webGainRelay{id::GAIN.getParamID()},
-      webBypassRelay{id::BYPASS.getParamID()},
-      webDistortionTypeRelay{id::DISTORTION_TYPE.getParamID()},
-        webMixRelay{id::MIX.getParamID()},
+      webSliderAtt(p),
       webView{ createWebBrowserOptions()
-      },
-      webGainSliderAttachment{
-          *processorRef.getState().getParameter(id::GAIN.getParamID()),
-          webGainRelay, nullptr},
-      webBypassToggleAttachment{
-          *processorRef.getState().getParameter(id::BYPASS.getParamID()),
-          webBypassRelay, nullptr},
-        webMixSliderAttachment{
-          *processorRef.getState().getParameter(id::MIX.getParamID()),
-          webMixRelay, nullptr},
-      webDistortionTypeComboBoxAttachment{*processorRef.getState().getParameter(
-                                              id::DISTORTION_TYPE.getParamID()),
-                                          webDistortionTypeRelay, nullptr} {
-  addAndMakeVisible(webView);
-
-  // WebBrowserComponent can display any URL
-  // webView.goToURL("https://juce.com");
+      }
+    {
+webSliderAtt.createAttachments();
+    addAndMakeVisible(webView);
 
   // This is necessary if we want to use a ResourceProvider
    //webView.goToURL(juce::WebBrowserComponent::getResourceProviderRoot());
 
-  // This can be used for hot reloading (requires npm run dev in another terminal)
    webView.goToURL(LOCAL_DEV_SERVER_ADDRESS);
 
   runJavaScriptButton.onClick = [this] {

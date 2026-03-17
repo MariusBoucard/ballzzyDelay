@@ -61,6 +61,8 @@ target_sources(${PROJECT_NAME}
         source/ui/gui.h
         source/ui/gui.hpp
 
+        source/ui/webSliderAttachments.h
+
 
 
         # UI Compon
