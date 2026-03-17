@@ -21,6 +21,8 @@ namespace FaustParameterMapping {
             {"HEAD_1_FEEDBACK", "/FaustEffect/Delay_Multi-Tap/Head_0/Feedback"},
             {"HEAD_1_GAIN",     "/FaustEffect/Delay_Multi-Tap/Head_0/Level"},
             {"HEAD_1_PAN",      "/FaustEffect/Delay_Multi-Tap/Head_0/Pan"},
+            {"HEAD_1_TIME","/FaustEffect/Delay_Multi-Tap/Head_0/Time"}
+        ,
             // Note: Head_0/Time has no JUCE equivalent in your parameter list
 
             // ============================================================================
@@ -29,6 +31,8 @@ namespace FaustParameterMapping {
             {"HEAD_2_FEEDBACK", "/FaustEffect/Delay_Multi-Tap/Head_1/Feedback"},
             {"HEAD_2_GAIN",     "/FaustEffect/Delay_Multi-Tap/Head_1/Level"},
             {"HEAD_2_PAN",      "/FaustEffect/Delay_Multi-Tap/Head_1/Pan"},
+        {"HEAD_2_TIME","/FaustEffect/Delay_Multi-Tap/Head_1/Time"},
+
 
             // ============================================================================
             // Head 3 Parameters (JUCE HEAD_3 -> Faust Head_2)
@@ -36,13 +40,15 @@ namespace FaustParameterMapping {
             {"HEAD_3_FEEDBACK", "/FaustEffect/Delay_Multi-Tap/Head_2/Feedback"},
             {"HEAD_3_GAIN",     "/FaustEffect/Delay_Multi-Tap/Head_2/Level"},
             {"HEAD_3_PAN",      "/FaustEffect/Delay_Multi-Tap/Head_2/Pan"},
+            {"HEAD_3_TIME","/FaustEffect/Delay_Multi-Tap/Head_2/Time"},
 
             // ============================================================================
             // Head 4 Parameters (JUCE HEAD_4 -> Faust Head_3)
             // ============================================================================
             {"HEAD_4_FEEDBACK", "/FaustEffect/Delay_Multi-Tap/Head_3/Feedback"},
             {"HEAD_4_GAIN",     "/FaustEffect/Delay_Multi-Tap/Head_3/Level"},
-            {"HEAD_4_PAN",      "/FaustEffect/Delay_Multi-Tap/Head_3/Pan"}
+            {"HEAD_4_PAN",      "/FaustEffect/Delay_Multi-Tap/Head_3/Pan"},
+{"HEAD_4_TIME",      "/FaustEffect/Delay_Multi-Tap/Head_3/Time"}
 
             // NOTE: The following JUCE parameters have NO Faust equivalents:
             // - GAIN, BYPASS, DISTORTION_TYPE, INPUT_GAIN, OUTPUT_GAIN, FEEDBACK

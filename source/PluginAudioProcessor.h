@@ -102,12 +102,12 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     head.pan = headPan.get();
     layout.add(std::move(headPan));
 
-    auto headFeed = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_FEEDBACK", 1}, "Pan Head "+prefix, 0.f, 1.f, 0.5f);
+    auto headFeed = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_FEEDBACK", 1}, "Feedback Head "+prefix, 0.f, 1.f, 0.5f);
     head.feedBack = headFeed.get();
     layout.add(std::move(headFeed));
 
-    auto headTime = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_TIME", 1}, "Pan Head "+prefix, 0.f, 1.f, 0.5f);
-    head.feedBack = headTime.get();
+    auto headTime = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_TIME", 1}, "Time Head "+prefix, 0.f, 1.f, 0.5f);
+    head.time = headTime.get();
     layout.add(std::move(headTime));
 
     // Nested calls

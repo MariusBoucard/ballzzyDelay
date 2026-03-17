@@ -19,6 +19,7 @@ namespace parametersDeclaration{
         struct Head{
             juce::AudioParameterBool* bypass{nullptr};
             juce::AudioParameterFloat* feedBack{nullptr};
+            juce::AudioParameterFloat* time{nullptr};
             juce::AudioParameterFloat* pan{nullptr};
             juce::AudioParameterFloat* gain{nullptr};
             MovementFunction movementFunction;
