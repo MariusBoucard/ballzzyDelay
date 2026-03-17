@@ -36,6 +36,7 @@
 #include "dsp/ParameterSetup.h"
 #include "dsp/ParameterIDs.hpp"
 #include "dsp/paramsDeclaration.h"
+#include "dsp/faustParameterMap.h"
 
 class PluginAudioProcessor final : public juce::AudioProcessor,
                                    public juce::AudioProcessorValueTreeState::Listener
@@ -48,7 +49,7 @@ public:
 
 
 
-void    addFilterLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
+void addFilterLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
                      juce::String prefix,
                      parametersDeclaration::Parameters::Lp& lp,
                      parametersDeclaration::Parameters::Hp& hp)
@@ -106,6 +107,38 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
+
+    std::vector<juce::String> params;
+/*
+
+    mydsp* tempDsp = new mydsp();
+    MapUI* tempUI = new MapUI();
+
+    tempDsp->buildUserInterface(tempUI);
+    auto fullPathMap = tempUI->getFullpathMap();
+
+    // Write to file
+    juce::File outputFile = juce::File::getSpecialLocation(juce::File::userDesktopDirectory)
+                                .getChildFile("faust_params.txt");
+    juce::FileOutputStream stream(outputFile);
+
+    if (stream.openedOk())
+    {
+        int i = 0;
+        for (const auto& [key, value] : fullPathMap)
+        {
+            auto name = key;
+            params.push_back(name);
+
+            stream.writeText(juce::String(i) + ": " + name + "\n", false, false, nullptr);
+            i++;
+        }
+        stream.flush();
+    }
+    delete tempDsp;
+    delete tempUI;
+*/
+
     // 1. Global Parameters
     auto gain = std::make_unique<juce::AudioParameterFloat>(id::GAIN, "Gain", 0.f, 1.f, 1.f);
     parameters.gain = gain.get();
@@ -139,7 +172,7 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
     void parameterChanged (const juce::String& parameterID, float newValue) override
     {
         if (mFaustUI != nullptr)
-            mFaustUI->setParamValue(parameterID.toStdString(), newValue);
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
     }
 
     void prepareToPlay (double sampleRate, int blockSize) override {

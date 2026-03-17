@@ -34,14 +34,13 @@ public:
     void parameterChanged(const juce::String& parameterID, float newValue) override;
 
     const ParameterSetupData* getAudioThreadParams() const;
+    void initParametersListener(juce::AudioProcessor& inProcessor);
 
 private:
     void run() override;
 
-    void initParametersListener();
     void initializeParameters();
     void performSwap();
-
     ParameterSetupData mSetupData1;
     ParameterSetupData mSetupData2;
 

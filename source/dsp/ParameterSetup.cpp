@@ -10,9 +10,7 @@ ParameterSetup::ParameterSetup(juce::AudioProcessorValueTreeState &inApvts)
     mNextParamsForProcessing = &mSetupData2;
     initializeParameters();
     *mCurrentParamsForAudio.load(std::memory_order_relaxed) = *mNextParamsForProcessing;
-
-    initParametersListener();
-    startThread();
+// Ce serait fou de pouvoir avoir la faust dans le swap et faire un set apres ? Necessaire meme ?
 }
 
 ParameterSetup::~ParameterSetup() {
@@ -31,22 +29,29 @@ ParameterSetupData ParameterSetup::createSetupData() {
     return data;
 }
 
-void ParameterSetup::initParametersListener() {
-    mParameters.addParameterListener("gain", this);
-    mParameters.addParameterListener("lowPassCutoff", this); // Example
-    mParameters.addParameterListener("highPassResonance", this); // Example
+void ParameterSetup::initParametersListener(juce::AudioProcessor& inProcessor) {
+    // Desactivation des setup car aps utilisé en faust
+    auto test =inProcessor.getParameters()[0];
+    //mParameters.addParameterListener(test, this);
+    //mParameters.addParameterListener("GAIN", this); // Example
+    //mParameters.addParameterListener("highPassResonance", this); // Example
+   // startThread();
+
 }
 
 void ParameterSetup::initializeParameters() {
-   /* auto *gainParam = mParameters.getRawParameterValue("gain");
-    parameterChanged("gain",gainParam->load()) ;
+    //osef by now no mappers
+   auto *gainParam = mParameters.getRawParameterValue("GAIN");
+    parameterChanged("GAIN",gainParam->load()) ;
+    //auto check = static_cast<juce::AudioProcessorParameterWithID*>(inProcessor.getParameters()[0])->paramID;
+
 
     if (auto *lpCutoffParam = mParameters.getRawParameterValue("lowPassCutoff"))
         mNextParamsForProcessing->lowPassFilterCoeffs.cutoff = static_cast<double>(lpCutoffParam->load());
 
     if (auto *hpResonanceParam = mParameters.getRawParameterValue("highPassResonance"))
         mNextParamsForProcessing->highPassFilterCoeffs.resonance = static_cast<double>(hpResonanceParam->load());
-*/
+
     mNextParamsForProcessing->version = 0;
 }
 

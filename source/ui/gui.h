@@ -98,7 +98,7 @@ private:
   juce::ComboBox distortionTypeComboBox{"distortion type combo box"};
   juce::ComboBoxParameterAttachment distortionTypeComboBoxAttachment;
 //-------------------------
-  webSliderAttachments webSliderAtt;
+  WebSliderAttachments webSliderAtt;
   juce::WebBrowserComponent webView;
 
 

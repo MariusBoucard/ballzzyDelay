@@ -1,6 +1,6 @@
-class webSliderAttachments {
+class WebSliderAttachments {
 public:
-    webSliderAttachments(SkeletonAudioProcessor& p) :
+    WebSliderAttachments(SkeletonAudioProcessor& p) :
         processorRef(p),
         webGainRelay{id::GAIN.getParamID()},
         webBypassRelay{id::BYPASS.getParamID()},
@@ -9,8 +9,13 @@ public:
     {}
 
     void createAttachments() {
-        auto& state = processorRef.getState();
+        for (auto* param : processorRef.getParameters())
+        {
+            auto paramID =static_cast<juce::AudioProcessorParameterWithID*>(param)->paramID;
+        }
 
+        auto& state = processorRef.getState();
+// On va pouvoir iterrer de la mm maniere que  pour les faust parameters // peut etre creation d attachments depuis main processor
         webGainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
             *state.getParameter(id::GAIN.getParamID()), webGainRelay, nullptr);
 

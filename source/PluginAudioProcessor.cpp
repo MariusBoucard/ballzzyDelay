@@ -13,15 +13,18 @@ PluginAudioProcessor::PluginAudioProcessor()
 {
     for (auto* param : mParameters.processor.getParameters())
     {
-        mParameters.addParameterListener(param->getName(152), this);
+        auto paramID =static_cast<juce::AudioProcessorParameterWithID*>(param)->paramID;
+        mParameters.addParameterListener(paramID, this);
     }
 }
 
 PluginAudioProcessor::~PluginAudioProcessor() {
     for (auto* param : getParameters())
     {
-        mParameters.removeParameterListener(param->getName(152), this);
+        auto paramID =static_cast<juce::AudioProcessorParameterWithID*>(param)->paramID;
+        mParameters.removeParameterListener(paramID, this);;
     }
+    // Carefull we should delete the editor before the processor
 }
 
 void PluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &a) {

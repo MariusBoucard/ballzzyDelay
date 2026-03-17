@@ -25,7 +25,19 @@ namespace id {
     // Helper function for nested Head IDs
     // ============================================================================
     inline juce::String getHeadPrefix(int index) { return "HEAD_" + juce::String(index) + "_"; }
-    
+
+    struct ParameterIDs {
+        static const std::array<juce::ParameterID, 10>& getIDs() {
+            static const std::array<juce::ParameterID, 10> ids = {
+                GAIN, BYPASS, DISTORTION_TYPE, INPUT_GAIN, OUTPUT_GAIN,
+                MIX, FEEDBACK, SYNC_TEMPO, DUCKING, DUCKING_ATTACK
+            };
+            return ids;
+        }
+    };
+
+
+
     // ============================================================================
     // Head 1 Parameters
     // ============================================================================

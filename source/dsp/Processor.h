@@ -20,6 +20,7 @@ public:
     void prepareToPlay(double inSampleRate, int inBlockSize) override {
         mSampleRate = inSampleRate;
         mBlockSize = inBlockSize;
+        mParameterSetup.initParametersListener(*this);
 
         Mappers::getMapperInstance().setSampleRate(mSampleRate);
         mProcessorGraph.prepareToPlay(mSampleRate, mBlockSize);
@@ -40,8 +41,10 @@ public:
     }
     [[nodiscard]] juce::AudioParameterChoice *getDistortionTypeParameter()
     const noexcept {
+        // A voir on en aurait peut etre plus besoin du mParametersDeclaration
         return mParametersDeclaration.distortionType;
     }
+
     void releaseResources() override {
         mProcessorGraph.releaseResources();
        // delete mFaustProcessor; // TODO THIS CAUSES CRASH ON EXIT
