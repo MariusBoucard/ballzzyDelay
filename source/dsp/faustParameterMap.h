@@ -8,6 +8,8 @@ namespace FaustParameterMapping {
     // Static map linking JUCE ParameterIDs to Faust parameter paths
       inline const std::unordered_map<juce::String, std::string>& getParameterMap() {
         static const std::unordered_map<juce::String, std::string> map = {
+            {"GAIN", "GAIN"},
+
             // ============================================================================
             // Global Parameters
             // ============================================================================
