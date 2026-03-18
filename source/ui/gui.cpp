@@ -92,15 +92,6 @@ VueProcessorEditor::VueProcessorEditor(
     SkeletonAudioProcessor& p)
     : AudioProcessorEditor(&p),
       processorRef(p),
-      gainSliderAttachment{
-          *processorRef.getState().getParameter(id::GAIN.getParamID()),
-          gainSlider, nullptr},
-      bypassButtonAttachment{
-          *processorRef.getState().getParameter(id::BYPASS.getParamID()),
-          bypassButton, nullptr},
-      distortionTypeComboBoxAttachment{*processorRef.getState().getParameter(
-                                           id::DISTORTION_TYPE.getParamID()),
-                                       distortionTypeComboBox, nullptr},
       webSliderAtt(p),
       webView{ createWebBrowserOptions()
       }
@@ -127,29 +118,12 @@ webSliderAtt.createAttachments();
           }
         });
   };
- // addAndMakeVisible(runJavaScriptButton);
 
   emitJavaScriptEventButton.onClick = [this] {
     static const juce::var valueToEmit{42.0};
     webView.emitEventIfBrowserIsVisible(getExampleEventId(), valueToEmit);
   };
- // addAndMakeVisible(emitJavaScriptEventButton);
 
-//  addAndMakeVisible(labelUpdatedFromJavaScript);
-
-  gainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBar);
-//  addAndMakeVisible(gainSlider);
-
- // addAndMakeVisible(bypassButton);
-
-  addAndMakeVisible(distortionTypeLabel);
-
-  const auto& distortionTypeParameter =
-      processorRef.getDistortionTypeParameter();
-  distortionTypeComboBox.addItemList(distortionTypeParameter->choices, 1);
-  distortionTypeComboBox.setSelectedItemIndex(
-      distortionTypeParameter->getIndex(), juce::dontSendNotification);
-  addAndMakeVisible(distortionTypeComboBox);
 
   setResizable(true, true);
 

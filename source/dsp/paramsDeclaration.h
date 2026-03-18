@@ -34,15 +34,16 @@ namespace parametersDeclaration{
 
         juce::AudioParameterFloat* gain{nullptr};
         juce::AudioParameterBool* bypass{nullptr};
-        juce::AudioParameterChoice* distortionType{nullptr};
         juce::AudioParameterFloat* inputGain{nullptr};
         juce::AudioParameterFloat* outputGain{nullptr};
         juce::AudioParameterFloat* mix{nullptr};
         juce::AudioParameterFloat* feedback{nullptr};
+        juce::AudioParameterFloat* time{nullptr};
         juce::AudioParameterBool* syncTempo{nullptr};
         juce::AudioParameterFloat* ducking{nullptr};
         juce::AudioParameterFloat* duckingAttack{nullptr};
         juce::AudioParameterFloat* duckingRelease{nullptr};
+        juce::AudioParameterFloat* duckingThreshold{nullptr};
         juce::AudioParameterFloat* width{nullptr};
 
         Lp lpFilter;

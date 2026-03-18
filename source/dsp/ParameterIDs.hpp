@@ -13,10 +13,12 @@ namespace id {
     const juce::ParameterID OUTPUT_GAIN           {"OUTPUT_GAIN", 1};
     const juce::ParameterID MIX                   {"MIX", 1};
     const juce::ParameterID FEEDBACK              {"FEEDBACK", 1};
+    const juce::ParameterID TIME                  {"TIME", 1};
     const juce::ParameterID SYNC_TEMPO            {"SYNC_TEMPO", 1};
     const juce::ParameterID DUCKING               {"DUCKING", 1};
     const juce::ParameterID DUCKING_ATTACK        {"DUCKING_ATTACK", 1};
     const juce::ParameterID DUCKING_RELEASE       {"DUCKING_RELEASE", 1};
+    const juce::ParameterID DUCKING_THRESHOLD {"DUCKING_THRESHOLD", 1};
     const juce::ParameterID WIDTH                 {"WIDTH", 1};
     const juce::ParameterID LP_FILTER_FREQ        {"LP_FILTER_FREQ", 1};
     const juce::ParameterID HP_FILTER_FREQ        {"HP_FILTER_FREQ", 1};
@@ -27,10 +29,10 @@ namespace id {
     inline juce::String getHeadPrefix(int index) { return "HEAD_" + juce::String(index) + "_"; }
 
     struct ParameterIDs {
-        static const std::array<juce::ParameterID, 10>& getIDs() {
-            static const std::array<juce::ParameterID, 10> ids = {
+        static const std::array<juce::ParameterID, 11>& getIDs() {
+            static const std::array<juce::ParameterID, 11> ids = {
                 GAIN, BYPASS, DISTORTION_TYPE, INPUT_GAIN, OUTPUT_GAIN,
-                MIX, FEEDBACK, SYNC_TEMPO, DUCKING, DUCKING_ATTACK
+                MIX,TIME, FEEDBACK, SYNC_TEMPO, DUCKING, DUCKING_ATTACK
             };
             return ids;
         }

@@ -39,11 +39,6 @@ public:
             outputs[channel] = new float[mBlockSize];
         }
     }
-    [[nodiscard]] juce::AudioParameterChoice *getDistortionTypeParameter()
-    const noexcept {
-        // A voir on en aurait peut etre plus besoin du mParametersDeclaration
-        return mParametersDeclaration.distortionType;
-    }
 
     void releaseResources() override {
         mProcessorGraph.releaseResources();

@@ -87,17 +87,7 @@ private:
                                          "To be updated from JavaScript"};
 
   SkeletonAudioProcessor& processorRef;
-//------------------------ On va pouvoir tej
-  juce::Slider gainSlider{"gain slider"};
-  juce::SliderParameterAttachment gainSliderAttachment;
 
-  juce::ToggleButton bypassButton{"Bypass"};
-  juce::ButtonParameterAttachment bypassButtonAttachment;
-
-  juce::Label distortionTypeLabel{"distortion type label", "Distortion"};
-  juce::ComboBox distortionTypeComboBox{"distortion type combo box"};
-  juce::ComboBoxParameterAttachment distortionTypeComboBoxAttachment;
-//-------------------------
   WebSliderAttachments webSliderAtt;
   juce::WebBrowserComponent webView;
 

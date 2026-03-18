@@ -55,12 +55,12 @@ void addFilterLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout
                      parametersDeclaration::Parameters::Hp& hp)
 {
     auto lpParam = std::make_unique<juce::AudioParameterFloat>(
-        juce::ParameterID{prefix + "_LP_FREQ", 1}, "LP Freq Head "+prefix, juce::NormalisableRange<float>{20.f, 20000.f, 1.f, 0.3f}, 20000.f);
+        juce::ParameterID{prefix + "_LP_FILTER_FREQ", 1}, "LP Freq Head "+prefix, juce::NormalisableRange<float>{20.f, 20000.f, 1.f, 0.3f}, 20000.f);
     lp.freq = lpParam.get();
     layout.add(std::move(lpParam));
 
     auto hpParam = std::make_unique<juce::AudioParameterFloat>(
-        juce::ParameterID{prefix + "_HP_FREQ", 1}, "HP Freq Head "+prefix, juce::NormalisableRange<float>{20.f, 20000.f, 1.f, 0.3f}, 20.f);
+        juce::ParameterID{prefix + "_HP_FILTER_FREQ", 1}, "HP Freq Head "+prefix, juce::NormalisableRange<float>{20.f, 20000.f, 1.f, 0.3f}, 20.f);
     hp.freq = hpParam.get();
     layout.add(std::move(hpParam));
 }
@@ -70,17 +70,52 @@ void addMovementLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layo
                        juce::String prefix,
                        parametersDeclaration::Parameters::MovementFunction& move)
 {
-    auto on = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{prefix + "_MOVE_ON", 1}, "Movement On Head "+prefix, false);
+    auto on = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{prefix + "_MOVEMENT_ON", 1}, "Movement On Head "+prefix, false);
     move.movementOn = on.get();
     layout.add(std::move(on));
 
-    auto period = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_PERIOD", 1}, "Period"+prefix, 0.1f, 10.f, 1.f);
+    auto period = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_MOVEMENT_PERIOD_DURATION", 1}, "Period"+prefix, 0.1f, 10.f, 1.f);
     move.periodDuration = period.get();
     layout.add(std::move(period));
+    auto width = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_MOVEMENT_WIDTH", 1}, "Width "+prefix, 0.f,1.f, 0.f);
+    move.width = width.get();
+    layout.add(std::move(width));
 
-    auto func = std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{prefix + "_FUNC", 1}, "Function"+prefix, juce::StringArray{"Sine", "Saw", "Square"}, 0);
+    auto func = std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{prefix + "_MOVEMENT_FUNCTION", 1}, "Function"+prefix, juce::StringArray{"Sine", "Saw", "Square"}, 0);
     move.function = func.get();
     layout.add(std::move(func));
+}
+void writeFaustParametersToFile() {
+
+    std::vector<juce::String> params;
+
+    mydsp* tempDsp = new mydsp();
+    MapUI* tempUI = new MapUI();
+
+    tempDsp->buildUserInterface(tempUI);
+    auto fullPathMap = tempUI->getFullpathMap();
+
+    // Write to file
+    juce::File outputFile = juce::File::getSpecialLocation(juce::File::userDesktopDirectory)
+                                .getChildFile("faust_params.txt");
+    juce::FileOutputStream stream(outputFile);
+
+    if (stream.openedOk())
+    {
+        int i = 0;
+        for (const auto& [key, value] : fullPathMap)
+        {
+            auto name = key;
+            params.push_back(name);
+
+            stream.writeText(juce::String(i) + ": " + name + "\n", false, false, nullptr);
+            i++;
+        }
+        stream.flush();
+    }
+    delete tempDsp;
+    delete tempUI;
+
 }
 
 // Helper for Head structures
@@ -114,42 +149,8 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     addFilterLayout(layout, prefix, head.lpFilter, head.hpFilter);
     addMovementLayout(layout, prefix + "_MV", head.movementFunction);
 }
-juce::AudioProcessorValueTreeState::ParameterLayout
-createParameterLayout(parametersDeclaration::Parameters& parameters)
-{
-    juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
-
-    std::vector<juce::String> params;
-/*
-
-    mydsp* tempDsp = new mydsp();
-    MapUI* tempUI = new MapUI();
-
-    tempDsp->buildUserInterface(tempUI);
-    auto fullPathMap = tempUI->getFullpathMap();
-
-    // Write to file
-    juce::File outputFile = juce::File::getSpecialLocation(juce::File::userDesktopDirectory)
-                                .getChildFile("faust_params.txt");
-    juce::FileOutputStream stream(outputFile);
-
-    if (stream.openedOk())
-    {
-        int i = 0;
-        for (const auto& [key, value] : fullPathMap)
-        {
-            auto name = key;
-            params.push_back(name);
-
-            stream.writeText(juce::String(i) + ": " + name + "\n", false, false, nullptr);
-            i++;
-        }
-        stream.flush();
-    }
-    delete tempDsp;
-    delete tempUI;
-*/
+    void addMainParametersLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout, parametersDeclaration::Parameters& parameters) {
 
     // 1. Global Parameters
     auto gain = std::make_unique<juce::AudioParameterFloat>(id::GAIN, "Gain", 0.f, 1.f, 1.f);
@@ -164,9 +165,62 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
     parameters.mix = mix.get();
     layout.add(std::move(mix));
 
-    auto dist = std::make_unique<juce::AudioParameterChoice>(id::DISTORTION_TYPE, "Distortion Type", juce::StringArray{"None", "Tanh", "Sigmoid"}, 0);
-    parameters.distortionType = dist.get();
-    layout.add(std::move(dist));
+    auto feedBack = std::make_unique<juce::AudioParameterFloat>(id::FEEDBACK,"Global Feedback",0.f,1.f,0.f);
+    parameters.feedback = feedBack.get();
+    layout.add(std::move(feedBack));
+
+    auto time = std::make_unique<juce::AudioParameterFloat>(id::TIME,"Global Feedback",0.f,1.f,0.f);
+    parameters.time = time.get();
+    layout.add(std::move(time));
+
+    auto inputGain = std::make_unique<juce::AudioParameterFloat>(id::INPUT_GAIN,"Input Gain",0.f,1.f,0.f);
+    parameters.inputGain = inputGain.get();
+    layout.add(std::move(inputGain));
+
+    auto outputGain = std::make_unique<juce::AudioParameterFloat>(id::OUTPUT_GAIN,"Output Gain",0.f,1.f,0.f);
+    parameters.outputGain = outputGain.get();
+    layout.add(std::move(outputGain));
+
+    auto syncTempo = std::make_unique<juce::AudioParameterBool>(id::SYNC_TEMPO,"Sync to bpm",false);
+    parameters.syncTempo = syncTempo.get();
+    layout.add(std::move(syncTempo));
+
+    auto ducking = std::make_unique<juce::AudioParameterFloat>(id::DUCKING,"Ducking",0.f,1.f,0.f);
+    parameters.ducking = ducking.get();
+    layout.add(std::move(ducking));
+
+    auto duckingAttac = std::make_unique<juce::AudioParameterFloat>(id::DUCKING_ATTACK,"Ducking attack time",0.f,1.f,0.f);
+    parameters.duckingAttack = duckingAttac.get();
+    layout.add(std::move(duckingAttac));
+    auto duckthres = std::make_unique<juce::AudioParameterFloat>(id::DUCKING_THRESHOLD,"Ducking Threshold",0.f,1.f,0.f);
+    parameters.duckingThreshold = duckthres.get();
+    layout.add(std::move(duckthres));
+
+    auto duckingRelease = std::make_unique<juce::AudioParameterFloat>(id::DUCKING_RELEASE,"Ducking attack time",0.f,1.f,0.f);
+    parameters.duckingRelease = duckingRelease.get();
+    layout.add(std::move(duckingRelease));
+
+    auto WIDTH = std::make_unique<juce::AudioParameterFloat>(id::WIDTH,"Width",0.f,1.f,0.f);
+    parameters.width = WIDTH.get(); 
+    layout.add(std::move(WIDTH));
+
+    auto lp = std::make_unique<juce::AudioParameterFloat>(id::LP_FILTER_FREQ,"LP Freq",20.f,20000.f,20000.f);
+    parameters.lpFilter.freq = lp.get();
+    layout.add(std::move(lp));
+
+    auto hp = std::make_unique<juce::AudioParameterFloat>(id::HP_FILTER_FREQ,"HP Freq",20.f,20000.f,20.f);
+    parameters.hpFilter.freq = hp.get();
+    layout.add(std::move(hp));
+
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout
+createParameterLayout(parametersDeclaration::Parameters& parameters)
+{
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+
+    addMainParametersLayout(layout, parameters);
+
 
     // 2. Main Filters
     addFilterLayout(layout, "MAIN", parameters.lpFilter, parameters.hpFilter);
@@ -192,6 +246,7 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
         mSkeletonProcessor.setMapUI(mFaustUI);
         mSkeletonProcessor.prepareToPlay(sampleRate, blockSize);
     }
+
     void releaseResources() override {
       //  delete mFaustUI;
     }
@@ -254,6 +309,5 @@ private:
     juce::AudioProcessorValueTreeState mParameters;
     SkeletonAudioProcessor mSkeletonProcessor;
     ParameterSetup mParameterSetup;
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginAudioProcessor)
 };

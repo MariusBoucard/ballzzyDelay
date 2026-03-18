@@ -12,10 +12,12 @@ public:
         webOutputGainRelay{id::OUTPUT_GAIN.getParamID()},
         webMixRelay{id::MIX.getParamID()},
         webFeedbackRelay{id::FEEDBACK.getParamID()},
+        webTimeRelay{id::TIME.getParamID()},
         webSyncTempoRelay{id::SYNC_TEMPO.getParamID()},
         webDuckingRelay{id::DUCKING.getParamID()},
         webDuckingAttackRelay{id::DUCKING_ATTACK.getParamID()},
         webDuckingReleaseRelay{id::DUCKING_RELEASE.getParamID()},
+        webDuckingThresholdRelay{id::DUCKING_THRESHOLD.getParamID()},
         webWidthRelay{id::WIDTH.getParamID()},
         webLpFilterFreqRelay{id::LP_FILTER_FREQ.getParamID()},
         webHpFilterFreqRelay{id::HP_FILTER_FREQ.getParamID()},
@@ -105,10 +107,6 @@ public:
         webBypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
             *param, webBypassRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::DISTORTION_TYPE.getParamID()))
-        webDistortionTypeComboBoxAttachment = std::make_unique<juce::WebComboBoxParameterAttachment>(
-            *param, webDistortionTypeRelay, nullptr);
-
     if (auto* param = state.getParameter(id::INPUT_GAIN.getParamID()))
         webInputGainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
             *param, webInputGainRelay, nullptr);
@@ -141,9 +139,18 @@ public:
         webDuckingReleaseSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
             *param, webDuckingReleaseRelay, nullptr);
 
+    if (auto* param = state.getParameter(id::DUCKING_THRESHOLD.getParamID()))
+        webDuckingThresholdSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+            *param, webDuckingThresholdRelay, nullptr);
+
     if (auto* param = state.getParameter(id::WIDTH.getParamID()))
         webWidthSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
             *param, webWidthRelay, nullptr);
+
+    if (auto* param = state.getParameter(id::TIME.getParamID()))
+            webTimeSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webTimeRelay, nullptr);
+
 
     if (auto* param = state.getParameter(id::LP_FILTER_FREQ.getParamID()))
         webLpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
@@ -423,10 +430,12 @@ public:
             .withOptionsFrom(webOutputGainRelay)
             .withOptionsFrom(webMixRelay)
             .withOptionsFrom(webFeedbackRelay)
+            .withOptionsFrom(webTimeRelay)
             .withOptionsFrom(webSyncTempoRelay)
             .withOptionsFrom(webDuckingRelay)
             .withOptionsFrom(webDuckingAttackRelay)
             .withOptionsFrom(webDuckingReleaseRelay)
+          .withOptionsFrom(webDuckingThresholdRelay)
             .withOptionsFrom(webWidthRelay)
             .withOptionsFrom(webLpFilterFreqRelay)
             .withOptionsFrom(webHpFilterFreqRelay)
@@ -517,10 +526,16 @@ private:
     juce::WebSliderRelay webOutputGainRelay;
     juce::WebSliderRelay webMixRelay;
     juce::WebSliderRelay webFeedbackRelay;
+
+    juce::WebSliderRelay webTimeRelay;
+
     juce::WebToggleButtonRelay webSyncTempoRelay;
     juce::WebToggleButtonRelay webDuckingRelay;
     juce::WebSliderRelay webDuckingAttackRelay;
     juce::WebSliderRelay webDuckingReleaseRelay;
+    juce::WebSliderRelay webDuckingThresholdRelay;
+
+
     juce::WebSliderRelay webWidthRelay;
     juce::WebSliderRelay webLpFilterFreqRelay;
     juce::WebSliderRelay webHpFilterFreqRelay;
@@ -615,10 +630,12 @@ private:
     std::unique_ptr<juce::WebSliderParameterAttachment> webOutputGainSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webMixSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webFeedbackSliderAttachment;
+    std::unique_ptr<juce::WebSliderParameterAttachment> webTimeSliderAttachment;
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webSyncTempoToggleAttachment;
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webDuckingToggleAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webDuckingAttackSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webDuckingReleaseSliderAttachment;
+    std::unique_ptr<juce::WebSliderParameterAttachment> webDuckingThresholdSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webWidthSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webLpFilterFreqSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHpFilterFreqSliderAttachment;
