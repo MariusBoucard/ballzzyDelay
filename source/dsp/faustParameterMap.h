@@ -48,7 +48,7 @@ namespace FaustParameterMapping {
             {"HEAD_4_FEEDBACK", "/FaustEffect/Delay_Multi-Tap/Head_3/Feedback"},
             {"HEAD_4_GAIN",     "/FaustEffect/Delay_Multi-Tap/Head_3/Level"},
             {"HEAD_4_PAN",      "/FaustEffect/Delay_Multi-Tap/Head_3/Pan"},
-{"HEAD_4_TIME",      "/FaustEffect/Delay_Multi-Tap/Head_3/Time"}
+            {"HEAD_4_TIME",      "/FaustEffect/Delay_Multi-Tap/Head_3/Time"}
 
             // NOTE: The following JUCE parameters have NO Faust equivalents:
             // - GAIN, BYPASS, DISTORTION_TYPE, INPUT_GAIN, OUTPUT_GAIN, FEEDBACK
@@ -68,7 +68,7 @@ namespace FaustParameterMapping {
             return it->second;
         }
         // Return empty string or throw exception if not found
-        jassertfalse; // Debug assertion
+      //  jassertfalse; // Debug assertion
         return "";
     }
 }

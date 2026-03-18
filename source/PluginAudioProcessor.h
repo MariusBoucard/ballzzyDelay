@@ -243,7 +243,13 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 
     void prepareToPlay (double sampleRate, int blockSize) override {
         mFaustUI = new MapUI(); // Pas bon ca
+        // TO REDO with tight UI : TODO
+        mFaustHpLpUI = new MapUI();
+        mFaustDuckingUI = new MapUI();
+
         mSkeletonProcessor.setMapUI(mFaustUI);
+        mSkeletonProcessor.setMapUIHpLp(mFaustHpLpUI);
+        mSkeletonProcessor.setMapUIDucking(mFaustDuckingUI);
         mSkeletonProcessor.prepareToPlay(sampleRate, blockSize);
     }
 
@@ -280,9 +286,7 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
     }
 
     juce::AudioProcessorValueTreeState& getState() { return mParameters; }
-    juce::AudioParameterChoice& getDistortionTypeParameter() const {
-        return *dynamic_cast<juce::AudioParameterChoice*>(mParameters.getParameter(id::DISTORTION_TYPE.getParamID()));
-    }
+
     void setStateInformation (const void* data, int sizeInBytes) override
     {
 
@@ -306,6 +310,10 @@ public:
 private:
     parametersDeclaration::Parameters parametersDeclaration;
     MapUI* mFaustUI;
+    // TODO CHANGE WHEN ON A CE QU4IL FAUT EN DSP
+    MapUI* mFaustHpLpUI;
+    MapUI* mFaustDuckingUI;
+
     juce::AudioProcessorValueTreeState mParameters;
     SkeletonAudioProcessor mSkeletonProcessor;
     ParameterSetup mParameterSetup;

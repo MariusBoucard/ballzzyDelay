@@ -27,9 +27,17 @@ public:
 
         mFaustProcessor = new mydsp();
         mFaustProcessor->init(mSampleRate);
-      //  fUI = new MapUI();
         mFaustProcessor->buildUserInterface(fUI);
-       //
+
+        // TODO CHANGE TO THE RIGHT DSP
+        mFaustDuckingProcessor = new mydsp();
+        mFaustDuckingProcessor->init(mSampleRate);
+        mFaustDuckingProcessor->buildUserInterface(fDuckingUI);
+
+        mFaustLPHpProcessor = new mydsp();
+        mFaustLPHpProcessor->init(mSampleRate);
+        mFaustLPHpProcessor->buildUserInterface(fLpHpUi);
+
         inputs = new float*[2];
         for (int channel = 0; channel < 2; ++channel) {
             inputs[channel] = new float[mBlockSize];
@@ -44,6 +52,10 @@ public:
         mProcessorGraph.releaseResources();
        // delete mFaustProcessor; // TODO THIS CAUSES CRASH ON EXIT
         delete fUI;
+        delete fDuckingUI;
+        delete fLpHpUi;
+        delete mFaustDuckingProcessor;
+        delete mFaustLPHpProcessor;
         delete mFaustProcessor;
         for (int channel = 0; channel < 2; ++channel) {
             delete[] outputs[channel];
@@ -92,7 +104,7 @@ public:
 
     //==============================================================================
     bool isBusesLayoutSupported(const BusesLayout &layouts) const override {
-        return true;
+        // TODO test, je rajoute ca mais jsp si c etait appelé ca peut faire peter le vst3 host
         const auto &mainInLayout = layouts.getChannelSet(true, 0);
         const auto &mainOutLayout = layouts.getChannelSet(false, 0);
 
@@ -117,6 +129,7 @@ public:
 
     //==============================================================================
     void initialiseGraph() {
+        // TODO : Est ce qu'on peut mettre faust dans le graph ?
         mInputNode = mProcessorGraph.addNode(std::make_unique<AudioInputNode>(AudioInputNode::audioInputNode));
         mOutputNode = mProcessorGraph.addNode(std::make_unique<AudioOutputNode>(AudioOutputNode::audioOutputNode));
         mGainNode = mProcessorGraph.addNode(std::make_unique<GainProcessor>(mParameters));
@@ -137,6 +150,14 @@ public:
 
     void setMapUI(MapUI *inUI) {
         fUI = inUI;
+    }
+
+    void setMapUIHpLp(MapUI *inUI) {
+        fLpHpUi = inUI;
+    }
+
+    void setMapUIDucking(MapUI *inUI) {
+        fDuckingUI = inUI;
     }
     void setRateAndBufferSizeDetails(double sampleRate, int bufferSize) {
         mSampleRate = sampleRate;
@@ -164,6 +185,14 @@ private:
 
     mydsp* mFaustProcessor;
     MapUI* fUI;
+
+    // TODO : faire des processors bien !
+    mydsp* mFaustLPHpProcessor;
+    MapUI* fLpHpUi;
+
+    mydsp* mFaustDuckingProcessor;
+    MapUI* fDuckingUI;
+
     float** inputs;
     float** outputs;
     juce::AudioProcessorGraph::Node::Ptr mInputNode;

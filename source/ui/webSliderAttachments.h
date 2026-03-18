@@ -7,7 +7,6 @@ public:
         // Global Parameters
         webGainRelay{id::GAIN.getParamID()},
         webBypassRelay{id::BYPASS.getParamID()},
-        webDistortionTypeRelay{id::DISTORTION_TYPE.getParamID()},
         webInputGainRelay{id::INPUT_GAIN.getParamID()},
         webOutputGainRelay{id::OUTPUT_GAIN.getParamID()},
         webMixRelay{id::MIX.getParamID()},
@@ -425,7 +424,6 @@ public:
             // Global Parameters
             .withOptionsFrom(webGainRelay)
             .withOptionsFrom(webBypassRelay)
-            .withOptionsFrom(webDistortionTypeRelay)
             .withOptionsFrom(webInputGainRelay)
             .withOptionsFrom(webOutputGainRelay)
             .withOptionsFrom(webMixRelay)
@@ -521,7 +519,6 @@ private:
     // ============================================================================
     juce::WebSliderRelay webGainRelay;
     juce::WebToggleButtonRelay webBypassRelay;
-    juce::WebComboBoxRelay webDistortionTypeRelay;
     juce::WebSliderRelay webInputGainRelay;
     juce::WebSliderRelay webOutputGainRelay;
     juce::WebSliderRelay webMixRelay;
@@ -625,7 +622,6 @@ private:
     // ============================================================================
     std::unique_ptr<juce::WebSliderParameterAttachment> webGainSliderAttachment;
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webBypassToggleAttachment;
-    std::unique_ptr<juce::WebComboBoxParameterAttachment> webDistortionTypeComboBoxAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webInputGainSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webOutputGainSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webMixSliderAttachment;
