@@ -125,7 +125,7 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
 {
      juce::String prefix = "HEAD_" +  juce::String(headIndex);
 
-    auto bypass = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{prefix + "_BYPASS", 1}, "Bypass Head "+prefix, false);
+    auto bypass = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{prefix + "_ON", 1}, "Head "+prefix+" on", true);
     head.bypass = bypass.get();
     layout.add(std::move(bypass));
 

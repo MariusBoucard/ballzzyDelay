@@ -42,7 +42,7 @@ namespace id {
     // ============================================================================
     // Head 1 Parameters
     // ============================================================================
-    const juce::ParameterID HEAD_1_BYPASS                    {"HEAD_1_BYPASS", 1};
+    const juce::ParameterID HEAD_1_ON                    {"HEAD_1_ON", 1};
     const juce::ParameterID HEAD_1_FEEDBACK                  {"HEAD_1_FEEDBACK", 1};
     const juce::ParameterID HEAD_1_PAN                       {"HEAD_1_PAN", 1};
     const juce::ParameterID HEAD_1_TIME                      {"HEAD_1_TIME", 1};
@@ -62,7 +62,7 @@ namespace id {
     // ============================================================================
     // Head 2 Parameters
     // ============================================================================
-    const juce::ParameterID HEAD_2_BYPASS                    {"HEAD_2_BYPASS", 1};
+    const juce::ParameterID HEAD_2_ON                    {"HEAD_2_ON", 1};
     const juce::ParameterID HEAD_2_FEEDBACK                  {"HEAD_2_FEEDBACK", 1};
     const juce::ParameterID HEAD_2_PAN                       {"HEAD_2_PAN", 1};
     const juce::ParameterID HEAD_2_TIME                      {"HEAD_2_TIME", 1};
@@ -82,7 +82,7 @@ namespace id {
     // ============================================================================
     // Head 3 Parameters
     // ============================================================================
-    const juce::ParameterID HEAD_3_BYPASS                    {"HEAD_3_BYPASS", 1};
+    const juce::ParameterID HEAD_3_ON                    {"HEAD_3_ON", 1};
     const juce::ParameterID HEAD_3_FEEDBACK                  {"HEAD_3_FEEDBACK", 1};
     const juce::ParameterID HEAD_3_PAN                       {"HEAD_3_PAN", 1};
     const juce::ParameterID HEAD_3_TIME                      {"HEAD_3_TIME", 1};
@@ -102,7 +102,7 @@ namespace id {
     // ============================================================================
     // Head 4 Parameters
     // ============================================================================
-    const juce::ParameterID HEAD_4_BYPASS                    {"HEAD_4_BYPASS", 1};
+    const juce::ParameterID HEAD_4_ON                    {"HEAD_4_ON", 1};
     const juce::ParameterID HEAD_4_FEEDBACK                  {"HEAD_4_FEEDBACK", 1};
     const juce::ParameterID HEAD_4_PAN                       {"HEAD_4_PAN", 1};
     const juce::ParameterID HEAD_4_TIME                      {"HEAD_4_TIME", 1};

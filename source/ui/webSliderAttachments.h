@@ -22,7 +22,7 @@ public:
         webHpFilterFreqRelay{id::HP_FILTER_FREQ.getParamID()},
 
         // Head 1 Parameters
-        webHead1BypassRelay{id::HEAD_1_BYPASS.getParamID()},
+        webHead1BypassRelay{id::HEAD_1_ON.getParamID()},
         webHead1FeedbackRelay{id::HEAD_1_FEEDBACK.getParamID()},
         webHead1PanRelay{id::HEAD_1_PAN.getParamID()},
         webHead1TimeRelay{id::HEAD_1_TIME.getParamID()},
@@ -40,7 +40,7 @@ public:
         webHead1LpSlaveRelay{id::HEAD_1_LP_SLAVE.getParamID()},
 
         // Head 2 Parameters
-        webHead2BypassRelay{id::HEAD_2_BYPASS.getParamID()},
+        webHead2BypassRelay{id::HEAD_2_ON.getParamID()},
         webHead2FeedbackRelay{id::HEAD_2_FEEDBACK.getParamID()},
         webHead2PanRelay{id::HEAD_2_PAN.getParamID()},
         webHead2TimeRelay{id::HEAD_2_TIME.getParamID()},
@@ -58,7 +58,7 @@ public:
         webHead2LpSlaveRelay{id::HEAD_2_LP_SLAVE.getParamID()},
 
         // Head 3 Parameters
-        webHead3BypassRelay{id::HEAD_3_BYPASS.getParamID()},
+        webHead3BypassRelay{id::HEAD_3_ON.getParamID()},
         webHead3FeedbackRelay{id::HEAD_3_FEEDBACK.getParamID()},
         webHead3PanRelay{id::HEAD_3_PAN.getParamID()},
         webHead3TimeRelay{id::HEAD_3_TIME.getParamID()},
@@ -76,7 +76,7 @@ public:
         webHead3LpSlaveRelay{id::HEAD_3_LP_SLAVE.getParamID()},
 
         // Head 4 Parameters
-        webHead4BypassRelay{id::HEAD_4_BYPASS.getParamID()},
+        webHead4BypassRelay{id::HEAD_4_ON.getParamID()},
         webHead4FeedbackRelay{id::HEAD_4_FEEDBACK.getParamID()},
         webHead4PanRelay{id::HEAD_4_PAN.getParamID()},
         webHead4TimeRelay{id::HEAD_4_TIME.getParamID()},
@@ -160,7 +160,7 @@ public:
             *param, webHpFilterFreqRelay, nullptr);
 
     // Head 1 Parameters
-    if (auto* param = state.getParameter(id::HEAD_1_BYPASS.getParamID()))
+    if (auto* param = state.getParameter(id::HEAD_1_ON.getParamID()))
         webHead1BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
             *param, webHead1BypassRelay, nullptr);
 
@@ -221,7 +221,7 @@ public:
             *param, webHead1LpSlaveRelay, nullptr);
 
     // Head 2 Parameters
-    if (auto* param = state.getParameter(id::HEAD_2_BYPASS.getParamID()))
+    if (auto* param = state.getParameter(id::HEAD_2_ON.getParamID()))
         webHead2BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
             *param, webHead2BypassRelay, nullptr);
 
@@ -297,7 +297,7 @@ public:
             *param, webHead2LpSlaveRelay, nullptr);
 
     // Head 3 Parameters
-    if (auto* param = state.getParameter(id::HEAD_3_BYPASS.getParamID()))
+    if (auto* param = state.getParameter(id::HEAD_3_ON.getParamID()))
         webHead3BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
             *param, webHead3BypassRelay, nullptr);
 
@@ -358,7 +358,7 @@ public:
             *param, webHead3LpSlaveRelay, nullptr);
 
     // Head 4 Parameters
-    if (auto* param = state.getParameter(id::HEAD_4_BYPASS.getParamID()))
+    if (auto* param = state.getParameter(id::HEAD_4_ON.getParamID()))
         webHead4BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
             *param, webHead4BypassRelay, nullptr);
 
