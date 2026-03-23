@@ -237,7 +237,7 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 
     void parameterChanged (const juce::String& parameterID, float newValue) override
     {
-        if (mFaustUI != nullptr){}
+        if (mFaustUI != nullptr && !FaustParameterMapping::getFaustPath(parameterID).empty())
             mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
     }
 
