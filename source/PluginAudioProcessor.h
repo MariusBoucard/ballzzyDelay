@@ -218,7 +218,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout
 createParameterLayout(parametersDeclaration::Parameters& parameters)
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
-
+    writeFaustParametersToFile();
     addMainParametersLayout(layout, parameters);
 
 
@@ -237,7 +237,7 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 
     void parameterChanged (const juce::String& parameterID, float newValue) override
     {
-        if (mFaustUI != nullptr)
+        if (mFaustUI != nullptr){}
             mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
     }
 

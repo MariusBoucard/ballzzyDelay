@@ -5,70 +5,59 @@
 #include <string>
 
 namespace FaustParameterMapping {
-    // Static map linking JUCE ParameterIDs to Faust parameter paths
-      inline const std::unordered_map<juce::String, std::string>& getParameterMap() {
+    inline const std::unordered_map<juce::String, std::string>& getParameterMap() {
         static const std::unordered_map<juce::String, std::string> map = {
-            {"GAIN", "GAIN"},
 
             // ============================================================================
-            // Global Parameters
+            // Head 1 (JUCE) -> Head 0 (Faust)
             // ============================================================================
-            {"MIX", "/FaustEffect/Global_Settings/Global_Mix"},
+            {"HEAD_1_BYPASS",           "/multiheadFeedback/Head_0_on"},
+            {"HEAD_1_FEEDBACK",         "/multiheadFeedback/Head_0_Feedback"},
+            {"HEAD_1_GAIN",             "/multiheadFeedback/Head_0_Level"},
+            {"HEAD_1_PAN",              "/multiheadFeedback/Head_0_Pan"},
+            {"HEAD_1_TIME",             "/multiheadFeedback/Head_0_Time"},
+            {"HEAD_1_HP_FILTER_FREQ",   "/multiheadFeedback/Head_0_HPF"},
+            {"HEAD_1_LP_FILTER_FREQ",   "/multiheadFeedback/Head_0_LPF"},
 
             // ============================================================================
-            // Head 1 Parameters (JUCE HEAD_1 -> Faust Head_0)
+            // Head 2 (JUCE) -> Head 1 (Faust)
             // ============================================================================
-            {"HEAD_1_FEEDBACK", "/FaustEffect/Delay_Multi-Tap/Head_0/Feedback"},
-            {"HEAD_1_GAIN",     "/FaustEffect/Delay_Multi-Tap/Head_0/Level"},
-            {"HEAD_1_PAN",      "/FaustEffect/Delay_Multi-Tap/Head_0/Pan"},
-            {"HEAD_1_TIME","/FaustEffect/Delay_Multi-Tap/Head_0/Time"}
-        ,
-            // Note: Head_0/Time has no JUCE equivalent in your parameter list
+            {"HEAD_2_BYPASS",           "/multiheadFeedback/Head_1_on"},
+            {"HEAD_2_FEEDBACK",         "/multiheadFeedback/Head_2_Feedback"},
+            {"HEAD_2_GAIN",             "/multiheadFeedback/Head_1_Level"},
+            {"HEAD_2_PAN",              "/multiheadFeedback/Head_1_Pan"},
+            {"HEAD_2_TIME",             "/multiheadFeedback/Head_1_Time"},
+            {"HEAD_2_HP_FILTER_FREQ",   "/multiheadFeedback/Head_1_HPF"},
+            {"HEAD_2_LP_FILTER_FREQ",   "/multiheadFeedback/Head_1_LPF"},
 
             // ============================================================================
-            // Head 2 Parameters (JUCE HEAD_2 -> Faust Head_1)
+            // Head 3 (JUCE) -> Head 2 (Faust)
             // ============================================================================
-            {"HEAD_2_FEEDBACK", "/FaustEffect/Delay_Multi-Tap/Head_1/Feedback"},
-            {"HEAD_2_GAIN",     "/FaustEffect/Delay_Multi-Tap/Head_1/Level"},
-            {"HEAD_2_PAN",      "/FaustEffect/Delay_Multi-Tap/Head_1/Pan"},
-        {"HEAD_2_TIME","/FaustEffect/Delay_Multi-Tap/Head_1/Time"},
-
-
-            // ============================================================================
-            // Head 3 Parameters (JUCE HEAD_3 -> Faust Head_2)
-            // ============================================================================
-            {"HEAD_3_FEEDBACK", "/FaustEffect/Delay_Multi-Tap/Head_2/Feedback"},
-            {"HEAD_3_GAIN",     "/FaustEffect/Delay_Multi-Tap/Head_2/Level"},
-            {"HEAD_3_PAN",      "/FaustEffect/Delay_Multi-Tap/Head_2/Pan"},
-            {"HEAD_3_TIME","/FaustEffect/Delay_Multi-Tap/Head_2/Time"},
+            {"HEAD_3_BYPASS",           "/multiheadFeedback/Head_2_on"},
+            {"HEAD_3_FEEDBACK",         "/multiheadFeedback/Head_2_Feedback"},
+            {"HEAD_3_GAIN",             "/multiheadFeedback/Head_2_Level"},
+            {"HEAD_3_PAN",              "/multiheadFeedback/Head_2_Pan"},
+            {"HEAD_3_TIME",             "/multiheadFeedback/Head_2_Time"},
+            {"HEAD_3_HP_FILTER_FREQ",   "/multiheadFeedback/Head_2_HPF"},
+            {"HEAD_3_LP_FILTER_FREQ",   "/multiheadFeedback/Head_2_LPF"},
 
             // ============================================================================
-            // Head 4 Parameters (JUCE HEAD_4 -> Faust Head_3)
+            // Head 4 (JUCE) -> Head 3 (Faust)
             // ============================================================================
-            {"HEAD_4_FEEDBACK", "/FaustEffect/Delay_Multi-Tap/Head_3/Feedback"},
-            {"HEAD_4_GAIN",     "/FaustEffect/Delay_Multi-Tap/Head_3/Level"},
-            {"HEAD_4_PAN",      "/FaustEffect/Delay_Multi-Tap/Head_3/Pan"},
-            {"HEAD_4_TIME",      "/FaustEffect/Delay_Multi-Tap/Head_3/Time"}
-
-            // NOTE: The following JUCE parameters have NO Faust equivalents:
-            // - GAIN, BYPASS, DISTORTION_TYPE, INPUT_GAIN, OUTPUT_GAIN, FEEDBACK
-            // - SYNC_TEMPO, DUCKING, DUCKING_ATTACK, DUCKING_RELEASE, WIDTH
-            // - LP_FILTER_FREQ, HP_FILTER_FREQ
-            // - All HEAD_*_BYPASS, HEAD_*_MOVEMENT_*, HEAD_*_*_SLAVE, HEAD_*_LP/HP_FILTER_FREQ
-            // These must be handled separately in your JUCE code if needed
+            {"HEAD_4_BYPASS",           "/multiheadFeedback/Head_3_on"},
+            {"HEAD_4_FEEDBACK",         "/multiheadFeedback/Head_3_Feedback"},
+            {"HEAD_4_GAIN",             "/multiheadFeedback/Head_3_Level"},
+            {"HEAD_4_PAN",              "/multiheadFeedback/Head_3_Pan"},
+            {"HEAD_4_TIME",             "/multiheadFeedback/Head_3_Time"},
+            {"HEAD_4_HP_FILTER_FREQ",   "/multiheadFeedback/Head_3_HPF"},
+            {"HEAD_4_LP_FILTER_FREQ",   "/multiheadFeedback/Head_3_LPF"}
         };
         return map;
     }
-    
-    // Helper function to get Faust path from JUCE parameter ID
+
     inline std::string getFaustPath(const juce::String& parameterID) {
         const auto& map = getParameterMap();
         auto it = map.find(parameterID);
-        if (it != map.end()) {
-            return it->second;
-        }
-        // Return empty string or throw exception if not found
-      //  jassertfalse; // Debug assertion
-        return "";
+        return (it != map.end()) ? it->second : "";
     }
 }
