@@ -45,38 +45,52 @@ void SkeletonAudioProcessor::updateMeter(bool isOutput, juce::AudioBuffer<float>
         }
     }
 }
-
 void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, juce::MidiBuffer& inMidiBuffer)
 {
     juce::ScopedNoDenormals noDenormals;
     const int numSamples = inBuffer.getNumSamples();
     const int numIn = getTotalNumInputChannels();
     const int numOut = getTotalNumOutputChannels();
-    
+
     // 1. Safety Check
     if (numSamples > mBlockSize || mFaustProcessor == nullptr) {
         return;
     }
 
-    // 2. Fill Faust Inputs from JUCE Buffer
-    // We manually copy to ensure the memory alignment is exactly what Faust expects
+    // --- PARAMETER RETRIEVAL ---
+    // Note: If these are 0.0 to 1.0, we use them as multipliers.
+    // If MIX is 0 to 100, we divide by 100.
+    const float inGain = mParameters.getRawParameterValue(id::INPUT_GAIN.getParamID())->load();
+    const float outGain = mParameters.getRawParameterValue(id::OUTPUT_GAIN.getParamID())->load();
+    const float mixAmount = mParameters.getRawParameterValue(id::MIX.getParamID())->load() / 100.0f; // 0.0 to 1.0
+
+    // We create a copy of the dry input for the Mix at the end
+    juce::AudioBuffer<float> dryBuffer;
+    dryBuffer.makeCopyOf(inBuffer);
+
+    // 2. Apply Input Gain & Fill Faust Inputs
     for (int ch = 0; ch < numIn; ++ch) {
         auto* channelReadPtr = inBuffer.getReadPointer(ch);
         for (int i = 0; i < numSamples; ++i) {
-            inputs[ch][i] = channelReadPtr[i];
+            // Apply Input Gain before Faust processing
+            inputs[ch][i] = channelReadPtr[i] * inGain;
         }
     }
 
-    // 3. Faust Processing (The Core Logic)
-    // This expects 2 inputs and produces 2 outputs based on your Faust 'process'
+    // 3. Faust Processing
     mFaustProcessor->compute(numSamples, inputs, outputs);
 
-    // 4. Overwrite JUCE Buffer with Faust Outputs (100% Wet)
+    // 4. Combine: Output Gain + Dry/Wet Mix
     for (int ch = 0; ch < numOut; ++ch) {
         auto* channelWritePtr = inBuffer.getWritePointer(ch);
+        auto* dryReadPtr = dryBuffer.getReadPointer(ch < numIn ? ch : 0);
+
         for (int i = 0; i < numSamples; ++i) {
-            // We replace the buffer content entirely with the processed signal
-            channelWritePtr[i] = outputs[ch][i];
+            // A. Apply Output Gain to the Faust result
+            float wetSample = outputs[ch][i] * outGain;
+
+            // B. Linear Mix formula: Out = (Dry * (1 - Mix)) + (Wet * Mix)
+            channelWritePtr[i] = (dryReadPtr[i] * (1.0f - mixAmount)) + (wetSample * mixAmount);
         }
     }
 }
