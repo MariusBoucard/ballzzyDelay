@@ -20,6 +20,7 @@ namespace parametersDeclaration{
             juce::AudioParameterBool* bypass{nullptr};
             juce::AudioParameterFloat* feedBack{nullptr};
             juce::AudioParameterFloat* time{nullptr};
+            juce::AudioParameterFloat* timeNoSync{nullptr};
             juce::AudioParameterFloat* pan{nullptr};
             juce::AudioParameterFloat* gain{nullptr};
             MovementFunction movementFunction;
@@ -39,6 +40,7 @@ namespace parametersDeclaration{
         juce::AudioParameterFloat* mix{nullptr};
         juce::AudioParameterFloat* feedback{nullptr};
         juce::AudioParameterFloat* time{nullptr};
+        juce::AudioParameterFloat* timeNoSync{nullptr};
         juce::AudioParameterBool* syncTempo{nullptr};
         juce::AudioParameterFloat* ducking{nullptr};
         juce::AudioParameterFloat* duckingAttack{nullptr};

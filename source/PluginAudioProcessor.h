@@ -145,6 +145,10 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     head.time = headTime.get();
     layout.add(std::move(headTime));
 
+    auto headTimeNoSync = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_TIME_NO_SYNC", 1}, "Time Head "+prefix+" no sync",0.f, 1.f, 0.5f);
+    head.timeNoSync = headTimeNoSync.get();
+    layout.add(std::move(headTimeNoSync));
+
     // Nested calls
     addFilterLayout(layout, prefix, head.lpFilter, head.hpFilter);
     addMovementLayout(layout, prefix + "_MV", head.movementFunction);
@@ -169,9 +173,13 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     parameters.feedback = feedBack.get();
     layout.add(std::move(feedBack));
 
-    auto time = std::make_unique<juce::AudioParameterFloat>(id::TIME,"Global Feedback",0.f,1.f,0.f);
+    auto time = std::make_unique<juce::AudioParameterFloat>(id::TIME,"Global Time",0.f,1.f,0.f);
     parameters.time = time.get();
     layout.add(std::move(time));
+
+    auto timeNoSync = std::make_unique<juce::AudioParameterFloat>(id::TIME_NO_SYNC,"Global Time no sync",0.f,1.f,0.f);
+    parameters.timeNoSync = timeNoSync.get();
+    layout.add(std::move(timeNoSync));
 
     auto inputGain = std::make_unique<juce::AudioParameterFloat>(id::INPUT_GAIN,"Input Gain",0.f,1.f,0.f);
     parameters.inputGain = inputGain.get();
