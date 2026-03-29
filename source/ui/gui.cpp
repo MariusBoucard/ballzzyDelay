@@ -100,9 +100,9 @@ webSliderAtt.createAttachments();
     addAndMakeVisible(webView);
 
   // This is necessary if we want to use a ResourceProvider
-   //webView.goToURL(juce::WebBrowserComponent::getResourceProviderRoot());
+   webView.goToURL(juce::WebBrowserComponent::getResourceProviderRoot());
 
-   webView.goToURL(LOCAL_DEV_SERVER_ADDRESS);
+   //webView.goToURL(LOCAL_DEV_SERVER_ADDRESS);
 
   runJavaScriptButton.onClick = [this] {
     constexpr auto JAVASCRIPT_TO_RUN{"console.log(\"Hello from C++!\");"};
