@@ -96,7 +96,7 @@ VueProcessorEditor::VueProcessorEditor(
       webView{ createWebBrowserOptions()
       }
     {
-webSliderAtt.createAttachments();
+    webSliderAtt.createAttachments();
     addAndMakeVisible(webView);
 
   // This is necessary if we want to use a ResourceProvider
