@@ -69,7 +69,7 @@ public:
     juce::AudioProcessorValueTreeState& getState() { return mParameters;}
     void processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &) override;
 
-    void updateMeter(bool isOutput, juce::AudioBuffer<float> &buffer, int numSamples, int numChannels);
+    void updateMeter(bool isOutput, juce::AudioBuffer<float>& buffer, int numChannels);
 
     //==============================================================================
     juce::AudioProcessorEditor *createEditor() override {
@@ -97,7 +97,10 @@ public:
     }
 
 
-    double getRmsLevelLeft() const { return mRmsLevelLeft.load(); }
+    double getRmsLevelLeft() const {
+        auto a = mRmsLevelLeft.load();
+        return a;
+    }
     double getRmsLevelRight() const { return mRmsLevelRight.load(); }
     double getRmsOutputLevelLeft() const { return mRmsOutputLevelLeft.load(); }
     double getRmsOutputLevelRight() const { return mRmsOutputLevelRight.load(); }

@@ -53,6 +53,14 @@ juce::Identifier getExampleEventId() {
   return id;
 }
 
+  juce::Identifier getInputLevelEventId() {
+  static const juce::Identifier id{"inputLevelEvent"};
+  return id;
+}juce::Identifier getOutputLevelEventId() {
+  static const juce::Identifier id{"outputLevelEvent"};
+  return id;
+}
+
 #ifndef ZIPPED_FILES_PREFIX
 #error \
     "You must provide the prefix of zipped web UI files' paths, e.g., 'public/', in the ZIPPED_FILES_PREFIX compile definition"
@@ -146,8 +154,14 @@ void VueProcessorEditor::resized() {
   distortionTypeComboBox.setBounds(bounds.removeFromTop(50).reduced(5));*/
 }
 
-void VueProcessorEditor::timerCallback() {
-  webView.emitEventIfBrowserIsVisible("outputLevel", juce::var{});
+void VueProcessorEditor::timerCallback() {  webView.emitEventIfBrowserIsVisible(getExampleEventId(),
+      juce::var{processorRef.getRmsLevelLeft()});
+
+  webView.emitEventIfBrowserIsVisible(getInputLevelEventId(),
+      juce::var{processorRef.getRmsLevelLeft()});
+
+  webView.emitEventIfBrowserIsVisible(getOutputLevelEventId(),
+      juce::var{processorRef.getRmsOutputLevelLeft()});
 
   // Periodically dump logs from the browser
   static int logCounter = 0;

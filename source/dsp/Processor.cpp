@@ -23,26 +23,24 @@ SkeletonAudioProcessor::SkeletonAudioProcessor(juce::AudioProcessorValueTreeStat
 SkeletonAudioProcessor::~SkeletonAudioProcessor()
 {
 
-}  
-void SkeletonAudioProcessor::updateMeter(bool isOutput, juce::AudioBuffer<float>& buffer,int numSamples,int numChannels)
+}
+
+// TODO
+void SkeletonAudioProcessor::updateMeter(bool isOutput, juce::AudioBuffer<float>& buffer, int numChannels)
 {
-    for (int channel = 0; channel < numChannels; ++channel)
+    if (isOutput)
     {
-        auto* channelData = buffer.getReadPointer(channel);
-        float sum = 0.0f;
-
-        for (int i = 0; i < numSamples; ++i)
-        {
-            sum += channelData[i] * channelData[i];
-        }
-
-        float rms = std::sqrt(sum / numSamples);
-
-        if (channel == 0)
-        {
-            mRmsLevelLeft.store(rms);
-            mRmsLevelRight.store(rms);
-        }
+        if (numChannels > 0)
+            mRmsOutputLevelLeft.store(buffer.getRMSLevel(0, 0, buffer.getNumSamples()));
+        if (numChannels > 1)
+            mRmsOutputLevelRight.store(buffer.getRMSLevel(1, 0, buffer.getNumSamples()));
+    }
+    else
+    {
+        if (numChannels > 0)
+            mRmsLevelLeft.store(buffer.getRMSLevel(0, 0, buffer.getNumSamples()));
+        if (numChannels > 1)
+            mRmsLevelRight.store(buffer.getRMSLevel(1, 0, buffer.getNumSamples()));
     }
 }
 void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, juce::MidiBuffer& inMidiBuffer)
@@ -52,40 +50,46 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
     const int numIn = getTotalNumInputChannels();
     const int numOut = getTotalNumOutputChannels();
 
-    // 1. Safety Check
     if (numSamples > mBlockSize || mFaustProcessor == nullptr) {
         return;
     }
 
     const float inGain = mParameters.getRawParameterValue(id::INPUT_GAIN.getParamID())->load();
     const float outGain = mParameters.getRawParameterValue(id::OUTPUT_GAIN.getParamID())->load();
-    const float mixAmount = mParameters.getRawParameterValue(id::MIX.getParamID())->load() / 100.0f; // 0.0 to 1.0
+    const float mixAmount = mParameters.getRawParameterValue(id::MIX.getParamID())->load() / 100.0f;
 
+    // Measure INPUT level BEFORE any processing
+    updateMeter(false, inBuffer, numIn);
+
+    // Store dry signal BEFORE applying input gain
     juce::AudioBuffer<float> dryBuffer;
     dryBuffer.makeCopyOf(inBuffer);
 
+    // Apply input gain
+    inBuffer.applyGain(inGain);
+
+    // Copy to Faust inputs
     for (int ch = 0; ch < numIn; ++ch) {
         auto* channelReadPtr = inBuffer.getReadPointer(ch);
         for (int i = 0; i < numSamples; ++i) {
-            // Apply Input Gain before Faust processing
-            inputs[ch][i] = channelReadPtr[i] * inGain;
+            inputs[ch][i] = channelReadPtr[i];
         }
     }
 
-    // 3. Faust Processing
+    // Faust Processing
     mFaustProcessor->compute(numSamples, inputs, outputs);
 
-    // 4. Combine: Output Gain + Dry/Wet Mix
+    // Combine: Output Gain + Dry/Wet Mix
     for (int ch = 0; ch < numOut; ++ch) {
         auto* channelWritePtr = inBuffer.getWritePointer(ch);
         auto* dryReadPtr = dryBuffer.getReadPointer(ch < numIn ? ch : 0);
 
         for (int i = 0; i < numSamples; ++i) {
-            // A. Apply Output Gain to the Faust result
             float wetSample = outputs[ch][i] * outGain;
-
-            // B. Linear Mix formula: Out = (Dry * (1 - Mix)) + (Wet * Mix)
             channelWritePtr[i] = (dryReadPtr[i] * (1.0f - mixAmount)) + (wetSample * mixAmount);
         }
     }
+
+    // Measure OUTPUT level AFTER all processing
+    updateMeter(true, inBuffer, numOut);
 }
