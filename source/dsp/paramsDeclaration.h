@@ -5,9 +5,11 @@ namespace parametersDeclaration{
     struct Parameters {
         struct Hp {
             juce::AudioParameterFloat* freq{nullptr};
+            juce::AudioParameterBool* bypass{nullptr};
         };
         struct Lp {
             juce::AudioParameterFloat* freq{nullptr};
+            juce::AudioParameterBool* bypass{nullptr};
         };
         struct MovementFunction {
             juce::AudioParameterFloat* periodDuration{nullptr};
@@ -29,8 +31,7 @@ namespace parametersDeclaration{
             Hp hpFilter;
             juce::AudioParameterBool* feedbackSlave{nullptr};
             juce::AudioParameterChoice * gainSlave{nullptr};
-            juce::AudioParameterBool* hpSlave{nullptr};
-            juce::AudioParameterBool* lpSlave{nullptr};
+
         };
 
         juce::AudioParameterFloat* gain{nullptr};

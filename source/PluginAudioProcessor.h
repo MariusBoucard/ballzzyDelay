@@ -63,6 +63,15 @@ void addFilterLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout
         juce::ParameterID{prefix + "_HP_FILTER_FREQ", 1}, "HP Freq Head "+prefix, juce::NormalisableRange<float>{20.f, 20000.f, 1.f, 0.3f}, 20.f);
     hp.freq = hpParam.get();
     layout.add(std::move(hpParam));
+
+    auto hpBpParam = std::make_unique<juce::AudioParameterBool>(
+        juce::ParameterID{prefix + "_HP_FILTER_BYPASS", 1}, "HP Bp Head "+prefix,1);
+    hp.bypass = hpBpParam.get();
+    layout.add(std::move(hpBpParam));
+    auto lpBpParam = std::make_unique<juce::AudioParameterBool>(
+        juce::ParameterID{prefix + "_LP_FILTER_BYPASS", 1}, "LP Bp Head "+prefix, 1);
+    hp.bypass = lpBpParam.get();
+    layout.add(std::move(lpBpParam));
 }
 
 // Helper for Movement Function structures
@@ -181,11 +190,11 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     parameters.timeNoSync = timeNoSync.get();
     layout.add(std::move(timeNoSync));
 
-    auto inputGain = std::make_unique<juce::AudioParameterFloat>(id::INPUT_GAIN,"Input Gain",0.f,1.f,0.f);
+    auto inputGain = std::make_unique<juce::AudioParameterFloat>(id::INPUT_GAIN,"Input Gain",0.f,1.f,1.f);
     parameters.inputGain = inputGain.get();
     layout.add(std::move(inputGain));
 
-    auto outputGain = std::make_unique<juce::AudioParameterFloat>(id::OUTPUT_GAIN,"Output Gain",0.f,1.f,0.f);
+    auto outputGain = std::make_unique<juce::AudioParameterFloat>(id::OUTPUT_GAIN,"Output Gain",0.f,1.f,1.f);
     parameters.outputGain = outputGain.get();
     layout.add(std::move(outputGain));
 
@@ -249,17 +258,43 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
             mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
     }
 
-    void prepareToPlay (double sampleRate, int blockSize) override {
-        mFaustUI = new MapUI(); // Pas bon ca
-        // TO REDO with tight UI : TODO
-        mFaustHpLpUI = new MapUI();
-        mFaustDuckingUI = new MapUI();
+    void prepareToPlay (double sampleRate, int blockSize) override
+{
+    // 1. Ensure UI Mappings exist (Prefer doing this in the Constructor instead)
+    if (!mFaustUI) mFaustUI = std::make_unique<MapUI>();
+    if (!mFaustHpLpUI) mFaustHpLpUI = std::make_unique<MapUI>();
+    if (!mFaustDuckingUI) mFaustDuckingUI = std::make_unique<MapUI>();
 
-        mSkeletonProcessor.setMapUI(mFaustUI);
-        mSkeletonProcessor.setMapUIHpLp(mFaustHpLpUI);
-        mSkeletonProcessor.setMapUIDucking(mFaustDuckingUI);
-        mSkeletonProcessor.prepareToPlay(sampleRate, blockSize);
+    // 2. Attach them to the processor
+    mSkeletonProcessor.setMapUI(mFaustUI.get());
+    mSkeletonProcessor.setMapUIHpLp(mFaustHpLpUI.get());
+    mSkeletonProcessor.setMapUIDucking(mFaustDuckingUI.get());
+
+    // 3. Prepare the Faust engine
+    mSkeletonProcessor.prepareToPlay(sampleRate, blockSize);
+
+    // 4. SYNC: Push current JUCE values into Faust
+    for (auto* param : getParameters())
+    {
+        if (auto* p = dynamic_cast<juce::AudioProcessorParameterWithID*>(param))
+        {
+           juce::String paramID = p->getParameterID();
+
+            float currentValue = p->getValue(); // Normalized 0.0 to 1.0
+
+            // Convert normalized to actual range if your Faust UI expects raw values
+            // (Note: If using APVTS, it's often easier to use getRawParameterValue)
+          //  float denormalizedValue = p->;
+
+            // Use your mapping helper to update Faust
+            std::string faustPath = FaustParameterMapping::getFaustPath(paramID);
+            if (!faustPath.empty())
+            {
+                mFaustUI->setParamValue(faustPath, currentValue);
+            }
+        }
     }
+}
 
     void releaseResources() override {
       //  delete mFaustUI;
@@ -317,10 +352,10 @@ public:
 
 private:
     parametersDeclaration::Parameters parametersDeclaration;
-    MapUI* mFaustUI;
-    // TODO CHANGE WHEN ON A CE QU4IL FAUT EN DSP
-    MapUI* mFaustHpLpUI;
-    MapUI* mFaustDuckingUI;
+    // Use unique_ptr for automatic memory management
+    std::unique_ptr<MapUI> mFaustUI;
+    std::unique_ptr<MapUI> mFaustHpLpUI;
+    std::unique_ptr<MapUI> mFaustDuckingUI;
 
     juce::AudioProcessorValueTreeState mParameters;
     SkeletonAudioProcessor mSkeletonProcessor;

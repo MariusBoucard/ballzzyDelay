@@ -57,10 +57,10 @@ namespace id {
     const juce::ParameterID HEAD_1_MOVEMENT_WIDTH_SLAVE      {"HEAD_1_MOVEMENT_WIDTH_SLAVE", 1};
     const juce::ParameterID HEAD_1_LP_FILTER_FREQ            {"HEAD_1_LP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_1_HP_FILTER_FREQ            {"HEAD_1_HP_FILTER_FREQ", 1};
+    const juce::ParameterID HEAD_1_HP_FILTER_BYPASS          {"HEAD_1_HP_FILTER_BYPASS", 1};
+    const juce::ParameterID HEAD_1_LP_FILTER_BYPASS          {"HEAD_1_LP_FILTER_BYPASS", 1};
     const juce::ParameterID HEAD_1_FEEDBACK_SLAVE            {"HEAD_1_FEEDBACK_SLAVE", 1};
     const juce::ParameterID HEAD_1_GAIN_SLAVE                {"HEAD_1_GAIN_SLAVE", 1};
-    const juce::ParameterID HEAD_1_HP_SLAVE                  {"HEAD_1_HP_SLAVE", 1};
-    const juce::ParameterID HEAD_1_LP_SLAVE                  {"HEAD_1_LP_SLAVE", 1};
     
     // ============================================================================
     // Head 2 Parameters
@@ -81,8 +81,9 @@ namespace id {
     const juce::ParameterID HEAD_2_HP_FILTER_FREQ            {"HEAD_2_HP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_2_FEEDBACK_SLAVE            {"HEAD_2_FEEDBACK_SLAVE", 1};
     const juce::ParameterID HEAD_2_GAIN_SLAVE                {"HEAD_2_GAIN_SLAVE", 1};
-    const juce::ParameterID HEAD_2_HP_SLAVE                  {"HEAD_2_HP_SLAVE", 1};
-    const juce::ParameterID HEAD_2_LP_SLAVE                  {"HEAD_2_LP_SLAVE", 1};
+    const juce::ParameterID HEAD_2_LP_FILTER_BYPASS          {"HEAD_2_LP_FILTER_BYPASS", 1};
+    const juce::ParameterID HEAD_2_HP_FILTER_BYPASS          {"HEAD_2_HP_FILTER_BYPASS", 1};
+
     
     // ============================================================================
     // Head 3 Parameters
@@ -103,9 +104,9 @@ namespace id {
     const juce::ParameterID HEAD_3_HP_FILTER_FREQ            {"HEAD_3_HP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_3_FEEDBACK_SLAVE            {"HEAD_3_FEEDBACK_SLAVE", 1};
     const juce::ParameterID HEAD_3_GAIN_SLAVE                {"HEAD_3_GAIN_SLAVE", 1};
-    const juce::ParameterID HEAD_3_HP_SLAVE                  {"HEAD_3_HP_SLAVE", 1};
-    const juce::ParameterID HEAD_3_LP_SLAVE                  {"HEAD_3_LP_SLAVE", 1};
-    
+    const juce::ParameterID HEAD_3_LP_FILTER_BYPASS          {"HEAD_3_LP_FILTER_BYPASS", 1};
+    const juce::ParameterID HEAD_3_HP_FILTER_BYPASS          {"HEAD_3_HP_FILTER_BYPASS", 1};
+
     // ============================================================================
     // Head 4 Parameters
     // ============================================================================
@@ -125,6 +126,7 @@ namespace id {
     const juce::ParameterID HEAD_4_HP_FILTER_FREQ            {"HEAD_4_HP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_4_FEEDBACK_SLAVE            {"HEAD_4_FEEDBACK_SLAVE", 1};
     const juce::ParameterID HEAD_4_GAIN_SLAVE                {"HEAD_4_GAIN_SLAVE", 1};
-    const juce::ParameterID HEAD_4_HP_SLAVE                  {"HEAD_4_HP_SLAVE", 1};
-    const juce::ParameterID HEAD_4_LP_SLAVE                  {"HEAD_4_LP_SLAVE", 1};
+    const juce::ParameterID HEAD_4_LP_FILTER_BYPASS          {"HEAD_4_LP_FILTER_BYPASS", 1};
+    const juce::ParameterID HEAD_4_HP_FILTER_BYPASS          {"HEAD_4_HP_FILTER_BYPASS", 1};
+
 }
