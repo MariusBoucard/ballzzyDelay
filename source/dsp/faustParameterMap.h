@@ -7,7 +7,10 @@
 namespace FaustParameterMapping {
     inline const std::unordered_map<juce::String, std::string>& getParameterMap() {
         static const std::unordered_map<juce::String, std::string> map = {
-
+            {"HP_FILTER_BYPASS" , "/HpLp/Filters_BypassHp"},
+            {"LP_FILTER_BYPASS", "/HpLp/Filters_BypassLp"},
+            {"HP_FILTER_FREQ", "/HpLp/Filters_HPF"},
+            {"LP_FILTER_FREQ", "/HpLp/Filters_LPF"},
             // ============================================================================
             // Head 1 (JUCE) -> Head 0 (Faust)
             // ============================================================================
@@ -52,9 +55,9 @@ namespace FaustParameterMapping {
             // ============================================================================
             {"HEAD_4_ON",                "/multiheadFeedback/Head_3/On"},
             {"HEAD_4_FEEDBACK",          "/multiheadFeedback/Head_3/Feedback"},
-            {"HEAD_4_GAIN",              "/multiheadFeedback/Head_3_Level"},
-            {"HEAD_4_PAN",               "/multiheadFeedback/Head_3_Pan"},
-            {"HEAD_4_TIME",              "/multiheadFeedback/Head_3_Time"},
+            {"HEAD_4_GAIN",              "/multiheadFeedback/Head_3/Level"},
+            {"HEAD_4_PAN",               "/multiheadFeedback/Head_3/Pan"},
+            {"HEAD_4_TIME",              "/multiheadFeedback/Head_3/Time"},
             {"HEAD_4_HP_FILTER_FREQ",    "/multiheadFeedback/Head_3/Filters_HPF"},
             {"HEAD_4_HP_FILTER_BYPASS",  "/multiheadFeedback/Head_3/Filters_HP_Bp"},
             {"HEAD_4_LP_FILTER_FREQ",    "/multiheadFeedback/Head_3/Filters_LPF"},
@@ -68,4 +71,5 @@ namespace FaustParameterMapping {
         auto it = map.find(parameterID);
         return (it != map.end()) ? it->second : "";
     }
+
 }

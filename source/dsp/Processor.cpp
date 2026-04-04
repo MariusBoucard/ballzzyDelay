@@ -43,6 +43,7 @@ void SkeletonAudioProcessor::updateMeter(bool isOutput, juce::AudioBuffer<float>
             mRmsLevelRight.store(buffer.getRMSLevel(1, 0, buffer.getNumSamples()));
     }
 }
+
 void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, juce::MidiBuffer& inMidiBuffer)
 {
     juce::ScopedNoDenormals noDenormals;
@@ -58,15 +59,15 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
     const float outGain = mParameters.getRawParameterValue(id::OUTPUT_GAIN.getParamID())->load();
     const float mixAmount = mParameters.getRawParameterValue(id::MIX.getParamID())->load() / 100.0f;
 
-    // Measure INPUT level BEFORE any processing
-    updateMeter(false, inBuffer, numIn);
-
     // Store dry signal BEFORE applying input gain
     juce::AudioBuffer<float> dryBuffer;
     dryBuffer.makeCopyOf(inBuffer);
 
     // Apply input gain
     inBuffer.applyGain(inGain);
+
+    // Measure INPUT level AFTER gain staging (what's going into Faust)
+    updateMeter(false, inBuffer, numIn);
 
     // Copy to Faust inputs
     for (int ch = 0; ch < numIn; ++ch) {
@@ -75,9 +76,11 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
             inputs[ch][i] = channelReadPtr[i];
         }
     }
+    mFaustLPHpProcessor->compute(numSamples, inputs, postHpLp);
 
-    // Faust Processing
-    mFaustProcessor->compute(numSamples, inputs, outputs);
+    // SECOND processor: Main effect
+    // outputs (from first) → outputs (reuse same buffer)
+    mFaustProcessor->compute(numSamples, postHpLp, outputs);
 
     // Combine: Output Gain + Dry/Wet Mix
     for (int ch = 0; ch < numOut; ++ch) {

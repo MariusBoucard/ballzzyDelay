@@ -22,7 +22,9 @@ namespace id {
     const juce::ParameterID WIDTH                 {"WIDTH", 1};
     const juce::ParameterID LP_FILTER_FREQ        {"LP_FILTER_FREQ", 1};
     const juce::ParameterID HP_FILTER_FREQ        {"HP_FILTER_FREQ", 1};
-    
+  //  const juce::ParameterID LP_FILTER_BYPASS      {"LP_FILTER_BYPASS", 1};
+   // const juce::ParameterID HP_FILTER_BYPASS      {"HP_FILTER_BYPASS", 1};
+
     // ============================================================================
     // Helper function for nested Head IDs
     // ============================================================================
@@ -47,7 +49,7 @@ namespace id {
     const juce::ParameterID HEAD_1_FEEDBACK                  {"HEAD_1_FEEDBACK", 1};
     const juce::ParameterID HEAD_1_PAN                       {"HEAD_1_PAN", 1};
     const juce::ParameterID HEAD_1_TIME                      {"HEAD_1_TIME", 1};
-    const juce::ParameterID HEAD_1_TIME_NO_SYNC                      {"HEAD_1_TIME_NO_SYNC", 1};
+    const juce::ParameterID HEAD_1_TIME_NO_SYNC               {"HEAD_1_TIME_NO_SYNC", 1};
     const juce::ParameterID HEAD_1_GAIN                      {"HEAD_1_GAIN", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_PERIOD_DURATION  {"HEAD_1_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_PERIOD_DURATION_NO_SYNC  {"HEAD_1_MOVEMENT_PERIOD_DURATION_NO_SYNC", 1};

@@ -55,6 +55,7 @@ target_sources(${PROJECT_NAME}
 
         # DSP Bones
         source/dsp/Bones/FaustMultiheadFeedback.h
+        source/dsp/Bones/FaustHpLp.h
 
 
         # UI

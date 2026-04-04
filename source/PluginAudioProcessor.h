@@ -98,8 +98,8 @@ void writeFaustParametersToFile() {
 
     std::vector<juce::String> params;
 
-    mydsp* tempDsp = new mydsp();
-    MapUI* tempUI = new MapUI();
+    HpLpFilter::hpLpDsp* tempDsp = new HpLpFilter::hpLpDsp ();
+    HpLpFilter::MapUI* tempUI = new HpLpFilter::MapUI();
 
     tempDsp->buildUserInterface(tempUI);
     auto fullPathMap = tempUI->getFullpathMap();
@@ -254,15 +254,19 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 
     void parameterChanged (const juce::String& parameterID, float newValue) override
     {
+    // Faire methode de discrimination pour aller dans la bonne direct
         if (mFaustUI != nullptr && !FaustParameterMapping::getFaustPath(parameterID).empty())
             mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
+        if (mFaustHpLpUI != nullptr && !FaustParameterMapping::getFaustPath(parameterID).empty())
+            mFaustHpLpUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
+
     }
 
     void prepareToPlay (double sampleRate, int blockSize) override
 {
     // 1. Ensure UI Mappings exist (Prefer doing this in the Constructor instead)
     if (!mFaustUI) mFaustUI = std::make_unique<MapUI>();
-    if (!mFaustHpLpUI) mFaustHpLpUI = std::make_unique<MapUI>();
+    if (!mFaustHpLpUI) mFaustHpLpUI = std::make_unique<HpLpFilter::MapUI>();
     if (!mFaustDuckingUI) mFaustDuckingUI = std::make_unique<MapUI>();
 
     // 2. Attach them to the processor
@@ -354,7 +358,7 @@ private:
     parametersDeclaration::Parameters parametersDeclaration;
     // Use unique_ptr for automatic memory management
     std::unique_ptr<MapUI> mFaustUI;
-    std::unique_ptr<MapUI> mFaustHpLpUI;
+    std::unique_ptr<HpLpFilter::MapUI> mFaustHpLpUI;
     std::unique_ptr<MapUI> mFaustDuckingUI;
 
     juce::AudioProcessorValueTreeState mParameters;

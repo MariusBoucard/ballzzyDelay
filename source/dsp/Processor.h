@@ -6,6 +6,7 @@
 #include "Bones/GainBone.h"
 #include "Processor.hpp"
 #include "Bones/FaustMultiheadFeedback.h"
+#include "Bones/FaustHpLp.h"
 
 //==============================================================================
 class SkeletonAudioProcessor final : public juce::AudioProcessor {
@@ -34,7 +35,7 @@ public:
         mFaustDuckingProcessor->init(mSampleRate);
         mFaustDuckingProcessor->buildUserInterface(fDuckingUI);
 
-        mFaustLPHpProcessor = new mydsp();
+        mFaustLPHpProcessor = new HpLpFilter::hpLpDsp();
         mFaustLPHpProcessor->init(mSampleRate);
         mFaustLPHpProcessor->buildUserInterface(fLpHpUi);
 
@@ -45,6 +46,10 @@ public:
         outputs = new float*[2];
         for (int channel = 0; channel < 2; ++channel) {
             outputs[channel] = new float[mBlockSize];
+        }
+        postHpLp  = new float*[2];
+        for (int channel = 0; channel < 2; ++channel) {
+            postHpLp[channel] = new float[mBlockSize];
         }
     }
 
@@ -65,6 +70,10 @@ public:
             delete[] inputs[channel];
         }
         delete[] inputs;
+        for (int channel = 0; channel < 2; ++channel) {
+            delete[] postHpLp[channel];
+        }
+        delete[] postHpLp;
     }
     juce::AudioProcessorValueTreeState& getState() { return mParameters;}
     void processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &) override;
@@ -155,7 +164,7 @@ public:
         fUI = inUI;
     }
 
-    void setMapUIHpLp(MapUI *inUI) {
+    void setMapUIHpLp(HpLpFilter::MapUI *inUI) {
         fLpHpUi = inUI;
     }
 
@@ -190,13 +199,14 @@ private:
     MapUI* fUI;
 
     // TODO : faire des processors bien !
-    mydsp* mFaustLPHpProcessor;
-    MapUI* fLpHpUi;
+    HpLpFilter::hpLpDsp* mFaustLPHpProcessor;
+    HpLpFilter::MapUI* fLpHpUi;
 
     mydsp* mFaustDuckingProcessor;
     MapUI* fDuckingUI;
 
     float** inputs;
+    float** postHpLp;
     float** outputs;
     juce::AudioProcessorGraph::Node::Ptr mInputNode;
     juce::AudioProcessorGraph::Node::Ptr mOutputNode;
