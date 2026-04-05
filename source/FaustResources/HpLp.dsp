@@ -9,4 +9,4 @@ bypassHp   = checkbox("Filters/[4]BypassHp");
 filterChain = ba.bypass1(bypassHp, fi.highpass(4, hpFreq)) : ba.bypass1(bypassLp,fi.lowpass(4, lpFreq));
 
 // ===== Main Process =====
-process = filterChain;
+process = filterChain, filterChain;

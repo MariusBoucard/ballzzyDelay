@@ -264,20 +264,16 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 
     void prepareToPlay (double sampleRate, int blockSize) override
 {
-    // 1. Ensure UI Mappings exist (Prefer doing this in the Constructor instead)
     if (!mFaustUI) mFaustUI = std::make_unique<MapUI>();
     if (!mFaustHpLpUI) mFaustHpLpUI = std::make_unique<HpLpFilter::MapUI>();
     if (!mFaustDuckingUI) mFaustDuckingUI = std::make_unique<MapUI>();
 
-    // 2. Attach them to the processor
     mSkeletonProcessor.setMapUI(mFaustUI.get());
     mSkeletonProcessor.setMapUIHpLp(mFaustHpLpUI.get());
     mSkeletonProcessor.setMapUIDucking(mFaustDuckingUI.get());
 
-    // 3. Prepare the Faust engine
     mSkeletonProcessor.prepareToPlay(sampleRate, blockSize);
 
-    // 4. SYNC: Push current JUCE values into Faust
     for (auto* param : getParameters())
     {
         if (auto* p = dynamic_cast<juce::AudioProcessorParameterWithID*>(param))

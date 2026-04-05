@@ -1204,6 +1204,10 @@ class hpLpDsp : public dsp {
 	float fRec4[3];
 	float fRec2[3];
 	float fRec1[3];
+	float fRec9[3];
+	float fRec8[3];
+	float fRec7[3];
+	float fRec6[3];
 
  public:
 	hpLpDsp() {
@@ -1255,10 +1259,10 @@ class hpLpDsp : public dsp {
 	}
 
 	virtual int getNumInputs() {
-		return 1;
+		return 2;
 	}
 	virtual int getNumOutputs() {
-		return 1;
+		return 2;
 	}
 
 	static void classInit(int sample_rate) {
@@ -1298,6 +1302,18 @@ class hpLpDsp : public dsp {
 		for (int l5 = 0; l5 < 3; l5 = l5 + 1) {
 			fRec1[l5] = 0.0f;
 		}
+		for (int l6 = 0; l6 < 3; l6 = l6 + 1) {
+			fRec9[l6] = 0.0f;
+		}
+		for (int l7 = 0; l7 < 3; l7 = l7 + 1) {
+			fRec8[l7] = 0.0f;
+		}
+		for (int l8 = 0; l8 < 3; l8 = l8 + 1) {
+			fRec7[l8] = 0.0f;
+		}
+		for (int l9 = 0; l9 < 3; l9 = l9 + 1) {
+			fRec6[l9] = 0.0f;
+		}
 	}
 
 	virtual void init(int sample_rate) {
@@ -1336,7 +1352,9 @@ class hpLpDsp : public dsp {
 
 	virtual void compute(int count, FAUSTFLOAT** RESTRICT inputs, FAUSTFLOAT** RESTRICT outputs) {
 		FAUSTFLOAT* input0 = inputs[0];
+		FAUSTFLOAT* input1 = inputs[1];
 		FAUSTFLOAT* output0 = outputs[0];
+		FAUSTFLOAT* output1 = outputs[1];
 		int iSlow0 = static_cast<int>(static_cast<float>(fCheckbox0));
 		float fSlow1 = fConst1 * static_cast<float>(fHslider0);
 		int iSlow2 = static_cast<int>(static_cast<float>(fCheckbox1));
@@ -1347,21 +1365,34 @@ class hpLpDsp : public dsp {
 			float fTemp1 = 1.0f / fTemp0;
 			float fTemp2 = (fTemp1 + 0.76536685f) / fTemp0 + 1.0f;
 			float fTemp3 = 1.0f - 1.0f / hpLpDsp_faustpower2_f(fTemp0);
-			float fTemp4 = (fTemp1 + 1.847759f) / fTemp0 + 1.0f;
+			float fTemp4 = (fTemp1 + -0.76536685f) / fTemp0 + 1.0f;
+			float fTemp5 = (fTemp1 + 1.847759f) / fTemp0 + 1.0f;
+			float fTemp6 = (fTemp1 + -1.847759f) / fTemp0 + 1.0f;
 			fRec3[0] = fSlow3 + fConst2 * fRec3[1];
-			float fTemp5 = std::tan(fConst3 * fRec3[0]);
-			float fTemp6 = 1.0f / fTemp5;
-			float fTemp7 = (fTemp6 + 0.76536685f) / fTemp5 + 1.0f;
-			float fTemp8 = hpLpDsp_faustpower2_f(fTemp5);
-			float fTemp9 = 1.0f - 1.0f / fTemp8;
-			float fTemp10 = (fTemp6 + 1.847759f) / fTemp5 + 1.0f;
-			float fTemp11 = static_cast<float>(input0[i0]);
-			fRec5[0] = ((iSlow2) ? 0.0f : fTemp11) - (fRec5[2] * ((fTemp6 + -1.847759f) / fTemp5 + 1.0f) + 2.0f * fRec5[1] * fTemp9) / fTemp10;
-			fRec4[0] = (fRec5[2] + (fRec5[0] - 2.0f * fRec5[1])) / (fTemp8 * fTemp10) - (fRec4[2] * ((fTemp6 + -0.76536685f) / fTemp5 + 1.0f) + 2.0f * fTemp9 * fRec4[1]) / fTemp7;
-			float fTemp12 = ((iSlow2) ? fTemp11 : (fRec4[2] + (fRec4[0] - 2.0f * fRec4[1])) / (fTemp8 * fTemp7));
-			fRec2[0] = ((iSlow0) ? 0.0f : fTemp12) - (fRec2[2] * ((fTemp1 + -1.847759f) / fTemp0 + 1.0f) + 2.0f * fRec2[1] * fTemp3) / fTemp4;
-			fRec1[0] = (fRec2[2] + fRec2[0] + 2.0f * fRec2[1]) / fTemp4 - (fRec1[2] * ((fTemp1 + -0.76536685f) / fTemp0 + 1.0f) + 2.0f * fTemp3 * fRec1[1]) / fTemp2;
-			output0[i0] = static_cast<FAUSTFLOAT>(((iSlow0) ? fTemp12 : (fRec1[2] + fRec1[0] + 2.0f * fRec1[1]) / fTemp2));
+			float fTemp7 = std::tan(fConst3 * fRec3[0]);
+			float fTemp8 = 1.0f / fTemp7;
+			float fTemp9 = (fTemp8 + 0.76536685f) / fTemp7 + 1.0f;
+			float fTemp10 = hpLpDsp_faustpower2_f(fTemp7);
+			float fTemp11 = fTemp10 * fTemp9;
+			float fTemp12 = 1.0f - 1.0f / fTemp10;
+			float fTemp13 = (fTemp8 + -0.76536685f) / fTemp7 + 1.0f;
+			float fTemp14 = (fTemp8 + 1.847759f) / fTemp7 + 1.0f;
+			float fTemp15 = fTemp10 * fTemp14;
+			float fTemp16 = (fTemp8 + -1.847759f) / fTemp7 + 1.0f;
+			float fTemp17 = static_cast<float>(input0[i0]);
+			fRec5[0] = ((iSlow2) ? 0.0f : fTemp17) - (fRec5[2] * fTemp16 + 2.0f * fRec5[1] * fTemp12) / fTemp14;
+			fRec4[0] = (fRec5[2] + (fRec5[0] - 2.0f * fRec5[1])) / fTemp15 - (fRec4[2] * fTemp13 + 2.0f * fTemp12 * fRec4[1]) / fTemp9;
+			float fTemp18 = ((iSlow2) ? fTemp17 : (fRec4[2] + (fRec4[0] - 2.0f * fRec4[1])) / fTemp11);
+			fRec2[0] = ((iSlow0) ? 0.0f : fTemp18) - (fRec2[2] * fTemp6 + 2.0f * fRec2[1] * fTemp3) / fTemp5;
+			fRec1[0] = (fRec2[2] + fRec2[0] + 2.0f * fRec2[1]) / fTemp5 - (fRec1[2] * fTemp4 + 2.0f * fTemp3 * fRec1[1]) / fTemp2;
+			output0[i0] = static_cast<FAUSTFLOAT>(((iSlow0) ? fTemp18 : (fRec1[2] + fRec1[0] + 2.0f * fRec1[1]) / fTemp2));
+			float fTemp19 = static_cast<float>(input1[i0]);
+			fRec9[0] = ((iSlow2) ? 0.0f : fTemp19) - (fTemp16 * fRec9[2] + 2.0f * fTemp12 * fRec9[1]) / fTemp14;
+			fRec8[0] = (fRec9[2] + (fRec9[0] - 2.0f * fRec9[1])) / fTemp15 - (fTemp13 * fRec8[2] + 2.0f * fTemp12 * fRec8[1]) / fTemp9;
+			float fTemp20 = ((iSlow2) ? fTemp19 : (fRec8[2] + (fRec8[0] - 2.0f * fRec8[1])) / fTemp11);
+			fRec7[0] = ((iSlow0) ? 0.0f : fTemp20) - (fTemp6 * fRec7[2] + 2.0f * fTemp3 * fRec7[1]) / fTemp5;
+			fRec6[0] = (fRec7[2] + fRec7[0] + 2.0f * fRec7[1]) / fTemp5 - (fTemp4 * fRec6[2] + 2.0f * fTemp3 * fRec6[1]) / fTemp2;
+			output1[i0] = static_cast<FAUSTFLOAT>(((iSlow0) ? fTemp20 : (fRec6[2] + fRec6[0] + 2.0f * fRec6[1]) / fTemp2));
 			fRec0[1] = fRec0[0];
 			fRec3[1] = fRec3[0];
 			fRec5[2] = fRec5[1];
@@ -1372,6 +1403,14 @@ class hpLpDsp : public dsp {
 			fRec2[1] = fRec2[0];
 			fRec1[2] = fRec1[1];
 			fRec1[1] = fRec1[0];
+			fRec9[2] = fRec9[1];
+			fRec9[1] = fRec9[0];
+			fRec8[2] = fRec8[1];
+			fRec8[1] = fRec8[0];
+			fRec7[2] = fRec7[1];
+			fRec7[1] = fRec7[0];
+			fRec6[2] = fRec6[1];
+			fRec6[1] = fRec6[0];
 		}
 	}
 
