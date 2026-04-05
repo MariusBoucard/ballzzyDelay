@@ -7,10 +7,6 @@
 namespace FaustParameterMapping {
     inline const std::unordered_map<juce::String, std::string>& getParameterMap() {
         static const std::unordered_map<juce::String, std::string> map = {
-            {"HP_FILTER_BYPASS" , "/HpLp/Filters_BypassHp"},
-            {"LP_FILTER_BYPASS", "/HpLp/Filters_BypassLp"},
-            {"HP_FILTER_FREQ", "/HpLp/Filters_HPF"},
-            {"LP_FILTER_FREQ", "/HpLp/Filters_LPF"},
             // ============================================================================
             // Head 1 (JUCE) -> Head 0 (Faust)
             // ============================================================================

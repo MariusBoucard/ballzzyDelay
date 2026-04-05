@@ -36,7 +36,8 @@
 #include "dsp/ParameterSetup.h"
 #include "dsp/ParameterIDs.hpp"
 #include "dsp/paramsDeclaration.h"
-#include "dsp/faustParameterMap.h"
+#include "dsp/faustParameterMappers/faustParameterMap.h"
+#include "dsp/faustParameterMappers/hpLpFaustParameterMap.h"
 
 class PluginAudioProcessor final : public juce::AudioProcessor,
                                    public juce::AudioProcessorValueTreeState::Listener
@@ -257,7 +258,7 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
     // Faire methode de discrimination pour aller dans la bonne direct
         if (mFaustUI != nullptr && !FaustParameterMapping::getFaustPath(parameterID).empty())
             mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
-        if (mFaustHpLpUI != nullptr && !FaustParameterMapping::getFaustPath(parameterID).empty())
+        if (mFaustHpLpUI != nullptr && !FaustParameterMapping::getHpLpPath(parameterID).empty())
             mFaustHpLpUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
 
     }
