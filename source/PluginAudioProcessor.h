@@ -192,11 +192,11 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     parameters.timeNoSync = timeNoSync.get();
     layout.add(std::move(timeNoSync));
 
-    auto inputGain = std::make_unique<juce::AudioParameterFloat>(id::INPUT_GAIN,"Input Gain",0.f,1.f,1.f);
+    auto inputGain = std::make_unique<juce::AudioParameterFloat>(id::INPUT_GAIN,"Input Gain",-12.f,12.f,0.f);
     parameters.inputGain = inputGain.get();
     layout.add(std::move(inputGain));
 
-    auto outputGain = std::make_unique<juce::AudioParameterFloat>(id::OUTPUT_GAIN,"Output Gain",0.f,1.f,1.f);
+    auto outputGain = std::make_unique<juce::AudioParameterFloat>(id::OUTPUT_GAIN,"Output Gain",-12.f,12.f,0.f);
     parameters.outputGain = outputGain.get();
     layout.add(std::move(outputGain));
 

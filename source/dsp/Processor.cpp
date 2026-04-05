@@ -62,7 +62,7 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
     juce::AudioBuffer<float> dryBuffer;
     dryBuffer.makeCopyOf(inBuffer);
 
-    inBuffer.applyGain(inGain);
+    inBuffer.applyGain(juce::Decibels::decibelsToGain ((float)inGain));
 
     updateMeter(false, inBuffer, numIn);
 
@@ -89,10 +89,11 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
         auto* dryReadPtr = dryBuffer.getReadPointer(ch < numIn ? ch : 0);
 
         for (int i = 0; i < numSamples; ++i) {
-            float wetSample = outputs[ch][i] * outGain;
+            float wetSample = outputs[ch][i];
             channelWritePtr[i] = (dryReadPtr[i] * (1.0f - mixAmount)) + (wetSample * mixAmount);
         }
     }
+    inBuffer.applyGain(juce::Decibels::decibelsToGain ((float)outGain));
 
     updateMeter(true, inBuffer, numOut);
 }
