@@ -59,17 +59,13 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
     const float outGain = mParameters.getRawParameterValue(id::OUTPUT_GAIN.getParamID())->load();
     const float mixAmount = mParameters.getRawParameterValue(id::MIX.getParamID())->load() / 100.0f;
 
-    // Store dry signal BEFORE applying input gain
     juce::AudioBuffer<float> dryBuffer;
     dryBuffer.makeCopyOf(inBuffer);
 
-    // Apply input gain
     inBuffer.applyGain(inGain);
 
-    // Measure INPUT level AFTER gain staging (what's going into Faust)
     updateMeter(false, inBuffer, numIn);
 
-    // Copy to Faust inputs
     for (int ch = 0; ch < numIn; ++ch) {
         auto* channelReadPtr = inBuffer.getReadPointer(ch);
         for (int i = 0; i < numSamples; ++i) {
@@ -77,27 +73,17 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
         }
     }
     mFaustLPHpProcessor->compute(numSamples, inputs, postHpLp);
-
-    // SECOND processor: Main effect
-    // outputs (from first) → outputs (reuse same buffer)
     mFaustProcessor->compute(numSamples, postHpLp, outputs);
 
-    //for (int ch = 0; ch < numOut; ++ch) {
-    //    auto* channelWritePtr = inBuffer.getWritePointer(ch);
-    //    for (int i = 0; i < numSamples; ++i) {
-    //        channelWritePtr[i] = outputs[ch][i];
-    //    }
-    //}
+    for (int i = 0; i < numSamples; ++i) {
+        duckingInput[0][i] = outputs[0][i];
+        duckingInput[1][i] = outputs[1][i];
 
-    for (int ch = 0; ch < numIn; ++ch) {
-        for (int i = 0; i < numSamples; ++i) {
-            duckingInput[ch][i] = outputs[ch][i];
-            duckingInput[ch][i+2] = inputs[ch][i];
-        }
+        duckingInput[2][i] = inputs[0][i];
+        duckingInput[3][i] = inputs[1][i];
     }
-
     mFaustDuckingProcessor->compute(numSamples, duckingInput, outputs);
-    // Combine: Output Gain + Dry/Wet Mix
+
     for (int ch = 0; ch < numOut; ++ch) {
         auto* channelWritePtr = inBuffer.getWritePointer(ch);
         auto* dryReadPtr = dryBuffer.getReadPointer(ch < numIn ? ch : 0);
@@ -108,6 +94,5 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
         }
     }
 
-    // Measure OUTPUT level AFTER all processing
     updateMeter(true, inBuffer, numOut);
 }

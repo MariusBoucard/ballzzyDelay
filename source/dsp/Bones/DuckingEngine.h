@@ -51,16 +51,16 @@ Compilation options: -a .\\faustMinimal.h -lang cpp -i -fpga-mem-th 4 -ct 1 -cn 
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation; either version 2.1 of the License, or
  (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  GNU Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- 
+
  EXCEPTION : As a special exception, you may create a larger work
  that contains this FAUST architecture section and distribute
  that work under terms of your choice, so long as this FAUST
@@ -78,16 +78,16 @@ Compilation options: -a .\\faustMinimal.h -lang cpp -i -fpga-mem-th 4 -ct 1 -cn 
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation; either version 2.1 of the License, or
  (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  GNU Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- 
+
  EXCEPTION : As a special exception, you may create a larger work
  that contains this FAUST architecture section and distribute
  that work under terms of your choice, so long as this FAUST
@@ -118,7 +118,7 @@ Compilation options: -a .\\faustMinimal.h -lang cpp -i -fpga-mem-th 4 -ct 1 -cn 
         #define LIBFAUST_API __declspec(dllexport)
     #else
         #define FAUST_API
-        #define LIBFAUST_API 
+        #define LIBFAUST_API
     #endif
 #else
     #ifdef FAUST_EXE
@@ -147,36 +147,36 @@ struct Soundfile;
 
 template <typename REAL>
 struct FAUST_API UIReal {
-    
+
     UIReal() {}
     virtual ~UIReal() {}
-    
+
     // -- widget's layouts
-    
+
     virtual void openTabBox(const char* label) = 0;
     virtual void openHorizontalBox(const char* label) = 0;
     virtual void openVerticalBox(const char* label) = 0;
     virtual void closeBox() = 0;
-    
+
     // -- active widgets
-    
+
     virtual void addButton(const char* label, REAL* zone) = 0;
     virtual void addCheckButton(const char* label, REAL* zone) = 0;
     virtual void addVerticalSlider(const char* label, REAL* zone, REAL init, REAL min, REAL max, REAL step) = 0;
     virtual void addHorizontalSlider(const char* label, REAL* zone, REAL init, REAL min, REAL max, REAL step) = 0;
     virtual void addNumEntry(const char* label, REAL* zone, REAL init, REAL min, REAL max, REAL step) = 0;
-    
+
     // -- passive widgets
-    
+
     virtual void addHorizontalBargraph(const char* label, REAL* zone, REAL min, REAL max) = 0;
     virtual void addVerticalBargraph(const char* label, REAL* zone, REAL min, REAL max) = 0;
-    
+
     // -- soundfiles
-    
+
     virtual void addSoundfile(const char* label, const char* filename, Soundfile** sf_zone) = 0;
-    
+
     // -- metadata declarations
-    
+
     virtual void declare(REAL* /*zone*/, const char* /*key*/, const char* /*val*/) {}
 
     // To be used by LLVM client
@@ -202,16 +202,16 @@ struct FAUST_API UI : public UIReal<FAUSTFLOAT> {
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation; either version 2.1 of the License, or
  (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  GNU Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- 
+
  EXCEPTION : As a special exception, you may create a larger work
  that contains this FAUST architecture section and distribute
  that work under terms of your choice, so long as this FAUST
@@ -236,11 +236,11 @@ struct FAUST_API UI : public UIReal<FAUSTFLOAT> {
 class FAUST_API PathBuilder {
 
     protected:
-    
+
         std::vector<std::string> fControlsLevel;
         std::vector<std::string> fFullPaths;
         std::map<std::string, std::string> fFull2Short;  // filled by computeShortNames()
-    
+
         /**
          * @brief check if a character is acceptable for an ID
          *
@@ -251,7 +251,7 @@ class FAUST_API PathBuilder {
         {
             return ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || ((c >= '0') && (c <= '9'));
         }
-    
+
         /**
          * @brief remove all "/0x00" parts
          *
@@ -269,7 +269,7 @@ class FAUST_API PathBuilder {
             }
             return src;
         }
-    
+
         /**
          * @brief replace all non ID char with '_' (one '_' may replace several non ID char)
          *
@@ -293,7 +293,7 @@ class FAUST_API PathBuilder {
             }
             return dst;
         }
-    
+
         /**
          * @brief Keep only the last n slash-parts
          *
@@ -321,9 +321,9 @@ class FAUST_API PathBuilder {
             }
             return src;
         }
-    
+
         void addFullPath(const std::string& label) { fFullPaths.push_back(buildPath(label)); }
-    
+
         /**
          * @brief Compute the mapping between full path and short names
          */
@@ -333,7 +333,7 @@ class FAUST_API PathBuilder {
             std::map<std::string, std::string> unique2full;  // all full paths transformed but made unique with a prefix
             char num_buffer[16];
             int pnum = 0;
-            
+
             for (const auto& s : fFullPaths) {
                 // Using snprintf since Teensy does not have the std::to_string function
                 snprintf(num_buffer, 16, "%d", pnum++);
@@ -341,11 +341,11 @@ class FAUST_API PathBuilder {
                 uniquePaths.push_back(u);
                 unique2full[u] = s;  // remember the full path associated to a unique path
             }
-        
+
             std::map<std::string, int> uniquePath2level;                // map path to level
             for (const auto& s : uniquePaths) uniquePath2level[s] = 1;   // we init all levels to 1
             bool have_collisions = true;
-        
+
             while (have_collisions) {
                 // compute collision list
                 std::set<std::string>              collisionSet;
@@ -368,7 +368,7 @@ class FAUST_API PathBuilder {
                 }
                 for (const auto& s : collisionSet) uniquePath2level[s]++;  // increase level of colliding path
             }
-        
+
             for (const auto& it : uniquePath2level) {
                 std::string u = it.first;
                 int n = it.second;
@@ -376,7 +376,7 @@ class FAUST_API PathBuilder {
                 fFull2Short[unique2full[u]] = shortName;
             }
         }
-    
+
         std::string replaceCharList(const std::string& str, const std::vector<char>& ch1, char ch2)
         {
             auto beg = ch1.begin();
@@ -387,22 +387,22 @@ class FAUST_API PathBuilder {
             }
             return res;
         }
-     
+
     public:
-    
+
         PathBuilder() {}
         virtual ~PathBuilder() {}
-    
+
         // Return true for the first level of groups
         bool pushLabel(const std::string& label_aux)
         {
             std::string label = replaceCharList(label_aux, {'/'}, '_');
             fControlsLevel.push_back(label); return fControlsLevel.size() == 1;
         }
-    
+
         // Return true for the last level of groups
         bool popLabel() { fControlsLevel.pop_back(); return fControlsLevel.size() == 0; }
-    
+
         // Return a complete path built from a label
         std::string buildPath(const std::string& label_aux)
         {
@@ -414,15 +414,15 @@ class FAUST_API PathBuilder {
             res += label;
             return replaceCharList(res, {' ', '#', '*', ',', '?', '[', ']', '{', '}', '(', ')'}, '_');
         }
-    
+
         // Assuming shortnames have been built, return the shortname from a label
         std::string buildShortname(const std::string& label)
         {
             return (hasShortname()) ? fFull2Short[buildPath(label)] : "";
         }
-    
+
         bool hasShortname() { return fFull2Short.size() > 0; }
-    
+
 };
 
 #endif  // __PathBuilder__
@@ -442,18 +442,18 @@ class FAUST_API PathBuilder {
 
 class FAUST_API MapUI : public UI, public PathBuilder
 {
-    
+
     protected:
-    
+
         // Label zone map
         std::map<std::string, FAUSTFLOAT*> fLabelZoneMap;
-    
+
         // Shortname zone map
         std::map<std::string, FAUSTFLOAT*> fShortnameZoneMap;
-    
+
         // Full path map
         std::map<std::string, FAUSTFLOAT*> fPathZoneMap;
-    
+
         void addZoneLabel(const std::string& label, FAUSTFLOAT* zone)
         {
             std::string path = buildPath(label);
@@ -461,12 +461,12 @@ class FAUST_API MapUI : public UI, public PathBuilder
             fPathZoneMap[path] = zone;
             fLabelZoneMap[label] = zone;
         }
-    
+
     public:
-        
+
         MapUI() {}
         virtual ~MapUI() {}
-        
+
         // -- widget's layouts
         void openTabBox(const char* label)
         {
@@ -491,7 +491,7 @@ class FAUST_API MapUI : public UI, public PathBuilder
                 }
             }
         }
-        
+
         // -- active widgets
         void addButton(const char* label, FAUSTFLOAT* zone)
         {
@@ -513,7 +513,7 @@ class FAUST_API MapUI : public UI, public PathBuilder
         {
             addZoneLabel(label, zone);
         }
-        
+
         // -- passive widgets
         void addHorizontalBargraph(const char* label, FAUSTFLOAT* zone, FAUSTFLOAT fmin, FAUSTFLOAT fmax)
         {
@@ -523,18 +523,18 @@ class FAUST_API MapUI : public UI, public PathBuilder
         {
             addZoneLabel(label, zone);
         }
-    
+
         // -- soundfiles
         virtual void addSoundfile(const char* label, const char* filename, Soundfile** sf_zone) {}
-        
+
         // -- metadata declarations
         virtual void declare(FAUSTFLOAT* zone, const char* key, const char* val)
         {}
-    
+
         //-------------------------------------------------------------------------------
         // Public API
         //-------------------------------------------------------------------------------
-    
+
         /**
          * Set the param value.
          *
@@ -549,22 +549,22 @@ class FAUST_API MapUI : public UI, public PathBuilder
                 *fPathZoneMapIter->second = value;
                 return;
             }
-            
+
             const auto fShortnameZoneMapIter = fShortnameZoneMap.find(str);
             if (fShortnameZoneMapIter != fShortnameZoneMap.end()) {
                 *fShortnameZoneMapIter->second = value;
                 return;
             }
-            
+
             const auto fLabelZoneMapIter = fLabelZoneMap.find(str);
             if (fLabelZoneMapIter != fLabelZoneMap.end()) {
                 *fLabelZoneMapIter->second = value;
                 return;
             }
-            
+
             fprintf(stderr, "ERROR : setParamValue '%s' not found\n", str.c_str());
         }
-        
+
         /**
          * Return the param value.
          *
@@ -578,33 +578,33 @@ class FAUST_API MapUI : public UI, public PathBuilder
             if (fPathZoneMapIter != fPathZoneMap.end()) {
                 return *fPathZoneMapIter->second;
             }
-            
+
             const auto fShortnameZoneMapIter = fShortnameZoneMap.find(str);
             if (fShortnameZoneMapIter != fShortnameZoneMap.end()) {
                 return *fShortnameZoneMapIter->second;
             }
-            
+
             const auto fLabelZoneMapIter = fLabelZoneMap.find(str);
             if (fLabelZoneMapIter != fLabelZoneMap.end()) {
                 return *fLabelZoneMapIter->second;
             }
-            
+
             fprintf(stderr, "ERROR : getParamValue '%s' not found\n", str.c_str());
             return 0;
         }
-    
-        // map access 
+
+        // map access
         std::map<std::string, FAUSTFLOAT*>& getFullpathMap() { return fPathZoneMap; }
         std::map<std::string, FAUSTFLOAT*>& getShortnameMap() { return fShortnameZoneMap; }
         std::map<std::string, FAUSTFLOAT*>& getLabelMap() { return fLabelZoneMap; }
-            
+
         /**
          * Return the number of parameters in the UI.
          *
          * @return the number of parameters
          */
         int getParamsCount() const { return int(fPathZoneMap.size()); }
-        
+
         /**
          * Return the param path.
          *
@@ -622,7 +622,7 @@ class FAUST_API MapUI : public UI, public PathBuilder
                 return it->first;
             }
         }
-        
+
         const char* getParamAddress1(int index) const
         {
             if (index < 0 || index > int(fPathZoneMap.size())) {
@@ -633,7 +633,7 @@ class FAUST_API MapUI : public UI, public PathBuilder
                 return it->first.c_str();
             }
         }
-    
+
         /**
          * Return the param shortname.
          *
@@ -651,7 +651,7 @@ class FAUST_API MapUI : public UI, public PathBuilder
                 return it->first;
             }
         }
-        
+
         const char* getParamShortname1(int index) const
         {
             if (index < 0 || index > int(fShortnameZoneMap.size())) {
@@ -662,7 +662,7 @@ class FAUST_API MapUI : public UI, public PathBuilder
                 return it->first.c_str();
             }
         }
-    
+
         /**
          * Return the param label.
          *
@@ -680,7 +680,7 @@ class FAUST_API MapUI : public UI, public PathBuilder
                 return it->first;
             }
         }
-        
+
         const char* getParamLabel1(int index) const
         {
             if (index < 0 || index > int(fLabelZoneMap.size())) {
@@ -691,7 +691,7 @@ class FAUST_API MapUI : public UI, public PathBuilder
                 return it->first.c_str();
             }
         }
-    
+
         /**
          * Return the param path.
          *
@@ -706,7 +706,7 @@ class FAUST_API MapUI : public UI, public PathBuilder
             }
             return "";
         }
-    
+
         /**
          * Return the param memory zone.
          *
@@ -720,12 +720,12 @@ class FAUST_API MapUI : public UI, public PathBuilder
             if (fPathZoneMapIter != fPathZoneMap.end()) {
                 return fPathZoneMapIter->second;
             }
-            
+
             const auto fShortnameZoneMapIter = fShortnameZoneMap.find(str);
             if (fShortnameZoneMapIter != fShortnameZoneMap.end()) {
                 return fShortnameZoneMapIter->second;
             }
-            
+
             const auto fLabelZoneMapIter = fLabelZoneMap.find(str);
             if (fLabelZoneMapIter != fLabelZoneMap.end()) {
                 return fLabelZoneMapIter->second;
@@ -733,7 +733,7 @@ class FAUST_API MapUI : public UI, public PathBuilder
 
             return nullptr;
         }
-    
+
         /**
          * Return the param memory zone.
          *
@@ -741,7 +741,7 @@ class FAUST_API MapUI : public UI, public PathBuilder
          *
          * @return the param path
          */
-        FAUSTFLOAT* getParamZone(int index) const 
+        FAUSTFLOAT* getParamZone(int index) const
         {
             if (index < 0 || index > int(fPathZoneMap.size())) {
                 return nullptr;
@@ -751,14 +751,14 @@ class FAUST_API MapUI : public UI, public PathBuilder
                 return it->second;
             }
         }
-    
+
         static bool endsWith(const std::string& str, const std::string& end)
         {
             size_t l1 = str.length();
             size_t l2 = end.length();
             return (l1 >= l2) && (0 == str.compare(l1 - l2, l2, end));
         }
-    
+
 };
 
 #endif // FAUST_MAPUI_H
@@ -771,16 +771,16 @@ class FAUST_API MapUI : public UI, public PathBuilder
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation; either version 2.1 of the License, or
  (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  GNU Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- 
+
  EXCEPTION : As a special exception, you may create a larger work
  that contains this FAUST architecture section and distribute
  that work under terms of your choice, so long as this FAUST
@@ -809,16 +809,16 @@ struct FAUST_API Meta {
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation; either version 2.1 of the License, or
  (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  GNU Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- 
+
  EXCEPTION : As a special exception, you may create a larger work
  that contains this FAUST architecture section and distribute
  that work under terms of your choice, so long as this FAUST
@@ -845,17 +845,17 @@ struct FAUST_API Meta;
  */
 
 struct FAUST_API dsp_memory_manager {
-    
+
     enum MemType { kInt32, kInt32_ptr, kFloat, kFloat_ptr, kDouble, kDouble_ptr, kQuad, kQuad_ptr, kFixedPoint, kFixedPoint_ptr, kObj, kObj_ptr, kSound, kSound_ptr };
 
     virtual ~dsp_memory_manager() = default;
-    
+
     /**
      * Inform the Memory Manager with the number of expected memory zones.
      * @param count - the number of expected memory zones
      */
     virtual void begin(size_t count) {}
-    
+
     /**
      * Give the Memory Manager information on a given memory zone.
      * @param name - the memory zone name
@@ -866,25 +866,25 @@ struct FAUST_API dsp_memory_manager {
      * @param writes - the number of Write access to the zone used to compute one frame
      */
     virtual void info(const char* name, MemType type, size_t size, size_t size_bytes, size_t reads, size_t writes) {}
-  
+
     /**
      * Inform the Memory Manager that all memory zones have been described,
      * to possibly start a 'compute the best allocation strategy' step.
      */
     virtual void end() {}
-    
+
     /**
      * Allocate a memory zone.
      * @param size - the memory zone size in bytes
      */
     virtual void* allocate(size_t size) = 0;
-    
+
     /**
      * Destroy a memory zone.
      * @param ptr - the memory zone pointer to be deallocated
      */
     virtual void destroy(void* ptr) = 0;
-    
+
 };
 
 /**
@@ -900,10 +900,10 @@ class FAUST_API dsp {
 
         /* Return instance number of audio inputs */
         virtual int getNumInputs() = 0;
-    
+
         /* Return instance number of audio outputs */
         virtual int getNumOutputs() = 0;
-    
+
         /**
          * Trigger the ui_interface parameter with instance specific calls
          * to 'openTabBox', 'addButton', 'addVerticalSlider'... in order to build the UI.
@@ -911,10 +911,10 @@ class FAUST_API dsp {
          * @param ui_interface - the user interface builder
          */
         virtual void buildUserInterface(UI* ui_interface) = 0;
-    
+
         /* Return the sample rate currently used by the instance */
         virtual int getSampleRate() = 0;
-    
+
         /**
          * Global init, calls the following methods:
          * - static class 'classInit': static tables initialization
@@ -930,40 +930,40 @@ class FAUST_API dsp {
          * @param sample_rate - the sampling rate in Hz
          */
         virtual void instanceInit(int sample_rate) = 0;
-    
+
         /**
          * Init instance constant state.
          *
          * @param sample_rate - the sampling rate in Hz
          */
         virtual void instanceConstants(int sample_rate) = 0;
-    
+
         /* Init default control parameters values */
         virtual void instanceResetUserInterface() = 0;
-    
+
         /* Init instance state (like delay lines...) but keep the control parameter values */
         virtual void instanceClear() = 0;
- 
+
         /**
          * Return a clone of the instance.
          *
          * @return a copy of the instance on success, otherwise a null pointer.
          */
         virtual ::dsp* clone() = 0;
-    
+
         /**
          * Trigger the Meta* m parameter with instance specific calls to 'declare' (key, value) metadata.
          *
          * @param m - the Meta* meta user
          */
         virtual void metadata(Meta* m) = 0;
-    
+
         /**
          * Read all controllers (buttons, sliders, etc.), and update the DSP state to be used by 'frame' or 'compute'.
          * This method will be filled with the -ec (--external-control) option.
          */
         virtual void control() {}
-    
+
         /**
          * DSP instance computation to process one single frame.
          *
@@ -976,7 +976,7 @@ class FAUST_API dsp {
          * @param outputs - the output audio buffers as an array of FAUSTFLOAT samples (eiher float, double or quad)
          */
         virtual void frame(FAUSTFLOAT* inputs, FAUSTFLOAT* outputs) {}
-        
+
         /**
          * DSP instance computation to be called with successive in/out audio buffers.
          *
@@ -991,7 +991,7 @@ class FAUST_API dsp {
          * (containing either float, double or quad samples)
          */
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) = 0;
-    
+
         /**
          * Alternative DSP instance computation method for use by subclasses, incorporating an additional `date_usec` parameter,
          * which specifies the timestamp of the first sample in the audio buffers.
@@ -1003,7 +1003,7 @@ class FAUST_API dsp {
          * @param outputs - the output audio buffers as an array of non-interleaved FAUSTFLOAT samples (either float, double or quad)
          */
         virtual void compute(double /*date_usec*/, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) { compute(count, inputs, outputs); }
-       
+
 };
 
 /**
@@ -1037,7 +1037,7 @@ class FAUST_API decorator_dsp : public ::dsp {
         virtual void frame(FAUSTFLOAT* inputs, FAUSTFLOAT* outputs) override { fDSP->frame(inputs, outputs); }
         virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) override { fDSP->compute(count, inputs, outputs); }
         virtual void compute(double date_usec, int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) override { fDSP->compute(date_usec, count, inputs, outputs); }
-    
+
 };
 
 /**
@@ -1046,47 +1046,47 @@ class FAUST_API decorator_dsp : public ::dsp {
  */
 
 class FAUST_API dsp_factory {
-    
+
     protected:
-    
+
         // So that to force sub-classes to use deleteDSPFactory(dsp_factory* factory);
         virtual ~dsp_factory() = default;
-    
+
     public:
-    
+
         /* Return factory name */
         virtual std::string getName() = 0;
-    
+
         /* Return factory SHA key */
         virtual std::string getSHAKey() = 0;
-    
+
         /* Return factory expanded DSP code */
         virtual std::string getDSPCode() = 0;
-    
+
         /* Return factory compile options */
         virtual std::string getCompileOptions() = 0;
-    
+
         /* Get the Faust DSP factory list of library dependancies */
         virtual std::vector<std::string> getLibraryList() = 0;
-    
+
         /* Get the list of all used includes */
         virtual std::vector<std::string> getIncludePathnames() = 0;
-    
+
         /* Get warning messages list for a given compilation */
         virtual std::vector<std::string> getWarningMessages() = 0;
-    
+
         /* Create a new DSP instance, to be deleted with C++ 'delete' */
         virtual ::dsp* createDSPInstance() = 0;
-    
+
         /* Static tables initialization, possibly implemened in sub-classes*/
         virtual void classInit(int sample_rate) {};
-    
+
         /* Set a custom memory manager to be used when creating instances */
         virtual void setMemoryManager(dsp_memory_manager* manager) = 0;
-    
+
         /* Return the currently set custom memory manager */
         virtual dsp_memory_manager* getMemoryManager() = 0;
-    
+
 };
 
 // Denormal handling
@@ -1096,11 +1096,11 @@ class FAUST_API dsp_factory {
 #endif
 
 class FAUST_API ScopedNoDenormals {
-    
+
     private:
-    
+
         intptr_t fpsr = 0;
-        
+
         void setFpStatusRegister(intptr_t fpsr_aux) noexcept
         {
         #if defined (__arm64__) || defined (__aarch64__)
@@ -1112,7 +1112,7 @@ class FAUST_API ScopedNoDenormals {
             _mm_setcsr(fpsr_w);
         #endif
         }
-        
+
         void getFpStatusRegister() noexcept
         {
         #if defined (__arm64__) || defined (__aarch64__)
@@ -1121,9 +1121,9 @@ class FAUST_API ScopedNoDenormals {
             fpsr = static_cast<intptr_t>(_mm_getcsr());
         #endif
         }
-    
+
     public:
-    
+
         ScopedNoDenormals() noexcept
         {
         #if defined (__arm64__) || defined (__aarch64__)
@@ -1140,7 +1140,7 @@ class FAUST_API ScopedNoDenormals {
             getFpStatusRegister();
             setFpStatusRegister(fpsr | mask);
         }
-        
+
         ~ScopedNoDenormals() noexcept
         {
             setFpStatusRegister(fpsr);
@@ -1159,18 +1159,18 @@ class FAUST_API ScopedNoDenormals {
 
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
-#endif 
+#endif
 
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <math.h>
 
-#ifndef FAUSTCLASS 
+#ifndef FAUSTCLASS
 #define FAUSTCLASS DuckingEngine
 #endif
 
-#ifdef __APPLE__ 
+#ifdef __APPLE__
 #define exp10f __exp10f
 #define exp10 __exp10
 #endif
@@ -1181,41 +1181,37 @@ class FAUST_API ScopedNoDenormals {
 #define RESTRICT __restrict__
 #endif
 
+static float DuckingEngine_faustpower2_f(float value) {
+	return value * value;
+}
 
 class DuckingEngine : public dsp {
-	
+
  private:
-	
-	float fVec0[2];
-	int iRec0[2];
+
 	FAUSTFLOAT fHslider0;
-	int fSampleRate;
-	float fConst0;
 	FAUSTFLOAT fHslider1;
 	FAUSTFLOAT fHslider2;
+	int fSampleRate;
+	float fConst0;
 	FAUSTFLOAT fHslider3;
+	float fRec0[2];
 	FAUSTFLOAT fHbargraph0;
-	
+
  public:
 	DuckingEngine() {
 	}
-	
+
 	DuckingEngine(const DuckingEngine&) = default;
-	
+
 	virtual ~DuckingEngine() = default;
-	
+
 	DuckingEngine& operator=(const DuckingEngine&) = default;
-	
-	void metadata(Meta* m) { 
+
+	void metadata(Meta* m) {
 		m->declare("basics.lib/name", "Faust Basic Element Library");
 		m->declare("basics.lib/version", "1.22.0");
 		m->declare("compile_options", "-a .\\faustMinimal.h -lang cpp -i -fpga-mem-th 4 -ct 1 -cn DuckingEngine -es 1 -mcd 16 -mdd 1024 -mdy 33 -single -ftz 0");
-		m->declare("envelopes.lib/ar:author", "Yann Orlarey, Stéphane Letz");
-		m->declare("envelopes.lib/author", "GRAME");
-		m->declare("envelopes.lib/copyright", "GRAME");
-		m->declare("envelopes.lib/license", "LGPL with exception");
-		m->declare("envelopes.lib/name", "Faust Envelope Library");
-		m->declare("envelopes.lib/version", "1.3.0");
 		m->declare("filename", "duckingEngine.dsp");
 		m->declare("maths.lib/author", "GRAME");
 		m->declare("maths.lib/copyright", "GRAME");
@@ -1233,69 +1229,65 @@ class DuckingEngine : public dsp {
 	virtual int getNumOutputs() {
 		return 2;
 	}
-	
+
 	static void classInit(int sample_rate) {
 	}
-	
+
 	virtual void instanceConstants(int sample_rate) {
 		fSampleRate = sample_rate;
-		fConst0 = 0.001f * std::min<float>(1.92e+05f, std::max<float>(1.0f, static_cast<float>(fSampleRate)));
+		fConst0 = 1e+03f / std::min<float>(1.92e+05f, std::max<float>(1.0f, static_cast<float>(fSampleRate)));
 	}
-	
+
 	virtual void instanceResetUserInterface() {
-		fHslider0 = static_cast<FAUSTFLOAT>(1e+01f);
-		fHslider1 = static_cast<FAUSTFLOAT>(1e+02f);
-		fHslider2 = static_cast<FAUSTFLOAT>(-2e+01f);
-		fHslider3 = static_cast<FAUSTFLOAT>(4.0f);
+		fHslider0 = static_cast<FAUSTFLOAT>(-2e+01f);
+		fHslider1 = static_cast<FAUSTFLOAT>(4.0f);
+		fHslider2 = static_cast<FAUSTFLOAT>(1e+02f);
+		fHslider3 = static_cast<FAUSTFLOAT>(1e+01f);
 	}
-	
+
 	virtual void instanceClear() {
 		for (int l0 = 0; l0 < 2; l0 = l0 + 1) {
-			fVec0[l0] = 0.0f;
-		}
-		for (int l1 = 0; l1 < 2; l1 = l1 + 1) {
-			iRec0[l1] = 0;
+			fRec0[l0] = 0.0f;
 		}
 	}
-	
+
 	virtual void init(int sample_rate) {
 		classInit(sample_rate);
 		instanceInit(sample_rate);
 	}
-	
+
 	virtual void instanceInit(int sample_rate) {
 		instanceConstants(sample_rate);
 		instanceResetUserInterface();
 		instanceClear();
 	}
-	
+
 	virtual DuckingEngine* clone() {
 		return new DuckingEngine(*this);
 	}
-	
+
 	virtual int getSampleRate() {
 		return fSampleRate;
 	}
-	
+
 	virtual void buildUserInterface(UI* ui_interface) {
 		ui_interface->openVerticalBox("duckingEngine");
-		ui_interface->declare(&fHslider2, "0", "");
-		ui_interface->declare(&fHslider2, "unit", "dB");
-		ui_interface->addHorizontalSlider("Threshold", &fHslider2, FAUSTFLOAT(-2e+01f), FAUSTFLOAT(-6e+01f), FAUSTFLOAT(0.0f), FAUSTFLOAT(0.1f));
-		ui_interface->declare(&fHslider3, "1", "");
-		ui_interface->addHorizontalSlider("Ratio", &fHslider3, FAUSTFLOAT(4.0f), FAUSTFLOAT(1.0f), FAUSTFLOAT(2e+01f), FAUSTFLOAT(0.1f));
-		ui_interface->declare(&fHslider0, "2", "");
-		ui_interface->declare(&fHslider0, "unit", "ms");
-		ui_interface->addHorizontalSlider("Attack", &fHslider0, FAUSTFLOAT(1e+01f), FAUSTFLOAT(1.0f), FAUSTFLOAT(5e+02f), FAUSTFLOAT(1.0f));
-		ui_interface->declare(&fHslider1, "3", "");
-		ui_interface->declare(&fHslider1, "unit", "ms");
-		ui_interface->addHorizontalSlider("Release", &fHslider1, FAUSTFLOAT(1e+02f), FAUSTFLOAT(5.0f), FAUSTFLOAT(2e+03f), FAUSTFLOAT(1.0f));
-		ui_interface->declare(&fHbargraph0, "4", "");
 		ui_interface->declare(&fHbargraph0, "unit", "dB");
 		ui_interface->addHorizontalBargraph("Gain Reduction", &fHbargraph0, FAUSTFLOAT(-6e+01f), FAUSTFLOAT(0.0f));
+		ui_interface->declare(&fHslider0, "0", "");
+		ui_interface->declare(&fHslider0, "unit", "dB");
+		ui_interface->addHorizontalSlider("Threshold", &fHslider0, FAUSTFLOAT(-2e+01f), FAUSTFLOAT(-6e+01f), FAUSTFLOAT(0.0f), FAUSTFLOAT(0.1f));
+		ui_interface->declare(&fHslider1, "1", "");
+		ui_interface->addHorizontalSlider("Ratio", &fHslider1, FAUSTFLOAT(4.0f), FAUSTFLOAT(1.0f), FAUSTFLOAT(2e+01f), FAUSTFLOAT(0.1f));
+		ui_interface->declare(&fHslider3, "3", "");
+		ui_interface->declare(&fHslider3, "unit", "ms");
+		ui_interface->addHorizontalSlider("Attack", &fHslider3, FAUSTFLOAT(1e+01f), FAUSTFLOAT(0.1f), FAUSTFLOAT(5e+02f), FAUSTFLOAT(0.1f));
+		ui_interface->declare(&fHslider2, "4", "");
+		ui_interface->declare(&fHslider2, "unit", "ms");
+		ui_interface->addHorizontalSlider("Release", &fHslider2, FAUSTFLOAT(1e+02f), FAUSTFLOAT(5.0f), FAUSTFLOAT(2e+03f), FAUSTFLOAT(1.0f));
 		ui_interface->closeBox();
 	}
-	
+
 	virtual void compute(int count, FAUSTFLOAT** RESTRICT inputs, FAUSTFLOAT** RESTRICT outputs) {
 		FAUSTFLOAT* input0 = inputs[0];
 		FAUSTFLOAT* input1 = inputs[1];
@@ -1303,22 +1295,24 @@ class DuckingEngine : public dsp {
 		FAUSTFLOAT* input3 = inputs[3];
 		FAUSTFLOAT* output0 = outputs[0];
 		FAUSTFLOAT* output1 = outputs[1];
-		float fSlow0 = std::max<float>(1.0f, fConst0 * static_cast<float>(fHslider0));
-		float fSlow1 = 1.0f / fSlow0;
-		float fSlow2 = 1.0f / std::max<float>(1.0f, fConst0 * static_cast<float>(fHslider1));
-		float fSlow3 = static_cast<float>(fHslider2);
-		float fSlow4 = 1.0f - 1.0f / static_cast<float>(fHslider3);
+		float fSlow0 = static_cast<float>(fHslider0);
+		float fSlow1 = fSlow0 + -2.0f;
+		float fSlow2 = fSlow0 + 2.0f;
+		float fSlow3 = 1.0f / static_cast<float>(fHslider1) + -1.0f;
+		float fSlow4 = 0.125f * fSlow3;
+		float fSlow5 = std::exp(-(fConst0 / static_cast<float>(fHslider2)));
+		float fSlow6 = 1.0f - fSlow5;
+		float fSlow7 = std::exp(-(fConst0 / static_cast<float>(fHslider3)));
+		float fSlow8 = 1.0f - fSlow7;
 		for (int i0 = 0; i0 < count; i0 = i0 + 1) {
-			float fTemp0 = std::max<float>(std::fabs(static_cast<float>(input2[i0])), std::fabs(static_cast<float>(input3[i0])));
-			fVec0[0] = fTemp0;
-			iRec0[0] = (iRec0[1] + (iRec0[1] > 0)) * (fTemp0 <= fVec0[1]) + (fTemp0 > fVec0[1]);
-			float fTemp1 = static_cast<float>(iRec0[0]);
-			fHbargraph0 = static_cast<FAUSTFLOAT>(std::min<float>(0.0f, fSlow4 * (fSlow3 - 2e+01f * std::log10(std::max<float>(1.1754944e-38f, std::max<float>(0.0f, std::min<float>(fSlow1 * fTemp1, fSlow2 * (fSlow0 - fTemp1) + 1.0f)) + 1.1920929e-07f)))));
+			float fTemp0 = 2e+01f * std::log10(std::max<float>(1.1754944e-38f, std::max<float>(std::fabs(static_cast<float>(input2[i0])), std::fabs(static_cast<float>(input3[i0]))) + 1.1920929e-07f));
+			float fTemp1 = ((fTemp0 < fSlow1) ? 0.0f : ((fTemp0 > fSlow2) ? fSlow3 * (fTemp0 - fSlow0) : fSlow4 * DuckingEngine_faustpower2_f(fTemp0 + 2.0f - fSlow0)));
+			fRec0[0] = ((fTemp1 < fRec0[1]) ? fSlow8 * fTemp1 + fSlow7 * fRec0[1] : fSlow6 * fTemp1 + fSlow5 * fRec0[1]);
+			fHbargraph0 = static_cast<FAUSTFLOAT>(fRec0[0]);
 			float fTemp2 = std::pow(1e+01f, 0.05f * fHbargraph0);
 			output0[i0] = static_cast<FAUSTFLOAT>(static_cast<float>(input0[i0]) * fTemp2);
 			output1[i0] = static_cast<FAUSTFLOAT>(static_cast<float>(input1[i0]) * fTemp2);
-			fVec0[1] = fVec0[0];
-			iRec0[1] = iRec0[0];
+			fRec0[1] = fRec0[0];
 		}
 	}
 

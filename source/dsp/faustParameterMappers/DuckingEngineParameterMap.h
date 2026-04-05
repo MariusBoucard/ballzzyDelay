@@ -9,7 +9,7 @@ namespace FaustParameterMapping {
         // TODO
         static const std::unordered_map<juce::String, std::string> map = {
             {"DUCKING_ATTACK" , "/duckingEngine/Attack"},
-            {"DUCKING_ATTACK", "/duckingEngine/Gain_Reduction"},
+            {"DUCKING_GR", "/duckingEngine/Gain_Reduction"},
             {"DUCKING_RATIO", "/duckingEngine/Ratio"},
             {"DUCKING_RELEASE", "/duckingEngine/Release"},
             {"DUCKING_THRESHOLD", "/duckingEngine/Threshold"},
