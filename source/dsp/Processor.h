@@ -7,6 +7,7 @@
 #include "Processor.hpp"
 #include "Bones/FaustMultiheadFeedback.h"
 #include "Bones/FaustHpLp.h"
+#include "Bones/DuckingEngine.h"
 
 //==============================================================================
 class SkeletonAudioProcessor final : public juce::AudioProcessor {
@@ -31,7 +32,7 @@ public:
         mFaustProcessor->buildUserInterface(fUI);
 
         // TODO CHANGE TO THE RIGHT DSP
-        mFaustDuckingProcessor = new mydsp();
+        mFaustDuckingProcessor = new DuckingEngine::DuckingEngine();
         mFaustDuckingProcessor->init(mSampleRate);
         mFaustDuckingProcessor->buildUserInterface(fDuckingUI);
 
@@ -51,6 +52,16 @@ public:
         for (int channel = 0; channel < 2; ++channel) {
             postHpLp[channel] = new float[mBlockSize];
         }
+
+        duckingInput = new float*[4];
+        for (int channel = 0; channel < 4; ++channel) {
+            duckingInput[channel] = new float[mBlockSize];
+        }
+        duckingOutput = new float*[2];
+        for (int channel = 0; channel < 2; ++channel) {
+            duckingOutput[channel] = new float[mBlockSize];
+        }
+
     }
 
     void releaseResources() override {
@@ -74,6 +85,15 @@ public:
             delete[] postHpLp[channel];
         }
         delete[] postHpLp;
+
+        for (int channel = 0; channel < 4; ++channel) {
+            delete[] duckingInput[channel];
+        }
+        delete[] duckingInput;
+        for (int channel = 0; channel < 2; ++channel) {
+            delete[] duckingOutput[channel];
+        }
+        delete[] duckingOutput;
     }
     juce::AudioProcessorValueTreeState& getState() { return mParameters;}
     void processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &) override;
@@ -168,7 +188,7 @@ public:
         fLpHpUi = inUI;
     }
 
-    void setMapUIDucking(MapUI *inUI) {
+    void setMapUIDucking(DuckingEngine::MapUI *inUI) {
         fDuckingUI = inUI;
     }
     void setRateAndBufferSizeDetails(double sampleRate, int bufferSize) {
@@ -198,16 +218,17 @@ private:
     mydsp* mFaustProcessor;
     MapUI* fUI;
 
-    // TODO : faire des processors bien !
     HpLpFilter::hpLpDsp* mFaustLPHpProcessor;
     HpLpFilter::MapUI* fLpHpUi;
 
-    mydsp* mFaustDuckingProcessor;
-    MapUI* fDuckingUI;
+    DuckingEngine::DuckingEngine* mFaustDuckingProcessor;
+    DuckingEngine::MapUI* fDuckingUI;
 
     float** inputs;
     float** postHpLp;
     float** outputs;
+    float** duckingInput;
+    float** duckingOutput;
     juce::AudioProcessorGraph::Node::Ptr mInputNode;
     juce::AudioProcessorGraph::Node::Ptr mOutputNode;
     juce::AudioProcessorGraph::Node::Ptr mGainNode;

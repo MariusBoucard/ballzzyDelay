@@ -82,6 +82,21 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
     // outputs (from first) → outputs (reuse same buffer)
     mFaustProcessor->compute(numSamples, postHpLp, outputs);
 
+    //for (int ch = 0; ch < numOut; ++ch) {
+    //    auto* channelWritePtr = inBuffer.getWritePointer(ch);
+    //    for (int i = 0; i < numSamples; ++i) {
+    //        channelWritePtr[i] = outputs[ch][i];
+    //    }
+    //}
+
+    for (int ch = 0; ch < numIn; ++ch) {
+        for (int i = 0; i < numSamples; ++i) {
+            duckingInput[ch][i] = outputs[ch][i];
+            duckingInput[ch][i+2] = inputs[ch][i];
+        }
+    }
+
+    mFaustDuckingProcessor->compute(numSamples, duckingInput, outputs);
     // Combine: Output Gain + Dry/Wet Mix
     for (int ch = 0; ch < numOut; ++ch) {
         auto* channelWritePtr = inBuffer.getWritePointer(ch);

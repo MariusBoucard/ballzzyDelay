@@ -38,6 +38,7 @@
 #include "dsp/paramsDeclaration.h"
 #include "dsp/faustParameterMappers/faustParameterMap.h"
 #include "dsp/faustParameterMappers/hpLpFaustParameterMap.h"
+#include "dsp/faustParameterMappers/DuckingEngineParameterMap.h"
 
 class PluginAudioProcessor final : public juce::AudioProcessor,
                                    public juce::AudioProcessorValueTreeState::Listener
@@ -99,8 +100,8 @@ void writeFaustParametersToFile() {
 
     std::vector<juce::String> params;
 
-    HpLpFilter::hpLpDsp* tempDsp = new HpLpFilter::hpLpDsp ();
-    HpLpFilter::MapUI* tempUI = new HpLpFilter::MapUI();
+    DuckingEngine::DuckingEngine* tempDsp = new DuckingEngine::DuckingEngine ();
+    DuckingEngine::MapUI* tempUI = new DuckingEngine::MapUI();
 
     tempDsp->buildUserInterface(tempUI);
     auto fullPathMap = tempUI->getFullpathMap();
@@ -206,17 +207,21 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     auto ducking = std::make_unique<juce::AudioParameterFloat>(id::DUCKING,"Ducking",0.f,1.f,0.f);
     parameters.ducking = ducking.get();
     layout.add(std::move(ducking));
-
-    auto duckingAttac = std::make_unique<juce::AudioParameterFloat>(id::DUCKING_ATTACK,"Ducking attack time",0.f,1.f,0.f);
+    auto duckingAttac = std::make_unique<juce::AudioParameterFloat>(id::DUCKING_ATTACK,"Ducking attack time",0.f,500.f,10.f);
     parameters.duckingAttack = duckingAttac.get();
     layout.add(std::move(duckingAttac));
-    auto duckthres = std::make_unique<juce::AudioParameterFloat>(id::DUCKING_THRESHOLD,"Ducking Threshold",0.f,1.f,0.f);
+
+    auto duckthres = std::make_unique<juce::AudioParameterFloat>(id::DUCKING_THRESHOLD,"Ducking Threshold",-60, 0,-20);
     parameters.duckingThreshold = duckthres.get();
     layout.add(std::move(duckthres));
 
-    auto duckingRelease = std::make_unique<juce::AudioParameterFloat>(id::DUCKING_RELEASE,"Ducking attack time",0.f,1.f,0.f);
+    auto duckingRelease = std::make_unique<juce::AudioParameterFloat>(id::DUCKING_RELEASE,"Ducking release time",5.f,2000.f,100.f);
     parameters.duckingRelease = duckingRelease.get();
     layout.add(std::move(duckingRelease));
+
+    auto duckingRatio = std::make_unique<juce::AudioParameterFloat>(id::DUCKING_RATIO,"Ducking Ratio",1.f,20.f,4.f);
+    parameters.duckingRatio = duckingRatio.get();
+    layout.add(std::move(duckingRatio));
 
     auto WIDTH = std::make_unique<juce::AudioParameterFloat>(id::WIDTH,"Width",0.f,1.f,0.f);
     parameters.width = WIDTH.get(); 
@@ -260,6 +265,8 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
             mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
         if (mFaustHpLpUI != nullptr && !FaustParameterMapping::getHpLpPath(parameterID).empty())
             mFaustHpLpUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
+        if (mFaustDuckingUI != nullptr && !FaustParameterMapping::getDuckingEnginePath(parameterID).empty())
+            mFaustDuckingUI->setParamValue(FaustParameterMapping::getDuckingEnginePath(parameterID), newValue);
 
     }
 
@@ -267,7 +274,7 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 {
     if (!mFaustUI) mFaustUI = std::make_unique<MapUI>();
     if (!mFaustHpLpUI) mFaustHpLpUI = std::make_unique<HpLpFilter::MapUI>();
-    if (!mFaustDuckingUI) mFaustDuckingUI = std::make_unique<MapUI>();
+    if (!mFaustDuckingUI) mFaustDuckingUI = std::make_unique<DuckingEngine::MapUI>();
 
     mSkeletonProcessor.setMapUI(mFaustUI.get());
     mSkeletonProcessor.setMapUIHpLp(mFaustHpLpUI.get());
@@ -356,7 +363,7 @@ private:
     // Use unique_ptr for automatic memory management
     std::unique_ptr<MapUI> mFaustUI;
     std::unique_ptr<HpLpFilter::MapUI> mFaustHpLpUI;
-    std::unique_ptr<MapUI> mFaustDuckingUI;
+    std::unique_ptr<DuckingEngine::MapUI> mFaustDuckingUI;
 
     juce::AudioProcessorValueTreeState mParameters;
     SkeletonAudioProcessor mSkeletonProcessor;

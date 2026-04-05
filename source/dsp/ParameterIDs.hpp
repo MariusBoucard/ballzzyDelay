@@ -15,13 +15,17 @@ namespace id {
     const juce::ParameterID TIME                  {"TIME", 1};
     const juce::ParameterID TIME_NO_SYNC          {"TIME_NO_SYNC", 1};
     const juce::ParameterID SYNC_TEMPO            {"SYNC_TEMPO", 1};
+
     const juce::ParameterID DUCKING               {"DUCKING", 1};
     const juce::ParameterID DUCKING_ATTACK        {"DUCKING_ATTACK", 1};
     const juce::ParameterID DUCKING_RELEASE       {"DUCKING_RELEASE", 1};
+    const juce::ParameterID DUCKING_RATIO         {"DUCKING_RATIO", 1};
     const juce::ParameterID DUCKING_THRESHOLD     {"DUCKING_THRESHOLD", 1};
+
     const juce::ParameterID WIDTH                 {"WIDTH", 1};
     const juce::ParameterID LP_FILTER_FREQ        {"LP_FILTER_FREQ", 1};
     const juce::ParameterID HP_FILTER_FREQ        {"HP_FILTER_FREQ", 1};
+    // TODO pourquoi pas mis ?
   //  const juce::ParameterID LP_FILTER_BYPASS      {"LP_FILTER_BYPASS", 1};
    // const juce::ParameterID HP_FILTER_BYPASS      {"HP_FILTER_BYPASS", 1};
 

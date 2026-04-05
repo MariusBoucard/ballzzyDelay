@@ -44,6 +44,7 @@ target_sources(${PROJECT_NAME}
         # DSP files
         source/dsp/faustParameterMappers/faustParameterMap.h
         source/dsp/faustParameterMappers/hpLpFaustParameterMap.h
+        source/dsp/faustParameterMappers/DuckingEngineParameterMap.h
         source/dsp/Mappers.cpp
         source/dsp/Mappers.h
         source/dsp/ParameterSetup.h
@@ -57,6 +58,7 @@ target_sources(${PROJECT_NAME}
         # DSP Bones
         source/dsp/Bones/FaustMultiheadFeedback.h
         source/dsp/Bones/FaustHpLp.h
+        source/dsp/Bones/DuckingEngine.h
 
 
         # UI
