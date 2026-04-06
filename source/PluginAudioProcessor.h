@@ -57,12 +57,13 @@ void addFilterLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout
                      parametersDeclaration::Parameters::Hp& hp)
 {
     auto lpParam = std::make_unique<juce::AudioParameterFloat>(
-        juce::ParameterID{prefix + "_LP_FILTER_FREQ", 1}, "LP Freq Head "+prefix, juce::NormalisableRange<float>{20.f, 20000.f, 1.f, 0.3f}, 20000.f);
+
+        juce::ParameterID{prefix + "_LP_FILTER_FREQ", 1}, "LP Freq Head "+prefix, 20.f, 20000.f, 20000.f);
     lp.freq = lpParam.get();
     layout.add(std::move(lpParam));
 
     auto hpParam = std::make_unique<juce::AudioParameterFloat>(
-        juce::ParameterID{prefix + "_HP_FILTER_FREQ", 1}, "HP Freq Head "+prefix, juce::NormalisableRange<float>{20.f, 20000.f, 1.f, 0.3f}, 20.f);
+        juce::ParameterID{prefix + "_HP_FILTER_FREQ", 1}, "HP Freq Head "+prefix, 20.f, 20000.f, 20.f);
     hp.freq = hpParam.get();
     layout.add(std::move(hpParam));
 
@@ -140,23 +141,22 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     head.bypass = bypass.get();
     layout.add(std::move(bypass));
 
-    auto headGain = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_GAIN", 1}, "Gain Head "+prefix, 0.f, 1.f, 1.f);
+    auto headGain = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_GAIN", 1}, "Gain Head "+prefix, -12.f, 12.f, 0.f);
     head.gain = headGain.get();
     layout.add(std::move(headGain));
 
     auto headPan = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_PAN", 1}, "Pan Head "+prefix, 0.f, 1.f, 0.5f);
     head.pan = headPan.get();
     layout.add(std::move(headPan));
-
-    auto headFeed = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_FEEDBACK", 1}, "Feedback Head "+prefix, 0.f, 1.f, 0.5f);
+     auto headFeed = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_FEEDBACK", 1}, "Feedback Head "+prefix, 0.f, 0.95f, 0.3f);
     head.feedBack = headFeed.get();
     layout.add(std::move(headFeed));
 
-    auto headTime = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_TIME", 1}, "Time Head "+prefix, 0.f, 1.f, 0.5f);
+    auto headTime = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_TIME", 1}, "Time Head "+prefix, 0.f, 4.f, 0.2f);
     head.time = headTime.get();
     layout.add(std::move(headTime));
 
-    auto headTimeNoSync = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_TIME_NO_SYNC", 1}, "Time Head "+prefix+" no sync",0.f, 1.f, 0.5f);
+    auto headTimeNoSync = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_TIME_NO_SYNC", 1}, "Time Head "+prefix+" no sync",0.f, 4.f, 0.2f*(headIndex+1));
     head.timeNoSync = headTimeNoSync.get();
     layout.add(std::move(headTimeNoSync));
 
@@ -168,9 +168,9 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     void addMainParametersLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout, parametersDeclaration::Parameters& parameters) {
 
     // 1. Global Parameters
-    auto gain = std::make_unique<juce::AudioParameterFloat>(id::GAIN, "Gain", 0.f, 1.f, 1.f);
-    parameters.gain = gain.get();
-    layout.add(std::move(gain));
+//    auto gain = std::make_unique<juce::AudioParameterFloat>(id::GAIN, "Gain", 0.f, 1.f, 1.f);
+ //   parameters.gain = gain.get();
+  //  layout.add(std::move(gain));
 
     auto bypass = std::make_unique<juce::AudioParameterBool>(id::BYPASS, "Bypass", false);
     parameters.bypass = bypass.get();
@@ -262,7 +262,10 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
     {
     // Faire methode de discrimination pour aller dans la bonne direct
         if (mFaustUI != nullptr && !FaustParameterMapping::getFaustPath(parameterID).empty())
-            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
+            if (parameterID == "HEAD_1_GAIN" || parameterID == "HEAD_2_GAIN" || parameterID == "HEAD_3_GAIN" || parameterID == "HEAD_4_GAIN")
+                mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), juce::Decibels::decibelsToGain (newValue));
+            else
+                mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
         if (mFaustHpLpUI != nullptr && !FaustParameterMapping::getHpLpPath(parameterID).empty())
             mFaustHpLpUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
         if (mFaustDuckingUI != nullptr && !FaustParameterMapping::getDuckingEnginePath(parameterID).empty())

@@ -41,8 +41,8 @@ void ParameterSetup::initParametersListener(juce::AudioProcessor& inProcessor) {
 
 void ParameterSetup::initializeParameters() {
     //osef by now no mappers
-   auto *gainParam = mParameters.getRawParameterValue("GAIN");
-    parameterChanged("GAIN",gainParam->load()) ;
+   //auto *gainParam = mParameters.getRawParameterValue("GAIN");
+   // parameterChanged("GAIN",gainParam->load()) ;
     //auto check = static_cast<juce::AudioProcessorParameterWithID*>(inProcessor.getParameters()[0])->paramID;
 
 
