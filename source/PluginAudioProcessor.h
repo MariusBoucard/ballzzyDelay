@@ -302,7 +302,6 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 
     bool setTempoSync(const juce::String& parameterID, float newValue) {
         if (parameterID.contains("TIME") && !parameterID.contains("NO_SYNC")) {
-            // TODO verifier on est que dans le bon cas
             mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), getTimeFromIndex(newValue, 60));
             return true;
         }
@@ -310,33 +309,71 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
     }
 
     void syncTempoToggled(bool isActive) {
-        //TODO ! set the timing of all the heads
+        if (isActive) {
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_1_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_1_TIME.getParamID())->load(),60));
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_2_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_2_TIME.getParamID())->load(),60));
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_3_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_3_TIME.getParamID())->load(),60));
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_4_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_4_TIME.getParamID())->load(),60));
+
+        } else {
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_1_TIME_NO_SYNC.getParamID()), mParameters.getRawParameterValue(id::HEAD_1_TIME_NO_SYNC.getParamID())->load());
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_2_TIME_NO_SYNC.getParamID()), mParameters.getRawParameterValue(id::HEAD_2_TIME_NO_SYNC.getParamID())->load());
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_3_TIME_NO_SYNC.getParamID()), mParameters.getRawParameterValue(id::HEAD_3_TIME_NO_SYNC.getParamID())->load());
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_4_TIME_NO_SYNC.getParamID()), mParameters.getRawParameterValue(id::HEAD_4_TIME_NO_SYNC.getParamID())->load());
+
+        }
+    }
+void parameterChanged(const juce::String& parameterID, float newValue) override
+{
+    // 1. Handle Global Sync Toggle first
+    if (parameterID == "SYNC_TEMPO") {
+        if (mFaustUI != nullptr && newValue > 0.5f) {
+            syncTempoToggled(true);
+        } else {
+            syncTempoToggled(false);
+        }
+        return; // Exit early as this is a state change, not a parameter update
     }
 
-    void parameterChanged (const juce::String& parameterID, float newValue) override
-    {
-    // Faire methode de discrimination pour aller dans la bonne direct
-    // Si jamais timeNoSync enclenché
-    if (mFaustUI != nullptr && parameterID.contains("SYNC_TEMPO") && newValue)
-        syncTempoToggled(newValue);
+    // 2. Dispatch to secondary engines (HP/LP and Ducking)
+    // These are independent of the main UI logic
+    updateSecondaryEngines(parameterID, newValue);
 
-    bool isTimeSync = false;
-    if (mFaustUI != nullptr && mParameters.getRawParameterValue("SYNC_TEMPO"))
-       isTimeSync = setTempoSync(parameterID, newValue);
+    // 3. Handle Main Engine (mFaustUI)
+    if (mFaustUI == nullptr) return;
 
-       // mFaustUI->setParamValue("time", newValue);
-
-    if (mFaustUI != nullptr && !FaustParameterMapping::getFaustPath(parameterID).empty() && !isTimeSync)
-        if (parameterID == "HEAD_1_GAIN" || parameterID == "HEAD_2_GAIN" || parameterID == "HEAD_3_GAIN" || parameterID == "HEAD_4_GAIN")
-            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), juce::Decibels::decibelsToGain (newValue));
-        else
-            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
-    if (mFaustHpLpUI != nullptr && !FaustParameterMapping::getHpLpPath(parameterID).empty())
-        mFaustHpLpUI->setParamValue(FaustParameterMapping::getHpLpPath(parameterID), newValue);
-    if (mFaustDuckingUI != nullptr && !FaustParameterMapping::getDuckingEnginePath(parameterID).empty())
-        mFaustDuckingUI->setParamValue(FaustParameterMapping::getDuckingEnginePath(parameterID), newValue);
-
+    // Check if it's a Tempo Sync parameter
+    bool isSynced = mParameters.getRawParameterValue("SYNC_TEMPO")->load() > 0.5f;
+    if (isSynced && setTempoSync(parameterID, newValue)) {
+        return; // setTempoSync handled the Faust update
     }
+
+    // Handle standard parameter updates
+    auto faustPath = FaustParameterMapping::getFaustPath(parameterID);
+    if (!faustPath.empty()) {
+        float finalValue = newValue;
+
+        // Automatically handle gain conversion for any parameter ending in _GAIN
+        if (parameterID.endsWith("_GAIN")) {
+            finalValue = juce::Decibels::decibelsToGain(newValue);
+        }
+
+        mFaustUI->setParamValue(faustPath, finalValue);
+    }
+}
+
+// Helper to keep the main method clean
+void updateSecondaryEngines(const juce::String& parameterID, float newValue) {
+    if (mFaustHpLpUI != nullptr) {
+        auto path = FaustParameterMapping::getHpLpPath(parameterID);
+        if (!path.empty()) mFaustHpLpUI->setParamValue(path, newValue);
+    }
+
+    if (mFaustDuckingUI != nullptr) {
+        auto path = FaustParameterMapping::getDuckingEnginePath(parameterID);
+        if (!path.empty()) mFaustDuckingUI->setParamValue(path, newValue);
+    }
+}
 
     void prepareToPlay (double sampleRate, int blockSize) override
 {
