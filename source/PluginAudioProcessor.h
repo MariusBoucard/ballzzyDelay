@@ -204,7 +204,7 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     parameters.syncTempo = syncTempo.get();
     layout.add(std::move(syncTempo));
 
-    auto ducking = std::make_unique<juce::AudioParameterFloat>(id::DUCKING,"Ducking",0.f,1.f,0.f);
+    auto ducking = std::make_unique<juce::AudioParameterBool>(id::DUCKING,"Ducking",false);
     parameters.ducking = ducking.get();
     layout.add(std::move(ducking));
     auto duckingAttac = std::make_unique<juce::AudioParameterFloat>(id::DUCKING_ATTACK,"Ducking attack time",0.f,500.f,10.f);
@@ -223,7 +223,7 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     parameters.duckingRatio = duckingRatio.get();
     layout.add(std::move(duckingRatio));
 
-    auto WIDTH = std::make_unique<juce::AudioParameterFloat>(id::WIDTH,"Width",0.f,1.f,0.f);
+    auto WIDTH = std::make_unique<juce::AudioParameterFloat>(id::WIDTH,"Width",0.f,100.f,0.f);
     parameters.width = WIDTH.get(); 
     layout.add(std::move(WIDTH));
 

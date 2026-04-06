@@ -43,7 +43,7 @@ namespace parametersDeclaration{
         juce::AudioParameterFloat* time{nullptr};
         juce::AudioParameterFloat* timeNoSync{nullptr};
         juce::AudioParameterBool* syncTempo{nullptr};
-        juce::AudioParameterFloat* ducking{nullptr};
+        juce::AudioParameterBool* ducking{nullptr};
         juce::AudioParameterFloat* duckingAttack{nullptr};
         juce::AudioParameterFloat* duckingRelease{nullptr};
         juce::AudioParameterFloat* duckingRatio{nullptr};
