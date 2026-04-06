@@ -21,6 +21,8 @@ public:
         webWidthRelay{id::WIDTH.getParamID()},
         webLpFilterFreqRelay{id::LP_FILTER_FREQ.getParamID()},
         webHpFilterFreqRelay{id::HP_FILTER_FREQ.getParamID()},
+        webHpBpRelay{id::HP_FILTER_BYPASS.getParamID()},
+        webLpBpRelay{id::LP_FILTER_BYPASS.getParamID()},
 
         // Head 1 Parameters
         webHead1BypassRelay{id::HEAD_1_ON.getParamID()},
@@ -167,6 +169,13 @@ public:
     if (auto* param = state.getParameter(id::HP_FILTER_FREQ.getParamID()))
         webHpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
             *param, webHpFilterFreqRelay, nullptr);
+
+    if (auto* param = state.getParameter(id::LP_FILTER_BYPASS.getParamID()))
+        webLpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+            *param, webLpBpRelay, nullptr);
+    if (auto* param = state.getParameter(id::HP_FILTER_BYPASS.getParamID()))
+        webHpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+            *param, webHpBpRelay, nullptr);
 
     // Head 1 Parameters
     if (auto* param = state.getParameter(id::HEAD_1_ON.getParamID()))
@@ -462,12 +471,16 @@ public:
             .withOptionsFrom(webWidthRelay)
             .withOptionsFrom(webLpFilterFreqRelay)
             .withOptionsFrom(webHpFilterFreqRelay)
+        .withOptionsFrom(webHpBpRelay)
+        .withOptionsFrom(webLpBpRelay)
 
             // Head 1 Parameters
             .withOptionsFrom(webHead1BypassRelay)
             .withOptionsFrom(webHead1FeedbackRelay)
             .withOptionsFrom(webHead1PanRelay)
             .withOptionsFrom(webHead1TimeRelay)
+        .withOptionsFrom(webHead1TimeNoSyncRelay)
+
             .withOptionsFrom(webHead1GainRelay)
             .withOptionsFrom(webHead1MovementPeriodDurationRelay)
             .withOptionsFrom(webHead1MovementFunctionRelay)
@@ -485,6 +498,8 @@ public:
             .withOptionsFrom(webHead2FeedbackRelay)
             .withOptionsFrom(webHead2PanRelay)
             .withOptionsFrom(webHead2TimeRelay)
+        .withOptionsFrom(webHead2TimeNoSyncRelay)
+
             .withOptionsFrom(webHead2GainRelay)
             .withOptionsFrom(webHead2MovementPeriodDurationRelay)
             .withOptionsFrom(webHead2MovementFunctionRelay)
@@ -503,6 +518,7 @@ public:
             .withOptionsFrom(webHead3FeedbackRelay)
             .withOptionsFrom(webHead3PanRelay)
             .withOptionsFrom(webHead3TimeRelay)
+            .withOptionsFrom(webHead3TimeNoSyncRelay)
             .withOptionsFrom(webHead3GainRelay)
             .withOptionsFrom(webHead3MovementPeriodDurationRelay)
             .withOptionsFrom(webHead3MovementFunctionRelay)
@@ -521,6 +537,8 @@ public:
             .withOptionsFrom(webHead4FeedbackRelay)
             .withOptionsFrom(webHead4PanRelay)
             .withOptionsFrom(webHead4TimeRelay)
+            .withOptionsFrom(webHead4TimeNoSyncRelay)
+
             .withOptionsFrom(webHead4GainRelay)
             .withOptionsFrom(webHead4MovementPeriodDurationRelay)
             .withOptionsFrom(webHead4MovementFunctionRelay)
@@ -561,6 +579,9 @@ private:
     juce::WebSliderRelay webWidthRelay;
     juce::WebSliderRelay webLpFilterFreqRelay;
     juce::WebSliderRelay webHpFilterFreqRelay;
+    juce::WebToggleButtonRelay webHpBpRelay;
+    juce::WebToggleButtonRelay webLpBpRelay;
+
 
     // ============================================================================
     // Relays - Head 1 Parameters
@@ -665,6 +686,10 @@ private:
     std::unique_ptr<juce::WebSliderParameterAttachment> webWidthSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webLpFilterFreqSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHpFilterFreqSliderAttachment;
+    std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHpBpToggleAttachment;
+    std::unique_ptr<juce::WebToggleButtonParameterAttachment> webLpBpToggleAttachment;
+
+
 
     // ============================================================================
     // Attachments - Head 1 Parameters

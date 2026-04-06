@@ -152,7 +152,9 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     head.feedBack = headFeed.get();
     layout.add(std::move(headFeed));
 
-    auto headTime = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_TIME", 1}, "Time Head "+prefix, 0.f, 4.f, 0.2f);
+
+    auto headTime = std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{prefix + "_TIME", 1},
+        "Time Head "+prefix, juce::StringArray{"1/64", "1/32T", "1/64D", "1/32", "1/16T", "1/32D", "1/16", "1/8T", "1/16D", "1/8", "1/4T", "1/8D", "1/4", "1/2T", "1/4D", "1/2", "1T", "1/2D", "1"},0);
     head.time = headTime.get();
     layout.add(std::move(headTime));
 
@@ -235,6 +237,13 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     parameters.hpFilter.freq = hp.get();
     layout.add(std::move(hp));
 
+    auto hpBp = std::make_unique<juce::AudioParameterBool>(id::HP_FILTER_BYPASS,"HP Bp",1);
+    parameters.hpFilter.bypass = hpBp.get();
+    layout.add(std::move(hpBp));
+    auto lpBp = std::make_unique<juce::AudioParameterBool>(id::LP_FILTER_BYPASS,"LP Bp",1);
+    parameters.lpFilter.bypass = lpBp.get();
+    layout.add(std::move(lpBp));
+
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout
@@ -257,19 +266,75 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
     return layout;
 }
 
+    float getTimeFromIndex(float index, float bpm) {
+    // 1. Calculate duration of one beat (quarter note) in seconds
+    const float beatDuration = 60.0f / bpm;
+    float beatMultiplier = 0.0f;
+
+    // 2. Cast float index to int for the switch
+    int idx = static_cast<int>(index);
+
+    switch (idx) {
+        case 0:  beatMultiplier = 4.0f / 64.0f;             break; // 1/64
+        case 1:  beatMultiplier = (4.0f / 32.0f) * (2.f/3.f); break; // 1/32T
+        case 2:  beatMultiplier = (4.0f / 64.0f) * 1.5f;      break; // 1/64D
+        case 3:  beatMultiplier = 4.0f / 32.0f;             break; // 1/32
+        case 4:  beatMultiplier = (4.0f / 16.0f) * (2.f/3.f); break; // 1/16T
+        case 5:  beatMultiplier = (4.0f / 32.0f) * 1.5f;      break; // 1/32D
+        case 6:  beatMultiplier = 4.0f / 16.0f;             break; // 1/16
+        case 7:  beatMultiplier = (4.0f / 8.0f)  * (2.f/3.f); break; // 1/8T
+        case 8:  beatMultiplier = (4.0f / 16.0f) * 1.5f;      break; // 1/16D
+        case 9:  beatMultiplier = 4.0f / 8.0f;              break; // 1/8
+        case 10: beatMultiplier = (4.0f / 4.0f)  * (2.f/3.f); break; // 1/4T
+        case 11: beatMultiplier = (4.0f / 8.0f)  * 1.5f;      break; // 1/8D
+        case 12: beatMultiplier = 4.0f / 4.0f;              break; // 1/4 (1 beat)
+        case 13: beatMultiplier = (4.0f / 2.0f)  * (2.f/3.f); break; // 1/2T
+        case 14: beatMultiplier = (4.0f / 4.0f)  * 1.5f;      break; // 1/4D
+        case 15: beatMultiplier = 4.0f / 2.0f;              break; // 1/2
+        case 16: beatMultiplier = 4.0f * (2.f/3.f);           break; // 1T (Whole Triplet)
+        case 17: beatMultiplier = (4.0f / 2.0f)  * 1.5f;      break; // 1/2D
+        case 18: beatMultiplier = 4.0f;                     break; // 1 (Whole note)
+        default: beatMultiplier = 1.0f;                     break;
+    }
+
+    return beatMultiplier * beatDuration;
+}
+
+    bool setTempoSync(const juce::String& parameterID, float newValue) {
+        if (parameterID.contains("TIME") && !parameterID.contains("NO_SYNC")) {
+            // TODO verifier on est que dans le bon cas
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), getTimeFromIndex(newValue, 60));
+            return true;
+        }
+        return false;
+    }
+
+    void syncTempoToggled(bool isActive) {
+        //TODO ! set the timing of all the heads
+    }
 
     void parameterChanged (const juce::String& parameterID, float newValue) override
     {
     // Faire methode de discrimination pour aller dans la bonne direct
-        if (mFaustUI != nullptr && !FaustParameterMapping::getFaustPath(parameterID).empty())
-            if (parameterID == "HEAD_1_GAIN" || parameterID == "HEAD_2_GAIN" || parameterID == "HEAD_3_GAIN" || parameterID == "HEAD_4_GAIN")
-                mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), juce::Decibels::decibelsToGain (newValue));
-            else
-                mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
-        if (mFaustHpLpUI != nullptr && !FaustParameterMapping::getHpLpPath(parameterID).empty())
-            mFaustHpLpUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
-        if (mFaustDuckingUI != nullptr && !FaustParameterMapping::getDuckingEnginePath(parameterID).empty())
-            mFaustDuckingUI->setParamValue(FaustParameterMapping::getDuckingEnginePath(parameterID), newValue);
+    // Si jamais timeNoSync enclenché
+    if (mFaustUI != nullptr && parameterID.contains("SYNC_TEMPO") && newValue)
+        syncTempoToggled(newValue);
+
+    bool isTimeSync = false;
+    if (mFaustUI != nullptr && mParameters.getRawParameterValue("SYNC_TEMPO"))
+       isTimeSync = setTempoSync(parameterID, newValue);
+
+       // mFaustUI->setParamValue("time", newValue);
+
+    if (mFaustUI != nullptr && !FaustParameterMapping::getFaustPath(parameterID).empty() && !isTimeSync)
+        if (parameterID == "HEAD_1_GAIN" || parameterID == "HEAD_2_GAIN" || parameterID == "HEAD_3_GAIN" || parameterID == "HEAD_4_GAIN")
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), juce::Decibels::decibelsToGain (newValue));
+        else
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), newValue);
+    if (mFaustHpLpUI != nullptr && !FaustParameterMapping::getHpLpPath(parameterID).empty())
+        mFaustHpLpUI->setParamValue(FaustParameterMapping::getHpLpPath(parameterID), newValue);
+    if (mFaustDuckingUI != nullptr && !FaustParameterMapping::getDuckingEnginePath(parameterID).empty())
+        mFaustDuckingUI->setParamValue(FaustParameterMapping::getDuckingEnginePath(parameterID), newValue);
 
     }
 
@@ -294,7 +359,7 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
             float currentValue = p->getValue(); // Normalized 0.0 to 1.0
 
             // Convert normalized to actual range if your Faust UI expects raw values
-            // (Note: If using APVTS, it's often easier to use getRawParameterValue)
+            // (Note: If using APVTS, it"s often easier to use getRawParameterValue)
           //  float denormalizedValue = p->;
 
             // Use your mapping helper to update Faust
