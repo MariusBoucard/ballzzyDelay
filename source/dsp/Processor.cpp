@@ -58,6 +58,7 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
     const float inGain = mParameters.getRawParameterValue(id::INPUT_GAIN.getParamID())->load();
     const float outGain = mParameters.getRawParameterValue(id::OUTPUT_GAIN.getParamID())->load();
     const float mixAmount = mParameters.getRawParameterValue(id::MIX.getParamID())->load() / 100.0f;
+    const bool ducking = mParameters.getRawParameterValue(id::DUCKING.getParamID())->load();
 
     juce::AudioBuffer<float> dryBuffer;
     dryBuffer.makeCopyOf(inBuffer);
@@ -75,15 +76,17 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
     mFaustLPHpProcessor->compute(numSamples, inputs, postHpLp);
     mFaustProcessor->compute(numSamples, postHpLp, outputs);
 
-    for (int i = 0; i < numSamples; ++i) {
-        duckingInput[0][i] = outputs[0][i];
-        duckingInput[1][i] = outputs[1][i];
+    if (ducking) {
+        for (int i = 0; i < numSamples; ++i) {
+            duckingInput[0][i] = outputs[0][i];
+            duckingInput[1][i] = outputs[1][i];
 
-        duckingInput[2][i] = inputs[0][i];
-        duckingInput[3][i] = inputs[1][i];
+            duckingInput[2][i] = inputs[0][i];
+            duckingInput[3][i] = inputs[1][i];
+        }
+
+        mFaustDuckingProcessor->compute(numSamples, duckingInput, outputs);
     }
-    mFaustDuckingProcessor->compute(numSamples, duckingInput, outputs);
-
     for (int ch = 0; ch < numOut; ++ch) {
         auto* channelWritePtr = inBuffer.getWritePointer(ch);
         auto* dryReadPtr = dryBuffer.getReadPointer(ch < numIn ? ch : 0);
