@@ -27,6 +27,8 @@ namespace id {
     const juce::ParameterID HP_FILTER_FREQ        {"HP_FILTER_FREQ", 1};
     const juce::ParameterID LP_FILTER_BYPASS      {"LP_FILTER_BYPASS", 1};
     const juce::ParameterID HP_FILTER_BYPASS      {"HP_FILTER_BYPASS", 1};
+    const juce::ParameterID USER_BPM                   {"USER_BPM", 1};
+    const juce::ParameterID BPM_FROM_HOST                   {"BPM_FROM_HOST", 1};
 
     // ============================================================================
     // Helper function for nested Head IDs

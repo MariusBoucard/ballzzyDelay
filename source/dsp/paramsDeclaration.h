@@ -49,6 +49,8 @@ namespace parametersDeclaration{
         juce::AudioParameterFloat* duckingRatio{nullptr};
         juce::AudioParameterFloat* duckingThreshold{nullptr};
         juce::AudioParameterFloat* width{nullptr};
+        juce::AudioParameterFloat* bpm{nullptr};
+        juce::AudioParameterBool* bpmFromHost{nullptr};
 
         Lp lpFilter;
         Hp hpFilter;

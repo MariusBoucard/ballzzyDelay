@@ -27,6 +27,13 @@ PluginAudioProcessor::~PluginAudioProcessor() {
 }
 
 void PluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &a) {
-    //juce::RangedAudioParameter *name = mParameters.getParameter("MIX");
+    if (auto* playHead = getPlayHead()) {
+        auto postion = playHead->getPosition();
+        if (postion.hasValue() && postion->getBpm().hasValue()) {
+            // Store it for the UI/other methods to use
+            currentBpm.store(*postion->getBpm());
+        }
+    }
+
     mSkeletonProcessor.processBlock(buffer, a);
 }

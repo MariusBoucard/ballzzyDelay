@@ -244,6 +244,14 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     parameters.lpFilter.bypass = lpBp.get();
     layout.add(std::move(lpBp));
 
+    auto bpm = std::make_unique<juce::AudioParameterFloat>(id::USER_BPM, "BPM", 10.f, 200.f, 120.f);
+    parameters.bpm = bpm.get();
+    layout.add(std::move(bpm));
+
+    auto bpmFromHost = std::make_unique<juce::AudioParameterBool>(id::BPM_FROM_HOST, "BPM value from host", 1);
+    parameters.bpmFromHost = bpmFromHost.get();
+    layout.add(std::move(bpmFromHost));
+
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout
@@ -266,8 +274,14 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
     return layout;
 }
 
-    float getTimeFromIndex(float index, float bpm) {
+    float getTimeFromIndex(float index) {
     // 1. Calculate duration of one beat (quarter note) in seconds
+    double bpm =   mParameters.getRawParameterValue(id::USER_BPM.getParamID())->load();
+    bool hostTempoBpm = mParameters.getRawParameterValue(id::BPM_FROM_HOST.getParamID())->load();
+    if (hostTempoBpm) {
+        bpm = currentBpm.load();
+    }
+
     const float beatDuration = 60.0f / bpm;
     float beatMultiplier = 0.0f;
 
@@ -302,7 +316,8 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 
     bool setTempoSync(const juce::String& parameterID, float newValue) {
         if (parameterID.contains("TIME") && !parameterID.contains("NO_SYNC")) {
-            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), getTimeFromIndex(newValue, 60));
+
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(parameterID), getTimeFromIndex(newValue));
             return true;
         }
         return false;
@@ -310,10 +325,10 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 
     void syncTempoToggled(bool isActive) {
         if (isActive) {
-            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_1_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_1_TIME.getParamID())->load(),60));
-            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_2_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_2_TIME.getParamID())->load(),60));
-            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_3_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_3_TIME.getParamID())->load(),60));
-            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_4_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_4_TIME.getParamID())->load(),60));
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_1_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_1_TIME.getParamID())->load()));
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_2_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_2_TIME.getParamID())->load()));
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_3_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_3_TIME.getParamID())->load()));
+            mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_4_TIME.getParamID()), getTimeFromIndex(mParameters.getRawParameterValue(id::HEAD_4_TIME.getParamID())->load()));
 
         } else {
             mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_1_TIME_NO_SYNC.getParamID()), mParameters.getRawParameterValue(id::HEAD_1_TIME_NO_SYNC.getParamID())->load());
@@ -332,28 +347,23 @@ void parameterChanged(const juce::String& parameterID, float newValue) override
         } else {
             syncTempoToggled(false);
         }
-        return; // Exit early as this is a state change, not a parameter update
+        return;
     }
 
-    // 2. Dispatch to secondary engines (HP/LP and Ducking)
-    // These are independent of the main UI logic
+
     updateSecondaryEngines(parameterID, newValue);
 
-    // 3. Handle Main Engine (mFaustUI)
     if (mFaustUI == nullptr) return;
 
-    // Check if it's a Tempo Sync parameter
     bool isSynced = mParameters.getRawParameterValue("SYNC_TEMPO")->load() > 0.5f;
     if (isSynced && setTempoSync(parameterID, newValue)) {
-        return; // setTempoSync handled the Faust update
+        return;
     }
 
-    // Handle standard parameter updates
     auto faustPath = FaustParameterMapping::getFaustPath(parameterID);
     if (!faustPath.empty()) {
         float finalValue = newValue;
 
-        // Automatically handle gain conversion for any parameter ending in _GAIN
         if (parameterID.endsWith("_GAIN")) {
             finalValue = juce::Decibels::decibelsToGain(newValue);
         }
@@ -362,7 +372,6 @@ void parameterChanged(const juce::String& parameterID, float newValue) override
     }
 }
 
-// Helper to keep the main method clean
 void updateSecondaryEngines(const juce::String& parameterID, float newValue) {
     if (mFaustHpLpUI != nullptr) {
         auto path = FaustParameterMapping::getHpLpPath(parameterID);
@@ -375,7 +384,7 @@ void updateSecondaryEngines(const juce::String& parameterID, float newValue) {
     }
 }
 
-    void prepareToPlay (double sampleRate, int blockSize) override
+void prepareToPlay (double sampleRate, int blockSize) override
 {
     if (!mFaustUI) mFaustUI = std::make_unique<MapUI>();
     if (!mFaustHpLpUI) mFaustHpLpUI = std::make_unique<HpLpFilter::MapUI>();
@@ -465,6 +474,7 @@ public:
 
 private:
     parametersDeclaration::Parameters parametersDeclaration;
+    std::atomic<double> currentBpm { 120.0 };
     // Use unique_ptr for automatic memory management
     std::unique_ptr<MapUI> mFaustUI;
     std::unique_ptr<HpLpFilter::MapUI> mFaustHpLpUI;
