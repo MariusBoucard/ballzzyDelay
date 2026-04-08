@@ -152,6 +152,9 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     head.feedBack = headFeed.get();
     layout.add(std::move(headFeed));
 
+    auto feedbackSlave = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{prefix + "_FEEDBACK_SLAVE"}, "Feedback Slave " + prefix,0 );
+    head.feedbackSlave = feedbackSlave.get();
+    layout.add(std::move(feedbackSlave));
 
     auto headTime = std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{prefix + "_TIME", 1},
         "Time Head "+prefix, juce::StringArray{"1/64", "1/32T", "1/64D", "1/32", "1/16T", "1/32D", "1/16", "1/8T", "1/16D", "1/8", "1/4T", "1/8D", "1/4", "1/2T", "1/4D", "1/2", "1T", "1/2D", "1"},0);
@@ -185,14 +188,6 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     auto feedBack = std::make_unique<juce::AudioParameterFloat>(id::FEEDBACK,"Global Feedback",0.f,1.f,0.f);
     parameters.feedback = feedBack.get();
     layout.add(std::move(feedBack));
-
-    auto time = std::make_unique<juce::AudioParameterFloat>(id::TIME,"Global Time",0.f,1.f,0.f);
-    parameters.time = time.get();
-    layout.add(std::move(time));
-
-    auto timeNoSync = std::make_unique<juce::AudioParameterFloat>(id::TIME_NO_SYNC,"Global Time no sync",0.f,1.f,0.f);
-    parameters.timeNoSync = timeNoSync.get();
-    layout.add(std::move(timeNoSync));
 
     auto inputGain = std::make_unique<juce::AudioParameterFloat>(id::INPUT_GAIN,"Input Gain",-12.f,12.f,0.f);
     parameters.inputGain = inputGain.get();
@@ -244,7 +239,7 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     parameters.lpFilter.bypass = lpBp.get();
     layout.add(std::move(lpBp));
 
-    auto bpm = std::make_unique<juce::AudioParameterFloat>(id::USER_BPM, "BPM", 10.f, 200.f, 120.f);
+    auto bpm = std::make_unique<juce::AudioParameterFloat>(id::USER_BPM, "BPM", 20.f, 300.f, 120.f);
     parameters.bpm = bpm.get();
     layout.add(std::move(bpm));
 
@@ -338,9 +333,55 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 
         }
     }
+
+    bool updateGlobalFeedBackParameters(const juce::String& parameterID, float newValue) {
+        // If global feedback, update all the feedback slave.
+        // if feedback slave, alors on update la tete courante avec global
+
+        if (parameterID.equalsIgnoreCase("FEEDBACK")) {
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_1_FEEDBACK_SLAVE.getParamID())->load() > 0.5f) {
+                if (auto* headFeedBack = mParameters.getParameter(id::HEAD_1_FEEDBACK.getParamID())) {
+                    headFeedBack->setValueNotifyingHost(newValue);
+                }
+            }
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_2_FEEDBACK_SLAVE.getParamID())->load() > 0.5f) {
+                if (auto* headFeedBack = mParameters.getParameter(id::HEAD_2_FEEDBACK.getParamID())) {
+                    headFeedBack->setValueNotifyingHost(newValue);
+                }
+            }
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_3_FEEDBACK_SLAVE.getParamID())->load() > 0.5f) {
+                if (auto* headFeedBack = mParameters.getParameter(id::HEAD_3_FEEDBACK.getParamID())) {
+                    headFeedBack->setValueNotifyingHost(newValue);
+                }
+            }
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_4_FEEDBACK_SLAVE.getParamID())->load() > 0.5f) {
+                if (auto* headFeedBack = mParameters.getParameter(id::HEAD_1_FEEDBACK.getParamID())) {
+                    headFeedBack->setValueNotifyingHost(newValue);
+                }
+            }
+            return true;
+        }
+
+        if (parameterID.contains("FEEDBACK_SLAVE")) {
+            juce::String param = parameterID.substring(0, parameterID.length() - 6); // on enleve le slave
+            if (auto* headFeedBack = mParameters.getParameter(param)) {
+                headFeedBack->setValueNotifyingHost(mParameters.getRawParameterValue(id::FEEDBACK.getParamID())->load());
+            }
+            return true;
+        }
+
+            // test si on est en mode slave, mais on essaye de update une head ?
+        if (parameterID.contains("FEEDBACK") && mParameters.getRawParameterValue(parameterID+"_SLAVE")->load() > 0.5f)
+        {
+            if (auto* headFeedBack = mParameters.getParameter(parameterID)) {
+                headFeedBack->setValueNotifyingHost(mParameters.getRawParameterValue(id::FEEDBACK.getParamID())->load());
+            }
+        }
+        return false;
+    }
+
 void parameterChanged(const juce::String& parameterID, float newValue) override
 {
-    // 1. Handle Global Sync Toggle first
     if (parameterID == "SYNC_TEMPO") {
         if (mFaustUI != nullptr && newValue > 0.5f) {
             syncTempoToggled(true);
@@ -350,6 +391,23 @@ void parameterChanged(const juce::String& parameterID, float newValue) override
         return;
     }
 
+    if (updateGlobalFeedBackParameters(parameterID, newValue)) return;
+
+    if (parameterID == "BPM_FROM_HOST") {
+        if (newValue > 0.5f) {
+            // 1. Get the actual parameter object
+            if (auto* bpmParam = mParameters.getParameter(id::USER_BPM.getParamID())) {
+
+                // 2. Convert the "real" BPM (e.g. 120) to normalized (0.0 -> 1.0)
+                float hostBpm = static_cast<float>(currentBpm.load());
+                float normalizedBpm = mParameters.getParameterRange(id::USER_BPM.getParamID())
+                                                 .convertTo0to1(hostBpm);
+
+                // 3. Update it so the UI and Host both know
+                bpmParam->setValueNotifyingHost(normalizedBpm);
+            }
+        }
+    }
 
     updateSecondaryEngines(parameterID, newValue);
 

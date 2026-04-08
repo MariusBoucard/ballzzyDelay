@@ -12,8 +12,6 @@ namespace id {
     const juce::ParameterID OUTPUT_GAIN           {"OUTPUT_GAIN", 1};
     const juce::ParameterID MIX                   {"MIX", 1};
     const juce::ParameterID FEEDBACK              {"FEEDBACK", 1};
-    const juce::ParameterID TIME                  {"TIME", 1};
-    const juce::ParameterID TIME_NO_SYNC          {"TIME_NO_SYNC", 1};
     const juce::ParameterID SYNC_TEMPO            {"SYNC_TEMPO", 1};
 
     const juce::ParameterID DUCKING               {"DUCKING", 1};
@@ -27,25 +25,13 @@ namespace id {
     const juce::ParameterID HP_FILTER_FREQ        {"HP_FILTER_FREQ", 1};
     const juce::ParameterID LP_FILTER_BYPASS      {"LP_FILTER_BYPASS", 1};
     const juce::ParameterID HP_FILTER_BYPASS      {"HP_FILTER_BYPASS", 1};
-    const juce::ParameterID USER_BPM                   {"USER_BPM", 1};
-    const juce::ParameterID BPM_FROM_HOST                   {"BPM_FROM_HOST", 1};
+    const juce::ParameterID USER_BPM              {"USER_BPM", 1};
+    const juce::ParameterID BPM_FROM_HOST         {"BPM_FROM_HOST", 1};
 
     // ============================================================================
     // Helper function for nested Head IDs
     // ============================================================================
     inline juce::String getHeadPrefix(int index) { return "HEAD_" + juce::String(index) + "_"; }
-
-    struct ParameterIDs {
-        static const std::array<juce::ParameterID, 10>& getIDs() {
-            static const std::array<juce::ParameterID, 10> ids = {
-                GAIN, BYPASS, INPUT_GAIN, OUTPUT_GAIN,
-                MIX,TIME, FEEDBACK, SYNC_TEMPO, DUCKING, DUCKING_ATTACK
-            };
-            return ids;
-        }
-    };
-
-
 
     // ============================================================================
     // Head 1 Parameters
@@ -66,9 +52,9 @@ namespace id {
     const juce::ParameterID HEAD_1_HP_FILTER_FREQ            {"HEAD_1_HP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_1_HP_FILTER_BYPASS          {"HEAD_1_HP_FILTER_BYPASS", 1};
     const juce::ParameterID HEAD_1_LP_FILTER_BYPASS          {"HEAD_1_LP_FILTER_BYPASS", 1};
+
     const juce::ParameterID HEAD_1_FEEDBACK_SLAVE            {"HEAD_1_FEEDBACK_SLAVE", 1};
-    const juce::ParameterID HEAD_1_GAIN_SLAVE                {"HEAD_1_GAIN_SLAVE", 1};
-    
+
     // ============================================================================
     // Head 2 Parameters
     // ============================================================================
@@ -87,7 +73,6 @@ namespace id {
     const juce::ParameterID HEAD_2_LP_FILTER_FREQ            {"HEAD_2_LP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_2_HP_FILTER_FREQ            {"HEAD_2_HP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_2_FEEDBACK_SLAVE            {"HEAD_2_FEEDBACK_SLAVE", 1};
-    const juce::ParameterID HEAD_2_GAIN_SLAVE                {"HEAD_2_GAIN_SLAVE", 1};
     const juce::ParameterID HEAD_2_LP_FILTER_BYPASS          {"HEAD_2_LP_FILTER_BYPASS", 1};
     const juce::ParameterID HEAD_2_HP_FILTER_BYPASS          {"HEAD_2_HP_FILTER_BYPASS", 1};
 
@@ -110,7 +95,6 @@ namespace id {
     const juce::ParameterID HEAD_3_LP_FILTER_FREQ            {"HEAD_3_LP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_3_HP_FILTER_FREQ            {"HEAD_3_HP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_3_FEEDBACK_SLAVE            {"HEAD_3_FEEDBACK_SLAVE", 1};
-    const juce::ParameterID HEAD_3_GAIN_SLAVE                {"HEAD_3_GAIN_SLAVE", 1};
     const juce::ParameterID HEAD_3_LP_FILTER_BYPASS          {"HEAD_3_LP_FILTER_BYPASS", 1};
     const juce::ParameterID HEAD_3_HP_FILTER_BYPASS          {"HEAD_3_HP_FILTER_BYPASS", 1};
 
@@ -132,7 +116,6 @@ namespace id {
     const juce::ParameterID HEAD_4_LP_FILTER_FREQ            {"HEAD_4_LP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_4_HP_FILTER_FREQ            {"HEAD_4_HP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_4_FEEDBACK_SLAVE            {"HEAD_4_FEEDBACK_SLAVE", 1};
-    const juce::ParameterID HEAD_4_GAIN_SLAVE                {"HEAD_4_GAIN_SLAVE", 1};
     const juce::ParameterID HEAD_4_LP_FILTER_BYPASS          {"HEAD_4_LP_FILTER_BYPASS", 1};
     const juce::ParameterID HEAD_4_HP_FILTER_BYPASS          {"HEAD_4_HP_FILTER_BYPASS", 1};
 

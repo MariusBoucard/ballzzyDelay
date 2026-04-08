@@ -30,8 +30,6 @@ namespace parametersDeclaration{
             Lp lpFilter;
             Hp hpFilter;
             juce::AudioParameterBool* feedbackSlave{nullptr};
-            juce::AudioParameterChoice * gainSlave{nullptr};
-
         };
 
         juce::AudioParameterFloat* gain{nullptr};
