@@ -89,14 +89,24 @@ void addMovementLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layo
     auto period = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_MOVEMENT_PERIOD_DURATION", 1}, "Period"+prefix, 0.1f, 10.f, 1.f);
     move.periodDuration = period.get();
     layout.add(std::move(period));
+
+    auto periodNoSync = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_MOVEMENT_PERIOD_DURATION_NO_SYNC", 1}, "Period"+prefix, 0.1f, 10.f, 1.f);
+    move.periodDurationNoSync = periodNoSync.get();
+    layout.add(std::move(periodNoSync));
+
     auto width = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_MOVEMENT_WIDTH", 1}, "Width "+prefix, 0.f,1.f, 0.f);
     move.width = width.get();
     layout.add(std::move(width));
 
-    auto func = std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{prefix + "_MOVEMENT_FUNCTION", 1}, "Function"+prefix, juce::StringArray{"Sine", "Saw", "Square"}, 0);
+    auto periodStart = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_MOVEMENT_PERIOD_STARTING_POINT", 1}, "Period Start "+prefix, 0.f, 1.f, 0.f);
+    move.periodStart = width.get();
+    layout.add(std::move(periodStart));
+
+    auto func = std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{prefix + "_MOVEMENT_FUNCTION", 1}, "Function"+prefix, juce::StringArray{"Sine", "Square", "Triangle"}, 0);
     move.function = func.get();
     layout.add(std::move(func));
 }
+
 void writeFaustParametersToFile() {
 
     std::vector<juce::String> params;
@@ -167,7 +177,7 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
 
     // Nested calls
     addFilterLayout(layout, prefix, head.lpFilter, head.hpFilter);
-    addMovementLayout(layout, prefix + "_MV", head.movementFunction);
+    addMovementLayout(layout, prefix , head.movementFunction);
 }
 
     void addMainParametersLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout, parametersDeclaration::Parameters& parameters) {

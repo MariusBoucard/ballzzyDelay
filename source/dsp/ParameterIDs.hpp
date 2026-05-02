@@ -44,6 +44,7 @@ namespace id {
     const juce::ParameterID HEAD_1_GAIN                      {"HEAD_1_GAIN", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_PERIOD_DURATION  {"HEAD_1_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_PERIOD_DURATION_NO_SYNC  {"HEAD_1_MOVEMENT_PERIOD_DURATION_NO_SYNC", 1};
+    const juce::ParameterID HEAD_1_MOVEMENT_PERIOD_STARTING_POINT  {"HEAD_1_MOVEMENT_PERIOD_STARTING_POINT", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_FUNCTION         {"HEAD_1_MOVEMENT_FUNCTION", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_WIDTH            {"HEAD_1_MOVEMENT_WIDTH", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_ON               {"HEAD_1_MOVEMENT_ON", 1};
@@ -66,6 +67,8 @@ namespace id {
     const juce::ParameterID HEAD_2_GAIN                      {"HEAD_2_GAIN", 1};
     const juce::ParameterID HEAD_2_MOVEMENT_PERIOD_DURATION  {"HEAD_2_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_2_MOVEMENT_PERIOD_DURATION_NO_SYNC  {"HEAD_2_MOVEMENT_PERIOD_DURATION_NO_SYNC", 1};
+    const juce::ParameterID HEAD_2_MOVEMENT_PERIOD_STARTING_POINT  {"HEAD_2_MOVEMENT_PERIOD_STARTING_POINT", 1};
+
     const juce::ParameterID HEAD_2_MOVEMENT_FUNCTION         {"HEAD_2_MOVEMENT_FUNCTION", 1};
     const juce::ParameterID HEAD_2_MOVEMENT_WIDTH            {"HEAD_2_MOVEMENT_WIDTH", 1};
     const juce::ParameterID HEAD_2_MOVEMENT_ON               {"HEAD_2_MOVEMENT_ON", 1};
@@ -88,6 +91,7 @@ namespace id {
     const juce::ParameterID HEAD_3_GAIN                      {"HEAD_3_GAIN", 1};
     const juce::ParameterID HEAD_3_MOVEMENT_PERIOD_DURATION  {"HEAD_3_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_3_MOVEMENT_PERIOD_DURATION_NO_SYNC  {"HEAD_3_MOVEMENT_PERIOD_DURATION_NO_SYNC", 1};
+    const juce::ParameterID HEAD_3_MOVEMENT_PERIOD_STARTING_POINT  {"HEAD_3_MOVEMENT_PERIOD_STARTING_POINT", 1};
     const juce::ParameterID HEAD_3_MOVEMENT_FUNCTION         {"HEAD_3_MOVEMENT_FUNCTION", 1};
     const juce::ParameterID HEAD_3_MOVEMENT_WIDTH            {"HEAD_3_MOVEMENT_WIDTH", 1};
     const juce::ParameterID HEAD_3_MOVEMENT_ON               {"HEAD_3_MOVEMENT_ON", 1};
@@ -109,9 +113,11 @@ namespace id {
     const juce::ParameterID HEAD_4_GAIN                      {"HEAD_4_GAIN", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_PERIOD_DURATION  {"HEAD_4_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_PERIOD_DURATION_NO_SYNC  {"HEAD_4_MOVEMENT_PERIOD_DURATION_NO_SYNC", 1};
+    const juce::ParameterID HEAD_4_MOVEMENT_PERIOD_STARTING_POINT  {"HEAD_4_MOVEMENT_PERIOD_STARTING_POINT", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_FUNCTION         {"HEAD_4_MOVEMENT_FUNCTION", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_WIDTH            {"HEAD_4_MOVEMENT_WIDTH", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_ON               {"HEAD_4_MOVEMENT_ON", 1};
+
     const juce::ParameterID HEAD_4_MOVEMENT_WIDTH_SLAVE      {"HEAD_4_MOVEMENT_WIDTH_SLAVE", 1};
     const juce::ParameterID HEAD_4_LP_FILTER_FREQ            {"HEAD_4_LP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_4_HP_FILTER_FREQ            {"HEAD_4_HP_FILTER_FREQ", 1};

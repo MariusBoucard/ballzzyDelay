@@ -15,9 +15,7 @@ public:
     //==============================================================================
     SkeletonAudioProcessor(juce::AudioProcessorValueTreeState &inParameters, ParameterSetup &inParameterSetup, parametersDeclaration::Parameters inParametersDeclaration);
 
-
     ~SkeletonAudioProcessor() override;
-
 
     void prepareToPlay(double inSampleRate, int inBlockSize) override {
         mSampleRate = inSampleRate;
@@ -31,7 +29,6 @@ public:
         mFaustProcessor->init(mSampleRate);
         mFaustProcessor->buildUserInterface(fUI);
 
-        // TODO CHANGE TO THE RIGHT DSP
         mFaustDuckingProcessor = new DuckingEngine::DuckingEngine();
         mFaustDuckingProcessor->init(mSampleRate);
         mFaustDuckingProcessor->buildUserInterface(fDuckingUI);

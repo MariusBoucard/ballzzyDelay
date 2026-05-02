@@ -13,6 +13,8 @@ namespace parametersDeclaration{
         };
         struct MovementFunction {
             juce::AudioParameterFloat* periodDuration{nullptr};
+            juce::AudioParameterFloat* periodDurationNoSync{nullptr};
+            juce::AudioParameterFloat* periodStart{nullptr};
             juce::AudioParameterChoice* function{nullptr};
             juce::AudioParameterFloat* width{nullptr};
             juce::AudioParameterBool* movementOn{nullptr};
@@ -25,6 +27,7 @@ namespace parametersDeclaration{
             juce::AudioParameterFloat* timeNoSync{nullptr};
             juce::AudioParameterFloat* pan{nullptr};
             juce::AudioParameterFloat* gain{nullptr};
+
             MovementFunction movementFunction;
 
             Lp lpFilter;
@@ -46,7 +49,7 @@ namespace parametersDeclaration{
         juce::AudioParameterFloat* duckingRelease{nullptr};
         juce::AudioParameterFloat* duckingRatio{nullptr};
         juce::AudioParameterFloat* duckingThreshold{nullptr};
-        juce::AudioParameterFloat* width{nullptr};
+        juce::AudioParameterFloat* width{nullptr}; // Todo reflechir si sens niveau head ?
         juce::AudioParameterFloat* bpm{nullptr};
         juce::AudioParameterBool* bpmFromHost{nullptr};
 
