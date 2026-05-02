@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Server",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/ui/vue-front/frontend",
+      "console": "integratedTerminal",
+      "restart": false,
+      "skipFiles": ["<node_internals>/**"],
+      "preLaunchTask": "none"
+    },
+    {
+      "name": "Attach Chrome",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "pathMapping": {
+        "/": "${workspaceFolder}/ui/vue-front/frontend/",
+        "/src": "${workspaceFolder}/ui/vue-front/frontend/src"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Dev + Debug",
+      "configurations": ["Launch Server", "Attach Chrome"],
+      "stopAll": true
+    }
+  ]
+}

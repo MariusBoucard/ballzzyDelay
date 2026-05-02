@@ -177,7 +177,7 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
 
     // Nested calls
     addFilterLayout(layout, prefix, head.lpFilter, head.hpFilter);
-    addMovementLayout(layout, prefix , head.movementFunction);
+    addMovementLayout(layout, prefix, head.movementFunction);
 }
 
     void addMainParametersLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout, parametersDeclaration::Parameters& parameters) {

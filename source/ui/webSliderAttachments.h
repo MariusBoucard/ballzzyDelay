@@ -215,7 +215,7 @@ public:
             *param, webHead1MovementPeriodStartRelay, nullptr);
 
     if (auto* param = state.getParameter(id::HEAD_1_MOVEMENT_FUNCTION.getParamID()))
-        webHead1MovementFunctionComboBoxAttachment = std::make_unique<juce::WebComboBoxParameterAttachment>(
+        webHead1MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
             *param, webHead1MovementFunctionRelay, nullptr);
 
     if (auto* param = state.getParameter(id::HEAD_1_MOVEMENT_WIDTH.getParamID()))
@@ -309,7 +309,7 @@ public:
             *param, webHead2MovementPeriodStartRelay, nullptr);
 
     if (auto* param = state.getParameter(id::HEAD_2_MOVEMENT_FUNCTION.getParamID()))
-        webHead2MovementFunctionComboBoxAttachment = std::make_unique<juce::WebComboBoxParameterAttachment>(
+        webHead2MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
             *param, webHead2MovementFunctionRelay, nullptr);
 
     if (auto* param = state.getParameter(id::HEAD_2_MOVEMENT_WIDTH.getParamID()))
@@ -374,7 +374,7 @@ public:
             *param, webHead3MovementPeriodStartRelay, nullptr);
 
     if (auto* param = state.getParameter(id::HEAD_3_MOVEMENT_FUNCTION.getParamID()))
-        webHead3MovementFunctionComboBoxAttachment = std::make_unique<juce::WebComboBoxParameterAttachment>(
+        webHead3MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
             *param, webHead3MovementFunctionRelay, nullptr);
 
     if (auto* param = state.getParameter(id::HEAD_3_MOVEMENT_WIDTH.getParamID()))
@@ -438,7 +438,7 @@ public:
             *param, webHead4MovementPeriodStartRelay, nullptr);
 
     if (auto* param = state.getParameter(id::HEAD_4_MOVEMENT_FUNCTION.getParamID()))
-        webHead4MovementFunctionComboBoxAttachment = std::make_unique<juce::WebComboBoxParameterAttachment>(
+        webHead4MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
             *param, webHead4MovementFunctionRelay, nullptr);
 
     if (auto* param = state.getParameter(id::HEAD_4_MOVEMENT_WIDTH.getParamID()))
@@ -622,7 +622,7 @@ private:
 
     juce::WebSliderRelay webHead1MovementPeriodDurationRelay;
     juce::WebSliderRelay webHead1MovementPeriodDurationNoSyncRelay;
-    juce::WebComboBoxRelay webHead1MovementFunctionRelay;
+    juce::WebSliderRelay webHead1MovementFunctionRelay;
     juce::WebSliderRelay webHead1MovementWidthRelay;
     juce::WebSliderRelay webHead1MovementPeriodStartRelay;
 
@@ -649,7 +649,7 @@ private:
     juce::WebSliderRelay webHead2MovementPeriodDurationNoSyncRelay;
     juce::WebSliderRelay webHead2MovementPeriodStartRelay;
 
-    juce::WebComboBoxRelay webHead2MovementFunctionRelay;
+    juce::WebSliderRelay webHead2MovementFunctionRelay;
     juce::WebSliderRelay webHead2MovementWidthRelay;
     juce::WebToggleButtonRelay webHead2MovementOnRelay;
     juce::WebToggleButtonRelay webHead2MovementWidthSlaveRelay;
@@ -670,7 +670,7 @@ private:
     juce::WebSliderRelay webHead3GainRelay;
     juce::WebSliderRelay webHead3MovementPeriodDurationRelay;
     juce::WebSliderRelay webHead3MovementPeriodDurationNoSyncRelay;
-    juce::WebComboBoxRelay webHead3MovementFunctionRelay;
+    juce::WebSliderRelay webHead3MovementFunctionRelay;
     juce::WebSliderRelay webHead3MovementWidthRelay;
     juce::WebToggleButtonRelay webHead3MovementOnRelay;
     juce::WebSliderRelay webHead3MovementPeriodStartRelay;
@@ -695,7 +695,7 @@ private:
     juce::WebSliderRelay webHead4MovementPeriodDurationNoSyncRelay;
     juce::WebSliderRelay webHead4MovementPeriodStartRelay;
 
-    juce::WebComboBoxRelay webHead4MovementFunctionRelay;
+    juce::WebSliderRelay webHead4MovementFunctionRelay;
     juce::WebSliderRelay webHead4MovementWidthRelay;
     juce::WebToggleButtonRelay webHead4MovementOnRelay;
     juce::WebToggleButtonRelay webHead4MovementWidthSlaveRelay;
@@ -744,7 +744,7 @@ private:
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead1MovementPeriodDurationNoSyncSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead1MovementPeriodStartingPointSliderAttachment;
 
-    std::unique_ptr<juce::WebComboBoxParameterAttachment> webHead1MovementFunctionComboBoxAttachment;
+    std::unique_ptr<juce::WebSliderParameterAttachment> webHead1MovementFunctionComboBoxAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead1MovementWidthSliderAttachment;
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead1MovementOnToggleAttachment;
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead1MovementWidthSlaveToggleAttachment;
@@ -764,7 +764,7 @@ private:
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead2TimeNoSyncSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead2GainSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead2MovementPeriodDurationSliderAttachment;
-    std::unique_ptr<juce::WebComboBoxParameterAttachment> webHead2MovementFunctionComboBoxAttachment;
+    std::unique_ptr<juce::WebSliderParameterAttachment> webHead2MovementFunctionComboBoxAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead2MovementWidthSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead2MovementPeriodDurationNoSyncSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead2MovementPeriodStartingPointSliderAttachment;
@@ -790,7 +790,7 @@ private:
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead3MovementPeriodDurationNoSyncSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead3MovementPeriodStartingPointSliderAttachment;
 
-    std::unique_ptr<juce::WebComboBoxParameterAttachment> webHead3MovementFunctionComboBoxAttachment;
+    std::unique_ptr<juce::WebSliderParameterAttachment> webHead3MovementFunctionComboBoxAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead3MovementWidthSliderAttachment;
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead3MovementOnToggleAttachment;
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead3MovementWidthSlaveToggleAttachment;
@@ -813,7 +813,7 @@ private:
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead4MovementPeriodDurationNoSyncSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead4MovementPeriodStartingPointSliderAttachment;
 
-    std::unique_ptr<juce::WebComboBoxParameterAttachment> webHead4MovementFunctionComboBoxAttachment;
+    std::unique_ptr<juce::WebSliderParameterAttachment> webHead4MovementFunctionComboBoxAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead4MovementWidthSliderAttachment;
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead4MovementOnToggleAttachment;
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead4MovementWidthSlaveToggleAttachment;
