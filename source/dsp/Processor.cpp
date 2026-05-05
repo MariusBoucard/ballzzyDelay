@@ -62,7 +62,6 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
 
     juce::AudioBuffer<float> dryBuffer;
     dryBuffer.makeCopyOf(inBuffer);
-
     inBuffer.applyGain(juce::Decibels::decibelsToGain ((float)inGain));
 
     updateMeter(false, inBuffer, numIn);
@@ -97,6 +96,6 @@ void SkeletonAudioProcessor::processBlock(juce::AudioBuffer<float>& inBuffer, ju
         }
     }
     inBuffer.applyGain(juce::Decibels::decibelsToGain ((float)outGain));
-
     updateMeter(true, inBuffer, numOut);
 }
+

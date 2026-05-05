@@ -392,7 +392,7 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 
 void parameterChanged(const juce::String& parameterID, float newValue) override
 {
-    if (parameterID == "SYNC_TEMPO") {
+        if (parameterID == "SYNC_TEMPO") {
         if (mFaustUI != nullptr && newValue > 0.5f) {
             syncTempoToggled(true);
         } else {
@@ -537,8 +537,10 @@ void prepareToPlay (double sampleRate, int blockSize) override
     {
         return mParameters;
     }
-public:
-
+private:
+    void updateMovmentHeadPosition(int inHeadNumber, juce::AudioPlayHead* playHead);
+    void updateMovmentPosition() ;
+    void updateDelayHeadPositionStraightFaust(juce::String headId, float position);
 
 private:
     parametersDeclaration::Parameters parametersDeclaration;

@@ -61,6 +61,7 @@ public:
 
     }
 
+
     void releaseResources() override {
         mProcessorGraph.releaseResources();
        // delete mFaustProcessor; // TODO THIS CAUSES CRASH ON EXIT
@@ -208,7 +209,7 @@ private:
     std::atomic<float> mRmsOutputLevelRight{0.0f};
 
     juce::AudioProcessorGraph mProcessorGraph;
-
+    juce::AudioPlayHead* mParentPlayHead;
     using AudioInputNode = juce::AudioProcessorGraph::AudioGraphIOProcessor;
     using AudioOutputNode = juce::AudioProcessorGraph::AudioGraphIOProcessor;
 
