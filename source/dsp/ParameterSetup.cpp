@@ -1,8 +1,12 @@
 #include "ParameterSetup.h"
 
+#include "ParameterIDs.hpp"
+#include "faustParameterMappers/faustParameterMap.h"
+
 ParameterSetup::ParameterSetup(juce::AudioProcessorValueTreeState &inApvts)
     : juce::Thread("MappersProcessingThread")
       , mParameters(inApvts)
+      , mFaustUI(nullptr)
       , mSetupData1(createSetupData())
       , mSetupData2(createSetupData())
 {
@@ -10,15 +14,23 @@ ParameterSetup::ParameterSetup(juce::AudioProcessorValueTreeState &inApvts)
     mNextParamsForProcessing = &mSetupData2;
     initializeParameters();
     *mCurrentParamsForAudio.load(std::memory_order_relaxed) = *mNextParamsForProcessing;
-// Ce serait fou de pouvoir avoir la faust dans le swap et faire un set apres ? Necessaire meme ?
+
+    // Start timer for periodic Faust updates (60 Hz is smooth enough for movement)
+    startTimerHz(60);
 }
 
 ParameterSetup::~ParameterSetup() {
+    stopTimer();
     mTasksEvent.signal();
     mParameters.removeParameterListener("gain", this);
     mParameters.removeParameterListener("lowPassCutoff", this);
     mParameters.removeParameterListener("highPassResonance", this);
+
     stopThread(10);
+}
+
+void ParameterSetup::setFaustUI(MapUI* faustUI) {
+    mFaustUI = faustUI;
 }
 
 ParameterSetupData ParameterSetup::createSetupData() {
@@ -26,26 +38,16 @@ ParameterSetupData ParameterSetup::createSetupData() {
     data.lowPassFilterCoeffs = {0.0, 0.0};
     data.highPassFilterCoeffs = {0.0, 0.0};
     data.gain = 0.0;
+
     return data;
 }
 
 void ParameterSetup::initParametersListener(juce::AudioProcessor& inProcessor) {
-    // Desactivation des setup car aps utilisé en faust
-    auto test =inProcessor.getParameters()[0];
-    //mParameters.addParameterListener(test, this);
-    //mParameters.addParameterListener("GAIN", this); // Example
-    //mParameters.addParameterListener("highPassResonance", this); // Example
-   // startThread();
 
+    startThread();
 }
 
 void ParameterSetup::initializeParameters() {
-    //osef by now no mappers
-   //auto *gainParam = mParameters.getRawParameterValue("GAIN");
-   // parameterChanged("GAIN",gainParam->load()) ;
-    //auto check = static_cast<juce::AudioProcessorParameterWithID*>(inProcessor.getParameters()[0])->paramID;
-
-
     if (auto *lpCutoffParam = mParameters.getRawParameterValue("lowPassCutoff"))
         mNextParamsForProcessing->lowPassFilterCoeffs.cutoff = static_cast<double>(lpCutoffParam->load());
 
@@ -59,11 +61,18 @@ const ParameterSetupData *ParameterSetup::getAudioThreadParams() const {
     return mCurrentParamsForAudio.load(std::memory_order_acquire);
 }
 
+void ParameterSetup::setHeadPanPosition(int headIndex, float panPosition) {
+    if (headIndex >= 0 && headIndex < 4) {
+        mHeadPanPositions[headIndex].store(panPosition, std::memory_order_relaxed);
+    }
+}
+
 void ParameterSetup::parameterChanged(const juce::String &parameterID, float newValue) {
     juce::String paramIDCopy = parameterID;
-
+/*
     MapperTask task = [this, paramIDCopy, newValue]() {
-        ParameterSetupData *paramsToUpdate = mNextParamsForProcessing; {
+        ParameterSetupData *paramsToUpdate = mNextParamsForProcessing;
+        {
             std::lock_guard<std::mutex> lock(mUpdateMutex);
             *paramsToUpdate = *mCurrentParamsForAudio.load(std::memory_order_relaxed);
         }
@@ -75,16 +84,69 @@ void ParameterSetup::parameterChanged(const juce::String &parameterID, float new
             calculationPerformed = true;
         }
 
+        // Handle movement parameters for each head
+        for (int headNum = 0; headNum < 4; ++headNum) {
+            juce::String headPrefix = "head" + juce::String(headNum + 1) + "_";
+
+            if (paramIDCopy == headPrefix + "movement_width") {
+                paramsToUpdate->headMovement[headNum].width = newValue;
+                calculationPerformed = true;
+            }
+            else if (paramIDCopy == headPrefix + "movement_function") {
+                paramsToUpdate->headMovement[headNum].function = newValue;
+                calculationPerformed = true;
+            }
+            else if (paramIDCopy == headPrefix + "movement_period_duration") {
+                paramsToUpdate->headMovement[headNum].duration = newValue;
+                calculationPerformed = true;
+            }
+            else if (paramIDCopy == headPrefix + "movement_period_starting_point") {
+                paramsToUpdate->headMovement[headNum].startingPoint = newValue;
+                calculationPerformed = true;
+            }
+            else if (paramIDCopy == headPrefix + "pan") {
+                paramsToUpdate->headMovement[headNum].basePan = newValue;
+                calculationPerformed = true;
+            }
+        }
+
         if (calculationPerformed) {
             std::lock_guard<std::mutex> lock(mUpdateMutex);
-            paramsToUpdate->version++; // Increment the version of the data that's about to become current.
+            paramsToUpdate->version++;
             performSwap();
         }
-    }; {
+    };
+
+    {
         std::lock_guard<std::mutex> lock(mTasksQueueMutex);
         mTaskQueue.push_back(std::move(task));
     }
     mTasksEvent.signal();
+    */
+}
+
+void ParameterSetup::timerCallback() {
+    // Update Faust with the latest pan positions from audio thread
+    // This runs at 60 Hz on the message thread, avoiding audio thread blocking
+    if (mFaustUI == nullptr)
+        return;
+
+    for (int i = 0; i < 4; ++i) {
+        float panPosition = mHeadPanPositions[i].load(std::memory_order_relaxed);
+        updateFaustHeadPan(i, panPosition);
+    }
+}
+
+void ParameterSetup::updateFaustHeadPan(int headIndex, float panPosition) {
+    if (mFaustUI == nullptr)
+        return;
+
+    // Map head index to parameter ID (adjust based on your actual parameter IDs)
+    juce::String paramID = "HEAD_" + juce::String(headIndex + 1) + "_PAN";
+    auto path = FaustParameterMapping::getFaustPath(paramID);
+    if (!path.empty()) {
+        mFaustUI->setParamValue(path, panPosition);
+    }
 }
 
 void ParameterSetup::run() {
@@ -96,7 +158,8 @@ void ParameterSetup::run() {
 
         // Process all tasks currently in the queue.
         while (true) {
-            MapperTask taskToExecute; {
+            MapperTask taskToExecute;
+            {
                 std::lock_guard<std::mutex> lock(mTasksQueueMutex);
                 if (mTaskQueue.empty())
                     break;
@@ -113,8 +176,6 @@ void ParameterSetup::run() {
 }
 
 void ParameterSetup::performSwap() {
-    // mNextParamsForProcessing (which has just been updated) becomes the new mCurrentParamsForAudio.
-    // The old mCurrentParamsForAudio becomes the new mNextParamsForProcessing, ready for the next update cycle.
     ParameterSetupData *tempOldCurrentAudioParams = mCurrentParamsForAudio.load(std::memory_order_relaxed);
     mCurrentParamsForAudio.store(mNextParamsForProcessing, std::memory_order_release);
     mNextParamsForProcessing = tempOldCurrentAudioParams;

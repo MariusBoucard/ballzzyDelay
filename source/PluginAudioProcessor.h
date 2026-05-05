@@ -464,6 +464,7 @@ void prepareToPlay (double sampleRate, int blockSize) override
 
     mSkeletonProcessor.prepareToPlay(sampleRate, blockSize);
 
+    mParameterSetup.setFaustUI(getFaustUI());
     for (auto* param : getParameters())
     {
         if (auto* p = dynamic_cast<juce::AudioProcessorParameterWithID*>(param))
@@ -537,10 +538,12 @@ void prepareToPlay (double sampleRate, int blockSize) override
     {
         return mParameters;
     }
+    MapUI* getFaustUI() {
+        return mFaustUI.get();
+    }
 private:
     void updateMovmentHeadPosition(int inHeadNumber, juce::AudioPlayHead* playHead);
     void updateMovmentPosition() ;
-    void updateDelayHeadPositionStraightFaust(juce::String headId, float position);
 
 private:
     parametersDeclaration::Parameters parametersDeclaration;

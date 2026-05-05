@@ -7,15 +7,19 @@ PluginAudioProcessor::PluginAudioProcessor()
     : juce::AudioProcessor(BusesProperties().withInput("Input", juce::AudioChannelSet::stereo())
           .withOutput("Output", juce::AudioChannelSet::stereo()))
       , mParameters{*this, nullptr, "PARAMETERS", createParameterLayout(parametersDeclaration)}
-      , mParameterSetup(mParameters)
-      , mSkeletonProcessor(mParameters, mParameterSetup, parametersDeclaration)
+, mParameterSetup(mParameters)
+, mSkeletonProcessor(mParameters, mParameterSetup, parametersDeclaration)
 {
     for (auto* param : mParameters.processor.getParameters())
     {
-        auto paramID =static_cast<juce::AudioProcessorParameterWithID*>(param)->paramID;
+        auto paramID = static_cast<juce::AudioProcessorParameterWithID*>(param)->paramID;
         mParameters.addParameterListener(paramID, this);
     }
+
+    // Initialize the parameter listeners for movement params
+    mParameterSetup.initParametersListener(*this);
 }
+
 
 PluginAudioProcessor::~PluginAudioProcessor() {
     for (auto* param : getParameters())
@@ -34,7 +38,7 @@ void PluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::
             currentBpm.store(*postion->getBpm());
         }
     }
- //   updateMovmentPosition();
+    updateMovmentPosition();
     mSkeletonProcessor.processBlock(buffer, a);
 }
 
@@ -121,13 +125,6 @@ void PluginAudioProcessor::updateMovmentHeadPosition(int inHeadNumber,juce::Audi
     const float finalMovment = width * functionResult + panMinusOnePlus1; // attention au pan !
 
 
-    // finaly set the parameter of the playHead Pan
-    updateDelayHeadPositionStraightFaust(id::HEAD_1_PAN.getParamID(),finalMovment);
+    mParameterSetup.setHeadPanPosition(inHeadNumber, finalMovment);
 }
 
-void PluginAudioProcessor::updateDelayHeadPositionStraightFaust(juce::String headId, float position) {
-    auto path = FaustParameterMapping::getFaustPath(headId);
-    if (!path.empty()) {
-        mFaustUI->setParamValue(path, position);
-    }
-}

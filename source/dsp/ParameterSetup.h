@@ -6,6 +6,7 @@
 #include <deque>
 #include <functional>
 #include "Mappers.h"
+#include "Bones/FaustMultiheadFeedback.h"
 
 struct FilterCoefficients
 {
@@ -21,13 +22,21 @@ struct ParameterSetupData
     uint64_t version = 0;
 };
 
-class ParameterSetup : public juce::Thread, public juce::AudioProcessorValueTreeState::Listener
+// Forward declaration
+class MapUI;
+
+class ParameterSetup : public juce::Thread,
+                       public juce::AudioProcessorValueTreeState::Listener,
+                       public juce::Timer
 {
 public:
     using MapperTask = std::function<void()>;
 
     ParameterSetup(juce::AudioProcessorValueTreeState& inApvts);
     ~ParameterSetup() override;
+
+    // Pass the Faust UI to enable parameter updates
+    void setFaustUI(MapUI* faustUI);
 
     ParameterSetupData createSetupData();
 
@@ -36,11 +45,17 @@ public:
     const ParameterSetupData* getAudioThreadParams() const;
     void initParametersListener(juce::AudioProcessor& inProcessor);
 
+    // Called from audio thread to update current playhead-based positions
+    void setHeadPanPosition(int headIndex, float panPosition);
+
 private:
     void run() override;
+    void timerCallback() override;
 
     void initializeParameters();
     void performSwap();
+    void updateFaustHeadPan(int headIndex, float panPosition);
+
     ParameterSetupData mSetupData1;
     ParameterSetupData mSetupData2;
 
@@ -54,6 +69,10 @@ private:
     std::deque<MapperTask> mTaskQueue;
     std::mutex mTasksQueueMutex;
     juce::WaitableEvent mTasksEvent;
+
+    MapUI* mFaustUI;
+
+    std::atomic<float> mHeadPanPositions[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterSetup)
 };
