@@ -85,7 +85,7 @@ void addMovementLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layo
     auto on = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{prefix + "_MOVEMENT_ON", 1}, "Movement On Head "+prefix, false);
     move.movementOn = on.get();
     layout.add(std::move(on));
-
+    // TODO : bien définir le range des différents params , ici et dans l'ui
     auto period = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_MOVEMENT_PERIOD_DURATION", 1}, "Period"+prefix, 0.1f, 10.f, 1.f);
     move.periodDuration = period.get();
     layout.add(std::move(period));
@@ -117,7 +117,6 @@ void writeFaustParametersToFile() {
     tempDsp->buildUserInterface(tempUI);
     auto fullPathMap = tempUI->getFullpathMap();
 
-    // Write to file
     juce::File outputFile = juce::File::getSpecialLocation(juce::File::userDesktopDirectory)
                                 .getChildFile("faust_params.txt");
     juce::FileOutputStream stream(outputFile);
@@ -263,14 +262,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout
 createParameterLayout(parametersDeclaration::Parameters& parameters)
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
-    writeFaustParametersToFile();
+    //writeFaustParametersToFile();
     addMainParametersLayout(layout, parameters);
 
 
-    // 2. Main Filters
     addFilterLayout(layout, "MAIN", parameters.lpFilter, parameters.hpFilter);
 
-    // 3. Heads
     addHeadLayout(layout, 1, parameters.head1);
     addHeadLayout(layout, 2, parameters.head2);
     addHeadLayout(layout, 3, parameters.head3);
