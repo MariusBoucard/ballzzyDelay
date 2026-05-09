@@ -153,7 +153,7 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     auto headGain = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_GAIN", 1}, "Gain Head "+prefix, -12.f, 12.f, 0.f);
     head.gain = headGain.get();
     layout.add(std::move(headGain));
-
+// TODO : attention pour mouvement : le pan a l air d etre en mode 0 / 1
     auto headPan = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_PAN", 1}, "Pan Head "+prefix, 0.f, 1.f, 0.5f);
     head.pan = headPan.get();
     layout.add(std::move(headPan));
@@ -275,9 +275,8 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
 
     return layout;
 }
-
+    // TODO va etre factorisable avec le code du mouvement
     float getTimeFromIndex(float index) {
-    // 1. Calculate duration of one beat (quarter note) in seconds
     double bpm =   mParameters.getRawParameterValue(id::USER_BPM.getParamID())->load();
     bool hostTempoBpm = mParameters.getRawParameterValue(id::BPM_FROM_HOST.getParamID())->load();
     if (hostTempoBpm) {
@@ -287,7 +286,6 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
     const float beatDuration = 60.0f / bpm;
     float beatMultiplier = 0.0f;
 
-    // 2. Cast float index to int for the switch
     int idx = static_cast<int>(index);
 
     switch (idx) {
@@ -480,6 +478,7 @@ void prepareToPlay (double sampleRate, int blockSize) override
             {
                 mFaustUI->setParamValue(faustPath, currentValue);
             }
+            // TODO : faire pour tous les faust engines
         }
     }
 }

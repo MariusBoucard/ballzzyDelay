@@ -45,8 +45,7 @@ public:
     const ParameterSetupData* getAudioThreadParams() const;
     void initParametersListener(juce::AudioProcessor& inProcessor);
 
-    // Called from audio thread to update current playhead-based positions
-    void setHeadPanPosition(int headIndex, float panPosition);
+    void setPlayTime(double playTime);
 
 private:
     void run() override;
@@ -54,7 +53,7 @@ private:
 
     void initializeParameters();
     void performSwap();
-    void updateFaustHeadPan(int headIndex, float panPosition);
+    void updateFaustHeadPan(int headIndex, double playTime);
 
     ParameterSetupData mSetupData1;
     ParameterSetupData mSetupData2;
@@ -72,7 +71,6 @@ private:
 
     MapUI* mFaustUI;
 
-    std::atomic<float> mHeadPanPositions[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-
+    std::atomic<double> mPlayTimeInSeconds { 0.0 };
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterSetup)
 };

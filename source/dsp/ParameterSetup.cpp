@@ -15,7 +15,6 @@ ParameterSetup::ParameterSetup(juce::AudioProcessorValueTreeState &inApvts)
     initializeParameters();
     *mCurrentParamsForAudio.load(std::memory_order_relaxed) = *mNextParamsForProcessing;
 
-    // Start timer for periodic Faust updates (60 Hz is smooth enough for movement)
     startTimerHz(60);
 }
 
@@ -61,11 +60,6 @@ const ParameterSetupData *ParameterSetup::getAudioThreadParams() const {
     return mCurrentParamsForAudio.load(std::memory_order_acquire);
 }
 
-void ParameterSetup::setHeadPanPosition(int headIndex, float panPosition) {
-    if (headIndex >= 0 && headIndex < 4) {
-        mHeadPanPositions[headIndex].store(panPosition, std::memory_order_relaxed);
-    }
-}
 
 void ParameterSetup::parameterChanged(const juce::String &parameterID, float newValue) {
     juce::String paramIDCopy = parameterID;
@@ -125,29 +119,79 @@ void ParameterSetup::parameterChanged(const juce::String &parameterID, float new
     */
 }
 
+void ParameterSetup::setPlayTime(double timeInSeconds) {
+    mPlayTimeInSeconds.store(timeInSeconds, std::memory_order_relaxed);
+}
+
 void ParameterSetup::timerCallback() {
     // Update Faust with the latest pan positions from audio thread
     // This runs at 60 Hz on the message thread, avoiding audio thread blocking
     if (mFaustUI == nullptr)
         return;
+    const double playTime = mPlayTimeInSeconds.load(std::memory_order_relaxed);
 
     for (int i = 0; i < 4; ++i) {
-        float panPosition = mHeadPanPositions[i].load(std::memory_order_relaxed);
-        updateFaustHeadPan(i, panPosition);
+        updateFaustHeadPan(i, playTime);
     }
 }
 
-void ParameterSetup::updateFaustHeadPan(int headIndex, float panPosition) {
+void ParameterSetup::updateFaustHeadPan(int headIndex, double playTime) {
     if (mFaustUI == nullptr)
         return;
 
-    // Map head index to parameter ID (adjust based on your actual parameter IDs)
+    juce::String headPrefix = "HEAD_" + juce::String(headIndex + 1) + "_";
+
+    const bool isMovementOnForThisHead = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_ON" );
+    if (!isMovementOnForThisHead) return;
+
+    const float duration      = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_PERIOD_DURATION_NO_SYNC")->load();
+    // TODO : attention que no sync pour le moment
+    const float width         = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_WIDTH")->load();
+    const float startingPoint = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_PERIOD_STARTING_POINT")->load();
+    const float function      = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_FUNCTION")->load();
+    const float pan           = mParameters.getRawParameterValue(headPrefix + "PAN")->load();
+
+    const double timeInSeconds = playTime;
+    const float phase = duration > 0.0f
+                        ? static_cast<float>(std::fmod(timeInSeconds / duration + startingPoint, 1.0))
+                        : 0.0f;
+
+    float functionResult = 0.0f;
+    switch (static_cast<int>(function)) {
+        case 0: // Sine
+            functionResult = std::sin(phase * 2.0f * juce::MathConstants<float>::pi);
+            break;
+
+        case 1: // Square
+            functionResult = (phase < 0.5f) ? 1.0f : -1.0f;
+            break;
+
+        case 2: // Triangle
+            if (phase < 0.25f)
+                functionResult = phase * 4.0f;
+            else if (phase < 0.75f)
+                functionResult = 1.0f - ((phase - 0.25f) * 4.0f);
+            else
+                functionResult = -1.0f + ((phase - 0.75f) * 4.0f);
+            break;
+
+        default:
+            functionResult = 0.0f;
+            break;
+    }
+
+    // --- Compute final pan (input is 0–1, Faust expects –1 to +1) ---
+    const float panCentered  = pan * 2.0f - 1.0f; // TODO : y a un monde ou faust se prend du 0 : 1
+    const float finalPan     = juce::jlimit(-1.0f, 1.0f, panCentered + width * functionResult);
+
+    // --- Push to Faust ---
     juce::String paramID = "HEAD_" + juce::String(headIndex + 1) + "_PAN";
     auto path = FaustParameterMapping::getFaustPath(paramID);
     if (!path.empty()) {
-        mFaustUI->setParamValue(path, panPosition);
+        mFaustUI->setParamValue(path, finalPan);
     }
 }
+
 
 void ParameterSetup::run() {
     while (!threadShouldExit()) {

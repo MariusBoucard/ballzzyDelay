@@ -52,94 +52,16 @@ void PluginAudioProcessor::updateMovmentPosition() {
         updateMovmentHeadPosition(i, playHead);
     }
 }
+
 void PluginAudioProcessor::updateMovmentHeadPosition(int inHeadNumber, juce::AudioPlayHead* playHead) {
-    const bool isSync = false; // TODO: make this a parameter
+    if (playHead == nullptr)
+        return;
 
-    // Build parameter IDs dynamically based on head number
-    juce::String headPrefix = "HEAD_" + juce::String(inHeadNumber + 1) + "_";
+    auto position = playHead->getPosition();
+    if (!position.hasValue())
+        return;
 
-    float duration;
-    if (isSync) {
-        juce::String durationId = headPrefix + "MOVEMENT_PERIOD_DURATION";
-        duration = mParameters.getRawParameterValue(durationId)->load();
-    } else {
-        juce::String durationId = headPrefix + "MOVEMENT_PERIOD_DURATION_NO_SYNC";
-        duration = mParameters.getRawParameterValue(durationId)->load();
+    if (position->getTimeInSeconds().hasValue()) {
+        mParameterSetup.setPlayTime(*position->getTimeInSeconds());
     }
-
-    juce::String widthId = headPrefix + "MOVEMENT_WIDTH";
-    juce::String startingPointId = headPrefix + "MOVEMENT_PERIOD_STARTING_POINT";
-    juce::String functionId = headPrefix + "MOVEMENT_FUNCTION";
-    juce::String panId = headPrefix + "PAN";
-
-    const float width = mParameters.getRawParameterValue(widthId)->load();
-    const float startingPoint = mParameters.getRawParameterValue(startingPointId)->load();
-    const float function = mParameters.getRawParameterValue(functionId)->load();
-    const float pan = mParameters.getRawParameterValue(panId)->load();
-
-    float phase = 0.0f;
-
-    if (playHead != nullptr) {
-        auto position = playHead->getPosition();
-
-        if (position.hasValue()) {
-            if (isSync && position->getPpqPosition().hasValue()) {
-                auto ppqPosition = *position->getPpqPosition();
-                // Normalize phase to 0-1 range
-                phase = fmod(ppqPosition / duration + startingPoint, 1.0);
-            }
-            else if (!isSync && position->getTimeInSeconds().hasValue()) {
-                auto timeInSeconds = *position->getTimeInSeconds();
-                // Normalize phase to 0-1 range
-                phase = fmod(timeInSeconds / duration + startingPoint, 1.0);
-            }
-        }
-    }
-    // TODO : a partir d'ici envoyer que la phase dans le parameterSetup.
-    // TODO : en fait mm plus haut, on get que la position in seconds !
-    // Comme ca on pourra get les params de la bas, moins reactif mais on bloque moins
-    // l'audioThread...
-
-    float functionResult = 0.0f;
-    int funcIndex = static_cast<int>(function);
-
-    switch (funcIndex) {
-        case 0: // Sine
-            functionResult = std::sin(phase * 2.0f * juce::MathConstants<float>::pi);
-            break;
-
-        case 1: // Rectangle/Square
-            functionResult = (phase < 0.5f) ? 1.0f : -1.0f;
-            break;
-
-        case 2: // Triangle
-            if (phase < 0.25f) {
-                // Rising 0 to 1
-                functionResult = phase * 4.0f;
-            } else if (phase < 0.75f) {
-                // Falling 1 to -1
-                functionResult = 1.0f - ((phase - 0.25f) * 4.0f);
-            } else {
-                // Rising -1 to 0
-                functionResult = -1.0f + ((phase - 0.75f) * 4.0f);
-            }
-            break;
-
-        default:
-            functionResult = 0.0f;
-            break;
-    }
-
-    // Convert pan from 0-1 range to -1 to +1 range
-    const float panMinusOnePlus1 = pan * 2.0f - 1.0f;
-
-    // Calculate final pan position (base pan + movement offset)
-    const float finalMovement = panMinusOnePlus1 + (width * functionResult);
-
-    // TODO : en fait je crois que faust prend des valeurs entre 0 et 1 pour le pan non ???
-
-    // Clamp to valid range and send to ParameterSetup
-    const float clampedPan = juce::jlimit(-1.0f, 1.0f, finalMovement);
-    mParameterSetup.setHeadPanPosition(inHeadNumber, clampedPan);
 }
-
