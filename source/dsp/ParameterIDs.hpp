@@ -42,13 +42,16 @@ namespace id {
     const juce::ParameterID HEAD_1_TIME                      {"HEAD_1_TIME", 1};
     const juce::ParameterID HEAD_1_TIME_NO_SYNC               {"HEAD_1_TIME_NO_SYNC", 1};
     const juce::ParameterID HEAD_1_GAIN                      {"HEAD_1_GAIN", 1};
+
     const juce::ParameterID HEAD_1_MOVEMENT_PERIOD_DURATION  {"HEAD_1_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_PERIOD_DURATION_NO_SYNC  {"HEAD_1_MOVEMENT_PERIOD_DURATION_NO_SYNC", 1};
+    const juce::ParameterID HEAD_1_MOVEMENT_BPM_SYNC  {"HEAD_1_MOVEMENT_BPM_SYNC", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_PERIOD_STARTING_POINT  {"HEAD_1_MOVEMENT_PERIOD_STARTING_POINT", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_FUNCTION         {"HEAD_1_MOVEMENT_FUNCTION", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_WIDTH            {"HEAD_1_MOVEMENT_WIDTH", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_ON               {"HEAD_1_MOVEMENT_ON", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_WIDTH_SLAVE      {"HEAD_1_MOVEMENT_WIDTH_SLAVE", 1};
+
     const juce::ParameterID HEAD_1_LP_FILTER_FREQ            {"HEAD_1_LP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_1_HP_FILTER_FREQ            {"HEAD_1_HP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_1_HP_FILTER_BYPASS          {"HEAD_1_HP_FILTER_BYPASS", 1};
@@ -68,6 +71,7 @@ namespace id {
     const juce::ParameterID HEAD_2_MOVEMENT_PERIOD_DURATION  {"HEAD_2_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_2_MOVEMENT_PERIOD_DURATION_NO_SYNC  {"HEAD_2_MOVEMENT_PERIOD_DURATION_NO_SYNC", 1};
     const juce::ParameterID HEAD_2_MOVEMENT_PERIOD_STARTING_POINT  {"HEAD_2_MOVEMENT_PERIOD_STARTING_POINT", 1};
+    const juce::ParameterID HEAD_2_MOVEMENT_BPM_SYNC  {"HEAD_2_MOVEMENT_BPM_SYNC", 1};
 
     const juce::ParameterID HEAD_2_MOVEMENT_FUNCTION         {"HEAD_2_MOVEMENT_FUNCTION", 1};
     const juce::ParameterID HEAD_2_MOVEMENT_WIDTH            {"HEAD_2_MOVEMENT_WIDTH", 1};
@@ -89,6 +93,7 @@ namespace id {
     const juce::ParameterID HEAD_3_TIME                      {"HEAD_3_TIME", 1};
     const juce::ParameterID HEAD_3_TIME_NO_SYNC                      {"HEAD_3_TIME_NO_SYNC", 1};
     const juce::ParameterID HEAD_3_GAIN                      {"HEAD_3_GAIN", 1};
+    const juce::ParameterID HEAD_3_MOVEMENT_BPM_SYNC  {"HEAD_3_MOVEMENT_BPM_SYNC", 1};
     const juce::ParameterID HEAD_3_MOVEMENT_PERIOD_DURATION  {"HEAD_3_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_3_MOVEMENT_PERIOD_DURATION_NO_SYNC  {"HEAD_3_MOVEMENT_PERIOD_DURATION_NO_SYNC", 1};
     const juce::ParameterID HEAD_3_MOVEMENT_PERIOD_STARTING_POINT  {"HEAD_3_MOVEMENT_PERIOD_STARTING_POINT", 1};
@@ -113,12 +118,13 @@ namespace id {
     const juce::ParameterID HEAD_4_GAIN                      {"HEAD_4_GAIN", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_PERIOD_DURATION  {"HEAD_4_MOVEMENT_PERIOD_DURATION", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_PERIOD_DURATION_NO_SYNC  {"HEAD_4_MOVEMENT_PERIOD_DURATION_NO_SYNC", 1};
+    const juce::ParameterID HEAD_4_MOVEMENT_BPM_SYNC  {"HEAD_4_MOVEMENT_BPM_SYNC", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_PERIOD_STARTING_POINT  {"HEAD_4_MOVEMENT_PERIOD_STARTING_POINT", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_FUNCTION         {"HEAD_4_MOVEMENT_FUNCTION", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_WIDTH            {"HEAD_4_MOVEMENT_WIDTH", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_ON               {"HEAD_4_MOVEMENT_ON", 1};
-
     const juce::ParameterID HEAD_4_MOVEMENT_WIDTH_SLAVE      {"HEAD_4_MOVEMENT_WIDTH_SLAVE", 1};
+
     const juce::ParameterID HEAD_4_LP_FILTER_FREQ            {"HEAD_4_LP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_4_HP_FILTER_FREQ            {"HEAD_4_HP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_4_FEEDBACK_SLAVE            {"HEAD_4_FEEDBACK_SLAVE", 1};

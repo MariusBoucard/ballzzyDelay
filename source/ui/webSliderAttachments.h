@@ -44,7 +44,7 @@ public:
         webHead1FeedbackSlaveRelay{id::HEAD_1_FEEDBACK_SLAVE.getParamID()},
         webHead1HpBpRelay{id::HEAD_1_HP_FILTER_BYPASS.getParamID()},
         webHead1LpBpRelay{id::HEAD_1_LP_FILTER_BYPASS.getParamID()},
-
+        webHead1MovementSyncRelay(id::HEAD_1_MOVEMENT_BPM_SYNC.getParamID()),
         // Head 2 Parameters
         webHead2BypassRelay{id::HEAD_2_ON.getParamID()},
         webHead2FeedbackRelay{id::HEAD_2_FEEDBACK.getParamID()},
@@ -64,6 +64,7 @@ public:
         webHead2FeedbackSlaveRelay{id::HEAD_2_FEEDBACK_SLAVE.getParamID()},
         webHead2HpBpRelay{id::HEAD_2_HP_FILTER_BYPASS.getParamID()},
         webHead2LpBpRelay{id::HEAD_2_LP_FILTER_BYPASS.getParamID()},
+        webHead2MovementSyncRelay(id::HEAD_2_MOVEMENT_BPM_SYNC.getParamID()),
 
         // Head 3 Parameters
         webHead3BypassRelay{id::HEAD_3_ON.getParamID()},
@@ -84,6 +85,8 @@ public:
         webHead3FeedbackSlaveRelay{id::HEAD_3_FEEDBACK_SLAVE.getParamID()},
         webHead3HpBpRelay{id::HEAD_3_HP_FILTER_BYPASS.getParamID()},
         webHead3LpBpRelay{id::HEAD_3_LP_FILTER_BYPASS.getParamID()},
+        webHead3MovementSyncRelay(id::HEAD_3_MOVEMENT_BPM_SYNC.getParamID()),
+
 
         // Head 4 Parameters
         webHead4BypassRelay{id::HEAD_4_ON.getParamID()},
@@ -103,8 +106,8 @@ public:
         webHead4HpFilterFreqRelay{id::HEAD_4_HP_FILTER_FREQ.getParamID()},
         webHead4FeedbackSlaveRelay{id::HEAD_4_FEEDBACK_SLAVE.getParamID()},
         webHead4HpBpRelay{id::HEAD_4_HP_FILTER_BYPASS.getParamID()},
-        webHead4LpBpRelay{id::HEAD_4_LP_FILTER_BYPASS.getParamID()}
-
+        webHead4LpBpRelay{id::HEAD_4_LP_FILTER_BYPASS.getParamID()},
+        webHead4MovementSyncRelay(id::HEAD_4_MOVEMENT_BPM_SYNC.getParamID())
     {}
 
    void createAttachments() {
@@ -465,13 +468,30 @@ public:
         webHead4FeedbackSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
             *param, webHead4FeedbackSlaveRelay, nullptr);
 
-        if (auto* param = state.getParameter(id::HEAD_4_HP_FILTER_BYPASS.getParamID()))
-            webHead4HpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-                *param, webHead4HpBpRelay, nullptr);
+    if (auto* param = state.getParameter(id::HEAD_4_HP_FILTER_BYPASS.getParamID()))
+        webHead4HpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+            *param, webHead4HpBpRelay, nullptr);
 
-        if (auto* param = state.getParameter(id::HEAD_4_LP_FILTER_BYPASS.getParamID()))
-            webHead4LpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-                *param, webHead4LpBpRelay, nullptr);
+    if (auto* param = state.getParameter(id::HEAD_4_LP_FILTER_BYPASS.getParamID()))
+        webHead4LpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+            *param, webHead4LpBpRelay, nullptr);
+
+    if (auto* param = state.getParameter(id::HEAD_1_MOVEMENT_BPM_SYNC.getParamID()))
+        webHead1MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+            *param, webHead1MovementSyncRelay, nullptr);
+
+    if (auto* param = state.getParameter(id::HEAD_2_MOVEMENT_BPM_SYNC.getParamID()))
+        webHead2MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+            *param, webHead2MovementSyncRelay, nullptr);
+
+    if (auto* param = state.getParameter(id::HEAD_3_MOVEMENT_BPM_SYNC.getParamID()))
+        webHead3MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+            *param, webHead3MovementSyncRelay, nullptr);
+
+    if (auto* param = state.getParameter(id::HEAD_4_MOVEMENT_BPM_SYNC.getParamID()))
+        webHead4MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+            *param, webHead4MovementSyncRelay, nullptr);
+
 }
 
     juce::WebBrowserComponent::Options addSlidersOptions(juce::WebBrowserComponent::Options options) {
@@ -501,8 +521,8 @@ public:
             .withOptionsFrom(webHead1FeedbackRelay)
             .withOptionsFrom(webHead1PanRelay)
             .withOptionsFrom(webHead1TimeRelay)
-        .withOptionsFrom(webHead1TimeNoSyncRelay)
-
+            .withOptionsFrom(webHead1TimeNoSyncRelay)
+            .withOptionsFrom(webHead1MovementSyncRelay)
             .withOptionsFrom(webHead1GainRelay)
             .withOptionsFrom(webHead1MovementPeriodDurationRelay)
             .withOptionsFrom(webHead1MovementPeriodDurationNoSyncRelay)
@@ -522,6 +542,7 @@ public:
             .withOptionsFrom(webHead2PanRelay)
             .withOptionsFrom(webHead2TimeRelay)
         .withOptionsFrom(webHead2TimeNoSyncRelay)
+        .withOptionsFrom(webHead2MovementSyncRelay)
 
             .withOptionsFrom(webHead2GainRelay)
             .withOptionsFrom(webHead2MovementPeriodDurationRelay)
@@ -556,6 +577,7 @@ public:
             .withOptionsFrom(webHead3FeedbackSlaveRelay)
             .withOptionsFrom(webHead3HpBpRelay)
             .withOptionsFrom(webHead3LpBpRelay)
+        .withOptionsFrom(webHead3MovementSyncRelay)
 
             // Head 4 Parameters
             .withOptionsFrom(webHead4BypassRelay)
@@ -563,6 +585,7 @@ public:
             .withOptionsFrom(webHead4PanRelay)
             .withOptionsFrom(webHead4TimeRelay)
             .withOptionsFrom(webHead4TimeNoSyncRelay)
+        .withOptionsFrom(webHead4MovementSyncRelay)
 
             .withOptionsFrom(webHead4GainRelay)
             .withOptionsFrom(webHead4MovementPeriodDurationRelay)
@@ -620,6 +643,7 @@ private:
     juce::WebSliderRelay webHead1TimeNoSyncRelay;
     juce::WebSliderRelay webHead1GainRelay;
 
+    juce::WebToggleButtonRelay webHead1MovementSyncRelay;
     juce::WebSliderRelay webHead1MovementPeriodDurationRelay;
     juce::WebSliderRelay webHead1MovementPeriodDurationNoSyncRelay;
     juce::WebSliderRelay webHead1MovementFunctionRelay;
@@ -649,6 +673,7 @@ private:
     juce::WebSliderRelay webHead2MovementPeriodDurationNoSyncRelay;
     juce::WebSliderRelay webHead2MovementPeriodStartRelay;
 
+    juce::WebToggleButtonRelay webHead2MovementSyncRelay;
     juce::WebSliderRelay webHead2MovementFunctionRelay;
     juce::WebSliderRelay webHead2MovementWidthRelay;
     juce::WebToggleButtonRelay webHead2MovementOnRelay;
@@ -675,6 +700,7 @@ private:
     juce::WebToggleButtonRelay webHead3MovementOnRelay;
     juce::WebSliderRelay webHead3MovementPeriodStartRelay;
 
+    juce::WebToggleButtonRelay webHead3MovementSyncRelay;
     juce::WebToggleButtonRelay webHead3MovementWidthSlaveRelay;
     juce::WebSliderRelay webHead3LpFilterFreqRelay;
     juce::WebSliderRelay webHead3HpFilterFreqRelay;
@@ -695,6 +721,7 @@ private:
     juce::WebSliderRelay webHead4MovementPeriodDurationNoSyncRelay;
     juce::WebSliderRelay webHead4MovementPeriodStartRelay;
 
+    juce::WebToggleButtonRelay webHead4MovementSyncRelay;
     juce::WebSliderRelay webHead4MovementFunctionRelay;
     juce::WebSliderRelay webHead4MovementWidthRelay;
     juce::WebToggleButtonRelay webHead4MovementOnRelay;
@@ -744,6 +771,7 @@ private:
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead1MovementPeriodDurationNoSyncSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead1MovementPeriodStartingPointSliderAttachment;
 
+    std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead1MovementSyncToggleAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead1MovementFunctionComboBoxAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead1MovementWidthSliderAttachment;
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead1MovementOnToggleAttachment;
@@ -769,6 +797,8 @@ private:
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead2MovementPeriodDurationNoSyncSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead2MovementPeriodStartingPointSliderAttachment;
 
+    std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead2MovementSyncToggleAttachment;
+
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead2MovementOnToggleAttachment;
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead2MovementWidthSlaveToggleAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead2LpFilterFreqSliderAttachment;
@@ -789,6 +819,7 @@ private:
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead3MovementPeriodDurationSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead3MovementPeriodDurationNoSyncSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead3MovementPeriodStartingPointSliderAttachment;
+    std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead3MovementSyncToggleAttachment;
 
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead3MovementFunctionComboBoxAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead3MovementWidthSliderAttachment;
@@ -812,6 +843,7 @@ private:
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead4MovementPeriodDurationSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead4MovementPeriodDurationNoSyncSliderAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead4MovementPeriodStartingPointSliderAttachment;
+    std::unique_ptr<juce::WebToggleButtonParameterAttachment> webHead4MovementSyncToggleAttachment;
 
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead4MovementFunctionComboBoxAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webHead4MovementWidthSliderAttachment;

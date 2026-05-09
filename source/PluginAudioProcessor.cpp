@@ -62,6 +62,6 @@ void PluginAudioProcessor::updateMovmentHeadPosition(int inHeadNumber, juce::Aud
         return;
 
     if (position->getTimeInSeconds().hasValue()) {
-        mParameterSetup.setPlayTime(*position->getTimeInSeconds());
+        mParameterSetup.setPlayTime(*position->getTimeInSeconds(), currentBpm.load());
     }
 }

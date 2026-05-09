@@ -21,9 +21,6 @@ ParameterSetup::ParameterSetup(juce::AudioProcessorValueTreeState &inApvts)
 ParameterSetup::~ParameterSetup() {
     stopTimer();
     mTasksEvent.signal();
-    mParameters.removeParameterListener("gain", this);
-    mParameters.removeParameterListener("lowPassCutoff", this);
-    mParameters.removeParameterListener("highPassResonance", this);
 
     stopThread(10);
 }
@@ -47,11 +44,6 @@ void ParameterSetup::initParametersListener(juce::AudioProcessor& inProcessor) {
 }
 
 void ParameterSetup::initializeParameters() {
-    if (auto *lpCutoffParam = mParameters.getRawParameterValue("lowPassCutoff"))
-        mNextParamsForProcessing->lowPassFilterCoeffs.cutoff = static_cast<double>(lpCutoffParam->load());
-
-    if (auto *hpResonanceParam = mParameters.getRawParameterValue("highPassResonance"))
-        mNextParamsForProcessing->highPassFilterCoeffs.resonance = static_cast<double>(hpResonanceParam->load());
 
     mNextParamsForProcessing->version = 0;
 }
@@ -119,7 +111,8 @@ void ParameterSetup::parameterChanged(const juce::String &parameterID, float new
     */
 }
 
-void ParameterSetup::setPlayTime(double timeInSeconds) {
+void ParameterSetup::setPlayTime(double timeInSeconds, double bpm) {
+    mCurrentBpm.store(bpm, std::memory_order_relaxed);
     mPlayTimeInSeconds.store(timeInSeconds, std::memory_order_relaxed);
 }
 
@@ -141,10 +134,18 @@ void ParameterSetup::updateFaustHeadPan(int headIndex, double playTime) {
 
     juce::String headPrefix = "HEAD_" + juce::String(headIndex + 1) + "_";
 
-    const bool isMovementOnForThisHead = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_ON" );
-    if (!isMovementOnForThisHead) return;
+    const bool isMovementOnForThisHead = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_ON" )->load();
+    const bool isHeadOn = mParameters.getRawParameterValue(headPrefix+"ON")->load();
 
-    const float duration      = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_PERIOD_DURATION_NO_SYNC")->load();
+    if (!isMovementOnForThisHead || !isHeadOn) return;
+    const bool isPeriodSync = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_BPM_SYNC")->load();
+    float duration = 0;
+
+    if (isPeriodSync) {
+        duration = getTimeFromIndex(mParameters.getRawParameterValue(headPrefix + "MOVEMENT_PERIOD_DURATION")->load());
+    } else {
+        duration = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_PERIOD_DURATION_NO_SYNC")->load();
+    }
     // TODO : attention que no sync pour le moment
     const float width         = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_WIDTH")->load();
     const float startingPoint = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_PERIOD_STARTING_POINT")->load();
@@ -181,7 +182,7 @@ void ParameterSetup::updateFaustHeadPan(int headIndex, double playTime) {
     }
 
     // --- Compute final pan (input is 0–1, Faust expects –1 to +1) ---
-    const float panCentered  = pan * 2.0f - 1.0f; // TODO : y a un monde ou faust se prend du 0 : 1
+    const float panCentered  = pan * 2.0f;// - 1.0f; // TODO : y a un monde ou faust se prend du 0 : 1
     const float finalPan     = juce::jlimit(-1.0f, 1.0f, panCentered + width * functionResult);
 
     // --- Push to Faust ---
@@ -196,7 +197,6 @@ void ParameterSetup::updateFaustHeadPan(int headIndex, double playTime) {
 void ParameterSetup::run() {
     while (!threadShouldExit()) {
         mTasksEvent.wait(-1);
-
         if (threadShouldExit())
             break;
 

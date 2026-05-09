@@ -12,8 +12,9 @@ namespace parametersDeclaration{
             juce::AudioParameterBool* bypass{nullptr};
         };
         struct MovementFunction {
-            juce::AudioParameterFloat* periodDuration{nullptr};
+            juce::AudioParameterChoice* periodDuration{nullptr};
             juce::AudioParameterFloat* periodDurationNoSync{nullptr};
+            juce::AudioParameterBool* periodSync{nullptr};
             juce::AudioParameterFloat* periodStart{nullptr};
             juce::AudioParameterChoice* function{nullptr};
             juce::AudioParameterFloat* width{nullptr};

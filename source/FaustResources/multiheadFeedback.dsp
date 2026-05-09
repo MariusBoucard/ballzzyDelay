@@ -9,8 +9,8 @@ with {
     // Unique sliders for each head
     dTime    = hslider("[0]Time [unit:s]", 0.2 * (i+1), 0, 4, 0.001);
     fb       = hslider("[1]Feedback", 0.3, 0, 0.95, 0.01);
-    pan      = hslider("[2]Pan", 0.5, 0, 1, 0.01);
-    level    = hslider("[3]Level", 0.5, 0, 1, 0.01);
+    pan      = hslider("[2]Pan", 0.5, 0, 1, 0.01): si.smoo;
+    level    = hslider("[3]Level", 0.5, 0, 1, 0.01): si.smoo;
     toggleOn = checkbox("[4]On");
 
     // Filter controls

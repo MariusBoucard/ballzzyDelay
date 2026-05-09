@@ -85,14 +85,18 @@ void addMovementLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layo
     auto on = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{prefix + "_MOVEMENT_ON", 1}, "Movement On Head "+prefix, false);
     move.movementOn = on.get();
     layout.add(std::move(on));
-    // TODO : bien définir le range des différents params , ici et dans l'ui
-    auto period = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_MOVEMENT_PERIOD_DURATION", 1}, "Period"+prefix, 0.1f, 10.f, 1.f);
+    auto period =  std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{prefix + "_MOVEMENT_PERIOD_DURATION", 1},
+        "Movement Period Duration "+prefix, juce::StringArray{"1/64", "1/32T", "1/64D", "1/32", "1/16T", "1/32D", "1/16", "1/8T", "1/16D", "1/8", "1/4T", "1/8D", "1/4", "1/2T", "1/4D", "1/2", "1T", "1/2D", "1"},0);
     move.periodDuration = period.get();
     layout.add(std::move(period));
 
     auto periodNoSync = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_MOVEMENT_PERIOD_DURATION_NO_SYNC", 1}, "Period"+prefix, 0.1f, 10.f, 1.f);
     move.periodDurationNoSync = periodNoSync.get();
     layout.add(std::move(periodNoSync));
+
+    auto isPeriodSync = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{prefix + "_MOVEMENT_BPM_SYNC", 1}, "Period Sync "+prefix, true);
+    move.periodSync = isPeriodSync.get();
+    layout.add(std::move(isPeriodSync));
 
     auto width = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_MOVEMENT_WIDTH", 1}, "Width "+prefix, 0.f,1.f, 0.f);
     move.width = width.get();
@@ -276,7 +280,7 @@ createParameterLayout(parametersDeclaration::Parameters& parameters)
     return layout;
 }
     // TODO va etre factorisable avec le code du mouvement
-    float getTimeFromIndex(float index) {
+float getTimeFromIndex(float index) {
     double bpm =   mParameters.getRawParameterValue(id::USER_BPM.getParamID())->load();
     bool hostTempoBpm = mParameters.getRawParameterValue(id::BPM_FROM_HOST.getParamID())->load();
     if (hostTempoBpm) {
