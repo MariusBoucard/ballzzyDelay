@@ -102,6 +102,10 @@ void addMovementLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layo
     move.width = width.get();
     layout.add(std::move(width));
 
+    auto widthSlave = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{ prefix + "_MOVEMENT_WIDTH_SLAVE", 1}, "Width Slave "+prefix, false);
+    move.widthSlave = widthSlave.get();
+    layout.add(std::move(widthSlave));
+
     auto periodStart = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_MOVEMENT_PERIOD_STARTING_POINT", 1}, "Period Start "+prefix, 0.f, 1.f, 0.f);
     move.periodStart = width.get();
     layout.add(std::move(periodStart));
@@ -233,7 +237,7 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     parameters.duckingRatio = duckingRatio.get();
     layout.add(std::move(duckingRatio));
 
-    auto WIDTH = std::make_unique<juce::AudioParameterFloat>(id::WIDTH,"Width",0.f,100.f,0.f);
+    auto WIDTH = std::make_unique<juce::AudioParameterFloat>(id::WIDTH,"Width",0.f,1.f,0.f);
     parameters.width = WIDTH.get(); 
     layout.add(std::move(WIDTH));
 
@@ -379,15 +383,68 @@ float getTimeFromIndex(float index) {
             return true;
         }
 
-            // test si on est en mode slave, mais on essaye de update une head ?
+        // test si on est en mode slave, mais on essaye de update une head ?
+    // UPDATE LOOP ICI ! il ne faut pas !
         if (parameterID.contains("FEEDBACK") && mParameters.getRawParameterValue(parameterID+"_SLAVE")->load() > 0.5f)
         {
             if (auto* headFeedBack = mParameters.getParameter(parameterID)) {
-                headFeedBack->setValueNotifyingHost(mParameters.getRawParameterValue(id::FEEDBACK.getParamID())->load());
+                if (mParameters.getRawParameterValue(parameterID)->load() != mParameters.getRawParameterValue(id::FEEDBACK.getParamID())->load()) {
+                    headFeedBack->setValueNotifyingHost(mParameters.getRawParameterValue(id::FEEDBACK.getParamID())->load());
+                }
             }
         }
         return false;
     }
+
+        bool updateGlobalWidthParameters(const juce::String& parameterID, float newValue) {
+        // If global width, update all the width slave.
+        // if feedback slave, alors on update la tete courante avec global
+
+        if (parameterID.equalsIgnoreCase("WIDTH")) {
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_1_MOVEMENT_WIDTH_SLAVE.getParamID())->load() > 0.5f) {
+                if (auto* headFeedBack = mParameters.getParameter(id::HEAD_1_MOVEMENT_WIDTH.getParamID())) {
+                    headFeedBack->setValueNotifyingHost(newValue);
+                }
+            }
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_2_MOVEMENT_WIDTH_SLAVE.getParamID())->load() > 0.5f) {
+                if (auto* headFeedBack = mParameters.getParameter(id::HEAD_2_MOVEMENT_WIDTH.getParamID())) {
+                    headFeedBack->setValueNotifyingHost(newValue);
+                }
+            }
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_3_MOVEMENT_WIDTH_SLAVE.getParamID())->load() > 0.5f) {
+                if (auto* headFeedBack = mParameters.getParameter(id::HEAD_3_MOVEMENT_WIDTH.getParamID())) {
+                    headFeedBack->setValueNotifyingHost(newValue);
+                }
+            }
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_4_MOVEMENT_WIDTH_SLAVE.getParamID())->load() > 0.5f) {
+                if (auto* headFeedBack = mParameters.getParameter(id::HEAD_4_MOVEMENT_WIDTH.getParamID())) {
+                    headFeedBack->setValueNotifyingHost(newValue);
+                }
+            }
+            return true;
+        }
+
+        if (parameterID.contains("WIDTH_SLAVE")) {
+            juce::String param = parameterID.substring(0, parameterID.length() - 6); // on enleve le slave
+            if (auto* headFeedBack = mParameters.getParameter(param)) {
+                headFeedBack->setValueNotifyingHost(mParameters.getRawParameterValue(id::WIDTH.getParamID())->load());
+            }
+            return true;
+        }
+
+            // test si on est en mode slave, mais on essaye de update une head ? ICI Cette condition casse tout !
+        if (parameterID.contains("WIDTH") && mParameters.getRawParameterValue(parameterID+"_SLAVE")->load() > 0.5f)
+        {
+            if (auto* headFeedBack = mParameters.getParameter(parameterID)) {
+                if (mParameters.getRawParameterValue(parameterID)->load() != mParameters.getRawParameterValue(id::WIDTH.getParamID())->load()) {
+                     headFeedBack->setValueNotifyingHost(mParameters.getRawParameterValue(id::WIDTH.getParamID())->load());
+                }
+            }
+        }
+        return false;
+    }
+
+
 
 void parameterChanged(const juce::String& parameterID, float newValue) override
 {
@@ -401,6 +458,7 @@ void parameterChanged(const juce::String& parameterID, float newValue) override
     }
 
     if (updateGlobalFeedBackParameters(parameterID, newValue)) return;
+    if (updateGlobalWidthParameters(parameterID, newValue)) return;
 
     if (parameterID == "BPM_FROM_HOST") {
         if (newValue > 0.5f) {

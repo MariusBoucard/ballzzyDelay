@@ -42,7 +42,7 @@ namespace FaustParameterMapping {
             {"HEAD_3_FEEDBACK",          "/multiheadFeedback/Head_2/Feedback"},
             {"HEAD_3_GAIN",              "/multiheadFeedback/Head_2/Level"},
             {"HEAD_3_PAN",               "/multiheadFeedback/Head_2/Pan"},
-            {"HEAD_3_TIME_NO_SYNC",              "/multiheadFeedback/Head_2/Time"},
+            {"HEAD_3_TIME_NO_SYNC",      "/multiheadFeedback/Head_2/Time"},
             {"HEAD_3_TIME",              "/multiheadFeedback/Head_2/Time"},
 
             {"HEAD_3_HP_FILTER_FREQ",    "/multiheadFeedback/Head_2/Filters_HPF"},
