@@ -383,13 +383,13 @@ float getTimeFromIndex(float index) {
             return true;
         }
 
+        // TODO : ce call fait crasher car peut faire une loop de call en cas de valeur bien diff entre fedback et feedback head
         // test si on est en mode slave, mais on essaye de update une head ?
-    // UPDATE LOOP ICI ! il ne faut pas !
         if (parameterID.contains("FEEDBACK") && mParameters.getRawParameterValue(parameterID+"_SLAVE")->load() > 0.5f)
         {
             if (auto* headFeedBack = mParameters.getParameter(parameterID)) {
                 if (mParameters.getRawParameterValue(parameterID)->load() != mParameters.getRawParameterValue(id::FEEDBACK.getParamID())->load()) {
-                    headFeedBack->setValueNotifyingHost(mParameters.getRawParameterValue(id::FEEDBACK.getParamID())->load());
+                //    headFeedBack->setValueNotifyingHost(mParameters.getRawParameterValue(id::FEEDBACK.getParamID())->load());
                 }
             }
         }
@@ -433,11 +433,12 @@ float getTimeFromIndex(float index) {
         }
 
             // test si on est en mode slave, mais on essaye de update une head ? ICI Cette condition casse tout !
+    // Risque de boucle reentrante non négligeable
         if (parameterID.contains("WIDTH") && mParameters.getRawParameterValue(parameterID+"_SLAVE")->load() > 0.5f)
         {
             if (auto* headFeedBack = mParameters.getParameter(parameterID)) {
                 if (mParameters.getRawParameterValue(parameterID)->load() != mParameters.getRawParameterValue(id::WIDTH.getParamID())->load()) {
-                     headFeedBack->setValueNotifyingHost(mParameters.getRawParameterValue(id::WIDTH.getParamID())->load());
+                   //  headFeedBack->setValueNotifyingHost(mParameters.getRawParameterValue(id::WIDTH.getParamID())->load());
                 }
             }
         }
