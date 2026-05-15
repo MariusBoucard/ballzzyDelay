@@ -135,7 +135,7 @@ VueProcessorEditor::VueProcessorEditor(
 
   setResizable(true, true);
 
-  setSize(800, 1000);
+  setSize(800, 630);
 
   startTimer(60);
 }
