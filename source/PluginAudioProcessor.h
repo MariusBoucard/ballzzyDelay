@@ -178,6 +178,10 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     head.time = headTime.get();
     layout.add(std::move(headTime));
 
+    auto timeSlave = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{prefix + "_TIME_SLAVE"}, "Time Slave " + prefix,0 );
+    head.timeSlave = timeSlave.get();
+    layout.add(std::move(timeSlave));
+
     auto headTimeNoSync = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_TIME_NO_SYNC", 1}, "Time Head "+prefix+" no sync",0.f, 4.f, 0.2f*(headIndex+1));
     head.timeNoSync = headTimeNoSync.get();
     layout.add(std::move(headTimeNoSync));
@@ -264,6 +268,16 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     parameters.bpmFromHost = bpmFromHost.get();
     layout.add(std::move(bpmFromHost));
 
+    auto globalTime = std::make_unique<juce::AudioParameterChoice>(juce::ParameterID{id::GLOBAL_TIME.getParamID(), 1},
+           "Global Time Sync", juce::StringArray{"1/64", "1/32T", "1/64D", "1/32", "1/16T", "1/32D", "1/16", "1/8T", "1/16D", "1/8", "1/4T", "1/8D", "1/4", "1/2T", "1/4D", "1/2", "1T", "1/2D", "1"},0);
+    parameters.globalTime = globalTime.get();
+    layout.add(std::move(globalTime));
+
+
+    auto globalTimeNoSync = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{id::GLOBAL_TIME_NO_SYNC.getParamID(), 1}, "Global Time no sync",0.f, 4.f, 0.2f);
+    parameters.globalTimeNoSync = globalTimeNoSync.get();
+    layout.add(std::move(globalTimeNoSync));
+
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout
@@ -345,6 +359,90 @@ float getTimeFromIndex(float index) {
             mFaustUI->setParamValue(FaustParameterMapping::getFaustPath(id::HEAD_4_TIME_NO_SYNC.getParamID()), mParameters.getRawParameterValue(id::HEAD_4_TIME_NO_SYNC.getParamID())->load());
 
         }
+    }
+     bool updateGlobalTimeParameters(const juce::String& parameterID, float newValue) {
+        // TODO : Faire attention avec le no sync peut poser pb !
+        // If global feedback, update all the feedback slave.
+        // if feedback slave, alors on update la tete courante avec global
+
+        if (parameterID.equalsIgnoreCase(id::GLOBAL_TIME.getParamID()) || parameterID.equalsIgnoreCase(id::GLOBAL_TIME_NO_SYNC.getParamID())) {
+            // TODO : Get the right timing depending on what we are settled to !
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_1_TIME_SLAVE.getParamID())->load() > 0.5f) {
+                if (parameterID.equalsIgnoreCase(id::GLOBAL_TIME_NO_SYNC.getParamID())) {
+                    if (auto* headTIME = mParameters.getParameter(id::HEAD_1_TIME_NO_SYNC.getParamID())) {
+                        headTIME->setValueNotifyingHost(newValue);
+                    }
+                } else {
+                    if (auto* headTIME = mParameters.getParameter(id::HEAD_1_TIME.getParamID())) {
+                        headTIME->setValueNotifyingHost(newValue);
+                    }
+                }
+            }
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_2_TIME_SLAVE.getParamID())->load() > 0.5f) {
+                if (parameterID.equalsIgnoreCase(id::GLOBAL_TIME_NO_SYNC.getParamID())) {
+                    if (auto* headTIME = mParameters.getParameter(id::HEAD_2_TIME_NO_SYNC.getParamID())) {
+                        headTIME->setValueNotifyingHost(newValue);
+                    }
+                } else {
+                    if (auto* headTIME = mParameters.getParameter(id::HEAD_2_TIME.getParamID())) {
+                        headTIME->setValueNotifyingHost(newValue);
+                    }
+                }
+            }
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_3_TIME_SLAVE.getParamID())->load() > 0.5f) {
+                if (parameterID.equalsIgnoreCase(id::GLOBAL_TIME_NO_SYNC.getParamID())) {
+                    if (auto* headTIME = mParameters.getParameter(id::HEAD_3_TIME_NO_SYNC.getParamID())) {
+                        headTIME->setValueNotifyingHost(newValue);
+                    }
+                } else {
+                    if (auto* headTIME = mParameters.getParameter(id::HEAD_3_TIME.getParamID())) {
+                        headTIME->setValueNotifyingHost(newValue);
+                    }
+                }
+            }
+            if (mFaustUI != nullptr && mParameters.getRawParameterValue(id::HEAD_4_TIME_SLAVE.getParamID())->load() > 0.5f) {
+                if (parameterID.equalsIgnoreCase(id::GLOBAL_TIME_NO_SYNC.getParamID())) {
+                    if (auto* headTIME = mParameters.getParameter(id::HEAD_4_TIME_NO_SYNC.getParamID())) {
+                        headTIME->setValueNotifyingHost(newValue);
+                    }
+                } else {
+                    if (auto* headTIME = mParameters.getParameter(id::HEAD_4_TIME.getParamID())) {
+                        headTIME->setValueNotifyingHost(newValue);
+                    }
+                }
+            }
+            return true;
+        }
+
+        if (parameterID.contains("TIME_SLAVE")) {
+            juce::String param = parameterID.substring(0, parameterID.length() - 6); // on enleve le slave
+            // TODO : verifier que ca marche ici
+
+            if (auto* headTIME = mParameters.getParameter(param)) {
+                headTIME->setValueNotifyingHost(mParameters.getRawParameterValue(id::GLOBAL_TIME.getParamID())->load());
+            }
+            juce::String param2 = parameterID.substring(0, parameterID.length()-6);
+            param2 = param2 + "_NO_SYNC";
+            if (auto* headTIME = mParameters.getParameter(param2)) {
+                headTIME->setValueNotifyingHost(mParameters.getParameterAsValue(id::GLOBAL_TIME_NO_SYNC.getParamID()).getValue());
+            }
+            return true;
+        }
+
+        // TODO : ce call fait crasher car peut faire une loop de call en cas de valeur bien diff entre fedback et TIME head
+        // test si on est en mode slave, mais on essaye de update une head ?
+        juce::String parameterIdCrop = parameterID;
+        if (parameterID.contains("TIME_NO_SYNC"))
+            parameterIdCrop = parameterID.substring(0, parameterID.length() - 8);
+        if (parameterID.contains("TIME") && mParameters.getRawParameterValue(parameterIdCrop+"_SLAVE")->load() > 0.5f)
+        {
+            if (auto* headTIME = mParameters.getParameter(parameterID)) {
+                if (mParameters.getRawParameterValue(parameterIdCrop)->load() != mParameters.getRawParameterValue(id::GLOBAL_TIME.getParamID())->load()) {
+                //    headTIME->setValueNotifyingHost(mParameters.getRawParameterValue(id::TIME.getParamID())->load());
+                }
+            }
+        }
+        return false;
     }
 
     bool updateGlobalFeedBackParameters(const juce::String& parameterID, float newValue) {
@@ -459,6 +557,8 @@ void parameterChanged(const juce::String& parameterID, float newValue) override
     }
 
     if (updateGlobalFeedBackParameters(parameterID, newValue)) return;
+    updateGlobalTimeParameters(parameterID, newValue);
+
     if (updateGlobalWidthParameters(parameterID, newValue)) return;
 
     if (parameterID == "BPM_FROM_HOST") {

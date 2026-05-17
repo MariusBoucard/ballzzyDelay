@@ -11,6 +11,8 @@ namespace id {
     const juce::ParameterID INPUT_GAIN            {"INPUT_GAIN", 1};
     const juce::ParameterID OUTPUT_GAIN           {"OUTPUT_GAIN", 1};
     const juce::ParameterID MIX                   {"MIX", 1};
+    const juce::ParameterID GLOBAL_TIME                      {"GLOBAL_TIME", 1};
+    const juce::ParameterID GLOBAL_TIME_NO_SYNC               {"GLOBAL_TIME_NO_SYNC", 1};
     const juce::ParameterID FEEDBACK              {"FEEDBACK", 1};
     const juce::ParameterID SYNC_TEMPO            {"SYNC_TEMPO", 1};
 
@@ -51,6 +53,7 @@ namespace id {
     const juce::ParameterID HEAD_1_MOVEMENT_WIDTH            {"HEAD_1_MOVEMENT_WIDTH", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_ON               {"HEAD_1_MOVEMENT_ON", 1};
     const juce::ParameterID HEAD_1_MOVEMENT_WIDTH_SLAVE      {"HEAD_1_MOVEMENT_WIDTH_SLAVE", 1};
+    const juce::ParameterID HEAD_1_TIME_SLAVE                   { "HEAD_1_TIME_SLAVE", 1};
 
     const juce::ParameterID HEAD_1_LP_FILTER_FREQ            {"HEAD_1_LP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_1_HP_FILTER_FREQ            {"HEAD_1_HP_FILTER_FREQ", 1};
@@ -80,6 +83,7 @@ namespace id {
     const juce::ParameterID HEAD_2_LP_FILTER_FREQ            {"HEAD_2_LP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_2_HP_FILTER_FREQ            {"HEAD_2_HP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_2_FEEDBACK_SLAVE            {"HEAD_2_FEEDBACK_SLAVE", 1};
+    const juce::ParameterID HEAD_2_TIME_SLAVE                   { "HEAD_2_TIME_SLAVE", 1};
     const juce::ParameterID HEAD_2_LP_FILTER_BYPASS          {"HEAD_2_LP_FILTER_BYPASS", 1};
     const juce::ParameterID HEAD_2_HP_FILTER_BYPASS          {"HEAD_2_HP_FILTER_BYPASS", 1};
 
@@ -104,6 +108,8 @@ namespace id {
     const juce::ParameterID HEAD_3_LP_FILTER_FREQ            {"HEAD_3_LP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_3_HP_FILTER_FREQ            {"HEAD_3_HP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_3_FEEDBACK_SLAVE            {"HEAD_3_FEEDBACK_SLAVE", 1};
+    const juce::ParameterID HEAD_3_TIME_SLAVE                   { "HEAD_3_TIME_SLAVE", 1};
+
     const juce::ParameterID HEAD_3_LP_FILTER_BYPASS          {"HEAD_3_LP_FILTER_BYPASS", 1};
     const juce::ParameterID HEAD_3_HP_FILTER_BYPASS          {"HEAD_3_HP_FILTER_BYPASS", 1};
 
@@ -124,6 +130,8 @@ namespace id {
     const juce::ParameterID HEAD_4_MOVEMENT_WIDTH            {"HEAD_4_MOVEMENT_WIDTH", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_ON               {"HEAD_4_MOVEMENT_ON", 1};
     const juce::ParameterID HEAD_4_MOVEMENT_WIDTH_SLAVE      {"HEAD_4_MOVEMENT_WIDTH_SLAVE", 1};
+    const juce::ParameterID HEAD_4_TIME_SLAVE                   { "HEAD_4_TIME_SLAVE", 1};
+
 
     const juce::ParameterID HEAD_4_LP_FILTER_FREQ            {"HEAD_4_LP_FILTER_FREQ", 1};
     const juce::ParameterID HEAD_4_HP_FILTER_FREQ            {"HEAD_4_HP_FILTER_FREQ", 1};

@@ -34,6 +34,8 @@ namespace parametersDeclaration{
             Lp lpFilter;
             Hp hpFilter;
             juce::AudioParameterBool* feedbackSlave{nullptr};
+            juce::AudioParameterBool* timeSlave{nullptr};
+
         };
 
         juce::AudioParameterFloat* gain{nullptr};
@@ -50,6 +52,8 @@ namespace parametersDeclaration{
         juce::AudioParameterFloat* duckingRelease{nullptr};
         juce::AudioParameterFloat* duckingRatio{nullptr};
         juce::AudioParameterFloat* duckingThreshold{nullptr};
+        juce::AudioParameterChoice* globalTime{nullptr};
+        juce::AudioParameterFloat* globalTimeNoSync{nullptr};
         juce::AudioParameterFloat* width{nullptr}; // Todo reflechir si sens niveau head ?
         juce::AudioParameterFloat* bpm{nullptr};
         juce::AudioParameterBool* bpmFromHost{nullptr};
