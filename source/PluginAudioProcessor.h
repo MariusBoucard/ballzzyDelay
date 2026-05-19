@@ -360,71 +360,62 @@ float getTimeFromIndex(float index) {
 
         }
     }
-     bool updateGlobalTimeParameters(const juce::String& parameterID, float newValue) {
 
-    const bool isNoSync   = parameterID.equalsIgnoreCase(id::GLOBAL_TIME_NO_SYNC.getParamID());
-    const bool isGlobal   = parameterID.equalsIgnoreCase(id::GLOBAL_TIME.getParamID());
+    bool updateGlobalTimeParameters(const juce::String& parameterID, float newValue) {
 
-    // =========================================================
-    // Case 1 : Global time changed → propagate to enslaved heads
-    // =========================================================
-    if (isGlobal || isNoSync) {
-        if (mFaustUI == nullptr) return true;
+        const bool isNoSync   = parameterID.equalsIgnoreCase(id::GLOBAL_TIME_NO_SYNC.getParamID());
+        const bool isGlobal   = parameterID.equalsIgnoreCase(id::GLOBAL_TIME.getParamID());
 
-        // convertTo0to1 handles any range (e.g. [0,4] for NO_SYNC)
-        auto* sourceParam = mParameters.getParameter(parameterID);
-        if (sourceParam == nullptr) return true;
-        const float normalizedValue = sourceParam->convertTo0to1(newValue);
+        if (isGlobal || isNoSync) {
+            if (mFaustUI == nullptr) return true;
 
-        struct HeadParams {
-            juce::String slaveID;
-            juce::String timeID;
-            juce::String timeNoSyncID;
-        };
+            auto* sourceParam = mParameters.getParameter(parameterID);
+            if (sourceParam == nullptr) return true;
+            const float normalizedValue = sourceParam->convertTo0to1(newValue);
 
-        const HeadParams heads[] = {
-            { id::HEAD_1_TIME_SLAVE.getParamID(), id::HEAD_1_TIME.getParamID(), id::HEAD_1_TIME_NO_SYNC.getParamID() },
-            { id::HEAD_2_TIME_SLAVE.getParamID(), id::HEAD_2_TIME.getParamID(), id::HEAD_2_TIME_NO_SYNC.getParamID() },
-            { id::HEAD_3_TIME_SLAVE.getParamID(), id::HEAD_3_TIME.getParamID(), id::HEAD_3_TIME_NO_SYNC.getParamID() },
-            { id::HEAD_4_TIME_SLAVE.getParamID(), id::HEAD_4_TIME.getParamID(), id::HEAD_4_TIME_NO_SYNC.getParamID() },
-        };
+            struct HeadParams {
+                juce::String slaveID;
+                juce::String timeID;
+                juce::String timeNoSyncID;
+            };
 
-        for (const auto& head : heads) {
-            if (mParameters.getRawParameterValue(head.slaveID)->load() <= 0.5f)
-                continue; // not enslaved, skip
+            const HeadParams heads[] = {
+                { id::HEAD_1_TIME_SLAVE.getParamID(), id::HEAD_1_TIME.getParamID(), id::HEAD_1_TIME_NO_SYNC.getParamID() },
+                { id::HEAD_2_TIME_SLAVE.getParamID(), id::HEAD_2_TIME.getParamID(), id::HEAD_2_TIME_NO_SYNC.getParamID() },
+                { id::HEAD_3_TIME_SLAVE.getParamID(), id::HEAD_3_TIME.getParamID(), id::HEAD_3_TIME_NO_SYNC.getParamID() },
+                { id::HEAD_4_TIME_SLAVE.getParamID(), id::HEAD_4_TIME.getParamID(), id::HEAD_4_TIME_NO_SYNC.getParamID() },
+            };
 
-            const juce::String& targetID = isNoSync ? head.timeNoSyncID : head.timeID;
-            if (auto* headParam = mParameters.getParameter(targetID))
-                headParam->setValueNotifyingHost(normalizedValue);
+            for (const auto& head : heads) {
+                if (mParameters.getRawParameterValue(head.slaveID)->load() <= 0.5f)
+                    continue;
+
+                const juce::String& targetID = isNoSync ? head.timeNoSyncID : head.timeID;
+                if (auto* headParam = mParameters.getParameter(targetID))
+                    headParam->setValueNotifyingHost(normalizedValue);
+            }
+            return true;
         }
-        return true;
+
+        if (parameterID.contains("TIME_SLAVE") && newValue > 0.5f) {
+            const juce::String baseParam = parameterID.dropLastCharacters(6);
+
+            auto* globalTime      = mParameters.getParameter(id::GLOBAL_TIME.getParamID());
+            auto* globalTimeNoSync = mParameters.getParameter(id::GLOBAL_TIME_NO_SYNC.getParamID());
+
+            if (globalTime != nullptr)
+                if (auto* headTime = mParameters.getParameter(baseParam))
+                    headTime->setValueNotifyingHost(globalTime->getValue());
+
+            if (globalTimeNoSync != nullptr)
+                if (auto* headTimeNoSync = mParameters.getParameter(baseParam + "_NO_SYNC"))
+                    headTimeNoSync->setValueNotifyingHost(globalTimeNoSync->getValue());
+
+            return true;
+        }
+
+        return false;
     }
-
-    // =========================================================
-    // Case 2 : A slave toggle turned on → snap head to global
-    // =========================================================
-    if (parameterID.contains("TIME_SLAVE") && newValue > 0.5f) {
-        // Drop "_SLAVE" (6 chars) → e.g. "HEAD_1_TIME_SLAVE" → "HEAD_1_TIME"
-        const juce::String baseParam = parameterID.dropLastCharacters(6);
-
-        auto* globalTime      = mParameters.getParameter(id::GLOBAL_TIME.getParamID());
-        auto* globalTimeNoSync = mParameters.getParameter(id::GLOBAL_TIME_NO_SYNC.getParamID());
-
-        // Sync synced-time — getValue() returns already-normalized [0,1]
-        if (globalTime != nullptr)
-            if (auto* headTime = mParameters.getParameter(baseParam))
-                headTime->setValueNotifyingHost(globalTime->getValue());
-
-        // Sync free-time (no sync), same principle
-        if (globalTimeNoSync != nullptr)
-            if (auto* headTimeNoSync = mParameters.getParameter(baseParam + "_NO_SYNC"))
-                headTimeNoSync->setValueNotifyingHost(globalTimeNoSync->getValue());
-
-        return true;
-    }
-
-    return false;
-}
     bool updateGlobalFeedBackParameters(const juce::String& parameterID, float newValue) {
         // If global feedback, update all the feedback slave.
         // if feedback slave, alors on update la tete courante avec global
@@ -474,7 +465,7 @@ float getTimeFromIndex(float index) {
         return false;
     }
 
-        bool updateGlobalWidthParameters(const juce::String& parameterID, float newValue) {
+    bool updateGlobalWidthParameters(const juce::String& parameterID, float newValue) {
         // If global width, update all the width slave.
         // if feedback slave, alors on update la tete courante avec global
 
@@ -511,7 +502,7 @@ float getTimeFromIndex(float index) {
         }
 
             // test si on est en mode slave, mais on essaye de update une head ? ICI Cette condition casse tout !
-    // Risque de boucle reentrante non négligeable
+        // Risque de boucle reentrante non négligeable
         if (parameterID.contains("WIDTH") && mParameters.getRawParameterValue(parameterID+"_SLAVE")->load() > 0.5f)
         {
             if (auto* headFeedBack = mParameters.getParameter(parameterID)) {
