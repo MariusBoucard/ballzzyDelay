@@ -68,6 +68,9 @@ target_sources(${PROJECT_NAME}
 
         source/ui/webSliderAttachments.h
 
+        source/service/PresetManager.h
+        source/service/PresetManager.cpp
+
 
 
         # UI Compon

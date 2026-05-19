@@ -7,8 +7,8 @@ PluginAudioProcessor::PluginAudioProcessor()
     : juce::AudioProcessor(BusesProperties().withInput("Input", juce::AudioChannelSet::stereo())
           .withOutput("Output", juce::AudioChannelSet::stereo()))
       , mParameters{*this, nullptr, "PARAMETERS", createParameterLayout(parametersDeclaration)}
-, mParameterSetup(mParameters)
-, mSkeletonProcessor(mParameters, mParameterSetup, parametersDeclaration)
+      , mParameterSetup(mParameters)
+      , mSkeletonProcessor(mParameters, mParameterSetup, parametersDeclaration)
 {
     for (auto* param : mParameters.processor.getParameters())
     {

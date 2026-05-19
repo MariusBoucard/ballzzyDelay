@@ -1,37 +1,9 @@
 
-/*******************************************************************************
- The block below describes the properties of this PIP. A PIP is a short snippet
- of code that can be read by the Projucer and used to generate a JUCE project.
-
- BEGIN_JUCE_PIP_METADATA
-
- name:             GainPlugin
- version:          1.0.0
- vendor:           JUCE
- website:          http://juce.com
- description:      Gain audio plugin.
-
- dependencies:     juce_audio_basics, juce_audio_devices, juce_audio_formats,
-                   juce_audio_plugin_client, juce_audio_processors,
-                   juce_audio_utils, juce_core, juce_data_structures,
-                   juce_events, juce_graphics, juce_gui_basics, juce_gui_extra
- exporters:        xcode_mac, vs2022
-
- moduleFlags:      JUCE_STRICT_REFCOUNTEDPOINTER=1
-
- type:             AudioProcessor
- mainClass:        GainProcessor
-
- useLocalCopy:     1
-
- END_JUCE_PIP_METADATA
-
-*******************************************************************************/
-
 #pragma once
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_audio_processors_headless/juce_audio_processors_headless.h>
 #include "ui/gui.h"
+#include "service/PresetManager.h"
 #include "dsp/Processor.h"
 #include "dsp/ParameterSetup.h"
 #include "dsp/ParameterIDs.hpp"
@@ -39,6 +11,7 @@
 #include "dsp/faustParameterMappers/faustParameterMap.h"
 #include "dsp/faustParameterMappers/hpLpFaustParameterMap.h"
 #include "dsp/faustParameterMappers/DuckingEngineParameterMap.h"
+
 
 class PluginAudioProcessor final : public juce::AudioProcessor,
                                    public juce::AudioProcessorValueTreeState::Listener
@@ -648,12 +621,31 @@ void prepareToPlay (double sampleRate, int blockSize) override
         juce::MemoryOutputStream stream(destData, true);
         mParameters.state.writeToStream(stream);  
     }
-
-    juce::AudioProcessorValueTreeState& getState() { return mParameters; }
-
-    void setStateInformation (const void* data, int sizeInBytes) override
+/*
+    void PluginAudioProcessor::getStateInformation(juce::MemoryBlock& destData) override
     {
+        auto state = mParameters.copyState();
+        // Embed the current preset name so the host can restore it
+        state.setProperty("currentPreset", mPresetManager->getCurrentPresetName(), nullptr);
 
+        const auto xml = state.createXml();
+        copyXmlToBinary(*xml, destData); // JUCE helper — handles the MemoryBlock for you
+    }
+*/
+    // Fix setStateInformation — was completely empty before!
+    void PluginAudioProcessor::setStateInformation(const void* data, int sizeInBytes) override
+    {
+        const auto xml = getXmlFromBinary(data, sizeInBytes); // JUCE helper
+        if (xml == nullptr) return;
+
+        const auto newState = juce::ValueTree::fromXml(*xml);
+        if (!newState.isValid()) return;
+
+        // Restore the preset name if present
+        if (newState.hasProperty("currentPreset"))
+            mPresetManager->loadPreset(newState["currentPreset"].toString());
+        else
+            mParameters.replaceState(newState); // Raw state restore (no named preset)
     }
 
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override
@@ -671,11 +663,14 @@ void prepareToPlay (double sampleRate, int blockSize) override
     MapUI* getFaustUI() {
         return mFaustUI.get();
     }
+
+    PresetManager& getPresetManager() { return *mPresetManager; }
 private:
     void updateMovmentHeadPosition(int inHeadNumber, juce::AudioPlayHead* playHead);
     void updateMovmentPosition() ;
 
 private:
+    std::unique_ptr<PresetManager> mPresetManager;
     parametersDeclaration::Parameters parametersDeclaration;
     std::atomic<double> currentBpm { 120.0 };
     // Use unique_ptr for automatic memory management
