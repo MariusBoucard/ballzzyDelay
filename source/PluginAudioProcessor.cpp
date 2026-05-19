@@ -7,8 +7,10 @@ PluginAudioProcessor::PluginAudioProcessor()
     : juce::AudioProcessor(BusesProperties().withInput("Input", juce::AudioChannelSet::stereo())
           .withOutput("Output", juce::AudioChannelSet::stereo()))
       , mParameters{*this, nullptr, "PARAMETERS", createParameterLayout(parametersDeclaration)}
+      , mPresetManager { std::make_unique<PresetManager>(mParameters) }
       , mParameterSetup(mParameters)
-      , mSkeletonProcessor(mParameters, mParameterSetup, parametersDeclaration)
+      , mSkeletonProcessor(mParameters, mParameterSetup, parametersDeclaration, *mPresetManager)
+
 {
     for (auto* param : mParameters.processor.getParameters())
     {

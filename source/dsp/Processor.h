@@ -5,6 +5,7 @@
 #include "paramsDeclaration.h"
 #include "Bones/GainBone.h"
 #include "Processor.hpp"
+#include "../service/PresetManager.h"
 #include "Bones/FaustMultiheadFeedback.h"
 #include "Bones/FaustHpLp.h"
 #include "Bones/DuckingEngine.h"
@@ -13,9 +14,11 @@
 class SkeletonAudioProcessor final : public juce::AudioProcessor {
 public:
     //==============================================================================
-    SkeletonAudioProcessor(juce::AudioProcessorValueTreeState &inParameters, ParameterSetup &inParameterSetup, parametersDeclaration::Parameters inParametersDeclaration);
+    SkeletonAudioProcessor(juce::AudioProcessorValueTreeState &inParameters, ParameterSetup &inParameterSetup, parametersDeclaration::Parameters inParametersDeclaration,PresetManager& inPresetManager);
 
     ~SkeletonAudioProcessor() override;
+
+    PresetManager& getPresetManager() { return mPresetManager; }
 
     void prepareToPlay(double inSampleRate, int inBlockSize) override {
         mSampleRate = inSampleRate;
@@ -232,6 +235,7 @@ private:
     juce::AudioProcessorGraph::Node::Ptr mGainNode;
     int mBlockSize;
     double mSampleRate;
+    PresetManager& mPresetManager;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SkeletonAudioProcessor)
 };

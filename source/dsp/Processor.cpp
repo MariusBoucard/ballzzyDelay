@@ -5,7 +5,8 @@
 #include "ParameterIDs.hpp"
 
 
-SkeletonAudioProcessor::SkeletonAudioProcessor(juce::AudioProcessorValueTreeState& inParameters, ParameterSetup& inParameterSetup, parametersDeclaration::Parameters inParametersDeclaration)
+SkeletonAudioProcessor::SkeletonAudioProcessor(juce::AudioProcessorValueTreeState& inParameters,
+    ParameterSetup& inParameterSetup, parametersDeclaration::Parameters inParametersDeclaration, PresetManager& inPresetManager)
     : AudioProcessor(BusesProperties().withInput("Input", juce::AudioChannelSet::stereo())
         .withOutput("Output", juce::AudioChannelSet::stereo()))
     , mParameters(inParameters)
@@ -16,16 +17,15 @@ SkeletonAudioProcessor::SkeletonAudioProcessor(juce::AudioProcessorValueTreeStat
     , mFaustLPHpProcessor()
     , mFaustDuckingProcessor()
     , mParametersDeclaration(inParametersDeclaration)
+    , mPresetManager(inPresetManager)
 {
     setRateAndBufferSizeDetails(mSampleRate, mBlockSize);
-  //  initialiseGraph();
 }
 SkeletonAudioProcessor::~SkeletonAudioProcessor()
 {
 
 }
 
-// TODO
 void SkeletonAudioProcessor::updateMeter(bool isOutput, juce::AudioBuffer<float>& buffer, int numChannels)
 {
     if (isOutput)

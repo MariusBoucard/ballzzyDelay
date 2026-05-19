@@ -145,13 +145,6 @@ VueProcessorEditor::~VueProcessorEditor() {}
 void VueProcessorEditor::resized() {
   auto bounds = getBounds();
   webView.setBounds(bounds.removeFromRight(getWidth()));
- /* runJavaScriptButton.setBounds(bounds.removeFromTop(50).reduced(5));
-  emitJavaScriptEventButton.setBounds(bounds.removeFromTop(50).reduced(5));
-  labelUpdatedFromJavaScript.setBounds(bounds.removeFromTop(50).reduced(5));
-  gainSlider.setBounds(bounds.removeFromTop(50).reduced(5));
-  bypassButton.setBounds(bounds.removeFromTop(50).reduced(10));
-  distortionTypeLabel.setBounds(bounds.removeFromTop(50).reduced(5));
-  distortionTypeComboBox.setBounds(bounds.removeFromTop(50).reduced(5));*/
 }
 
 void VueProcessorEditor::timerCallback() {  webView.emitEventIfBrowserIsVisible(getExampleEventId(),

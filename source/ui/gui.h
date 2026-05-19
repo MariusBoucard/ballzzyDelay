@@ -74,12 +74,11 @@ public:
         juce::Identifier{"getPresetList"},
         [this](const juce::Array<juce::var>& args,
         juce::WebBrowserComponent::NativeFunctionCompletion completion) {
-        // Returns a JSON array of preset name strings to JS
-        //juce::StringArray presets = processorRef.getPresetManager().getPresetList();
+        juce::StringArray presets = processorRef.getPresetManager().getPresetList();
         juce::var result;
         juce::Array<juce::var> arr;
-        //for (const auto& name : presets)
-        //    arr.add(name);
+        for (const auto& name : presets)
+            arr.add(name);
         completion(juce::var{ arr });
         })
         .withNativeFunction(
@@ -87,7 +86,7 @@ public:
         [this](const juce::Array<juce::var>& args,
            juce::WebBrowserComponent::NativeFunctionCompletion completion) {
         if (args.isEmpty()) { completion("error: no name provided"); return; }
-        //processorRef.getPresetManager().savePreset(args[0].toString());
+        processorRef.getPresetManager().savePreset(args[0].toString());
         completion("ok");
         })
         .withNativeFunction(
@@ -95,7 +94,7 @@ public:
         [this](const juce::Array<juce::var>& args,
            juce::WebBrowserComponent::NativeFunctionCompletion completion) {
         if (args.isEmpty()) { completion("error: no name provided"); return; }
-        //processorRef.getPresetManager().loadPreset(args[0].toString());
+        processorRef.getPresetManager().loadPreset(args[0].toString());
         completion("ok");
         })
         .withNativeFunction(
@@ -103,7 +102,7 @@ public:
         [this](const juce::Array<juce::var>& args,
            juce::WebBrowserComponent::NativeFunctionCompletion completion) {
         if (args.isEmpty()) { completion("error: no name provided"); return; }
-        //processorRef.getPresetManager().deletePreset(args[0].toString());
+        processorRef.getPresetManager().deletePreset(args[0].toString());
         completion("ok");
         });
        return webSliderAtt.addSlidersOptions(opts);

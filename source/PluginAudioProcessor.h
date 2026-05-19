@@ -664,13 +664,11 @@ void prepareToPlay (double sampleRate, int blockSize) override
         return mFaustUI.get();
     }
 
-    PresetManager& getPresetManager() { return *mPresetManager; }
 private:
     void updateMovmentHeadPosition(int inHeadNumber, juce::AudioPlayHead* playHead);
     void updateMovmentPosition() ;
 
 private:
-    std::unique_ptr<PresetManager> mPresetManager;
     parametersDeclaration::Parameters parametersDeclaration;
     std::atomic<double> currentBpm { 120.0 };
     // Use unique_ptr for automatic memory management
@@ -679,6 +677,7 @@ private:
     std::unique_ptr<DuckingEngine::MapUI> mFaustDuckingUI;
 
     juce::AudioProcessorValueTreeState mParameters;
+    std::unique_ptr<PresetManager> mPresetManager;
     SkeletonAudioProcessor mSkeletonProcessor;
     ParameterSetup mParameterSetup;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginAudioProcessor)
