@@ -70,7 +70,42 @@ public:
                             completion("Error retrieving logs");
                           }
                         });
-                  });
+       }).withNativeFunction(
+        juce::Identifier{"getPresetList"},
+        [this](const juce::Array<juce::var>& args,
+        juce::WebBrowserComponent::NativeFunctionCompletion completion) {
+        // Returns a JSON array of preset name strings to JS
+        //juce::StringArray presets = processorRef.getPresetManager().getPresetList();
+        juce::var result;
+        juce::Array<juce::var> arr;
+        //for (const auto& name : presets)
+        //    arr.add(name);
+        completion(juce::var{ arr });
+        })
+        .withNativeFunction(
+        juce::Identifier{"savePreset"},
+        [this](const juce::Array<juce::var>& args,
+           juce::WebBrowserComponent::NativeFunctionCompletion completion) {
+        if (args.isEmpty()) { completion("error: no name provided"); return; }
+        //processorRef.getPresetManager().savePreset(args[0].toString());
+        completion("ok");
+        })
+        .withNativeFunction(
+        juce::Identifier{"loadPreset"},
+        [this](const juce::Array<juce::var>& args,
+           juce::WebBrowserComponent::NativeFunctionCompletion completion) {
+        if (args.isEmpty()) { completion("error: no name provided"); return; }
+        //processorRef.getPresetManager().loadPreset(args[0].toString());
+        completion("ok");
+        })
+        .withNativeFunction(
+        juce::Identifier{"deletePreset"},
+        [this](const juce::Array<juce::var>& args,
+           juce::WebBrowserComponent::NativeFunctionCompletion completion) {
+        if (args.isEmpty()) { completion("error: no name provided"); return; }
+        //processorRef.getPresetManager().deletePreset(args[0].toString());
+        completion("ok");
+        });
        return webSliderAtt.addSlidersOptions(opts);
     }
 private:
