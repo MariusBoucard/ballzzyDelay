@@ -62,11 +62,10 @@ void ParameterSetup::updateFaustHeadPan(int headIndex, double playTime) {
     float duration = 0;
 
     if (isPeriodSync) {
-        duration = getTimeFromIndex(mParameters.getRawParameterValue(headPrefix + "MOVEMENT_PERIOD_DURATION")->load());
+        duration = getTimeFromIndex(getTimeFromIndex(mParameters.getRawParameterValue(headPrefix + "MOVEMENT_PERIOD_DURATION")->load()));
     } else {
         duration = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_PERIOD_DURATION_NO_SYNC")->load();
     }
-    // TODO : attention que no sync pour le moment
     const float width         = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_WIDTH")->load();
     const float startingPoint = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_PERIOD_STARTING_POINT")->load();
     const float function      = mParameters.getRawParameterValue(headPrefix + "MOVEMENT_FUNCTION")->load();
@@ -102,8 +101,8 @@ void ParameterSetup::updateFaustHeadPan(int headIndex, double playTime) {
     }
 
     // --- Compute final pan (input is 0–1, Faust expects –1 to +1) ---
-    const float panCentered  = pan;
-    const float finalPan     = juce::jlimit(-1.0f, 1.0f, panCentered + width * functionResult);
+    const float panCentered  = pan * 2;
+    const float finalPan     = juce::jlimit(0.0f, 1.0f, panCentered + width * functionResult);
 
     // --- Push to Faust ---
     juce::String paramID = "HEAD_" + juce::String(headIndex + 1) + "_PAN";

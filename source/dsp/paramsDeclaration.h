@@ -54,7 +54,7 @@ namespace parametersDeclaration{
         juce::AudioParameterFloat* duckingThreshold{nullptr};
         juce::AudioParameterChoice* globalTime{nullptr};
         juce::AudioParameterFloat* globalTimeNoSync{nullptr};
-        juce::AudioParameterFloat* width{nullptr}; // Todo reflechir si sens niveau head ?
+        juce::AudioParameterFloat* width{nullptr};
         juce::AudioParameterFloat* bpm{nullptr};
         juce::AudioParameterBool* bpmFromHost{nullptr};
 

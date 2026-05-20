@@ -38,39 +38,7 @@ public:
               .withInitialisationData("pluginVersion", JUCE_PRODUCT_VERSION)
               .withUserScript("console.log(\"C++ backend here: This is run before any other loading happens\");"
                              )
-              .withEventListener(
-                  "exampleJavaScriptEvent",
-                  [this](juce::var objectFromFrontend) {
-                    labelUpdatedFromJavaScript.setText(
-                        "example JavaScript event occurred with value " +
-                            objectFromFrontend.getProperty("emittedCount", 0)
-                                .toString(),
-                        juce::dontSendNotification);
-                  })
-              .withNativeFunction(
-                  juce::Identifier{"nativeFunction"},
-                  [this](const juce::Array<juce::var>& args,
-                         juce::WebBrowserComponent::NativeFunctionCompletion
-                             completion) {
-                    nativeFunction(args, std::move(completion));
-                  })
-              .withNativeFunction(
-                  juce::Identifier{"getLogs"},
-                  [this](const juce::Array<juce::var>& args,
-                         juce::WebBrowserComponent::NativeFunctionCompletion
-                             completion) {
-                    webView.evaluateJavascript(
-                        "JSON.stringify(window.__allLogs || [])",
-                        [completion](juce::WebBrowserComponent::EvaluationResult result) {
-                          if (const auto* resultPtr = result.getResult()) {
-                            const auto logsJson = resultPtr->toString();
-                            std::cout << "\n[BROWSER LOGS]\n" << logsJson << "\n" << std::endl;
-                            completion(logsJson);
-                          } else {
-                            completion("Error retrieving logs");
-                          }
-                        });
-       }).withNativeFunction(
+     .withNativeFunction(
         juce::Identifier{"getPresetList"},
         [this](const juce::Array<juce::var>& args,
         juce::WebBrowserComponent::NativeFunctionCompletion completion) {
@@ -110,15 +78,6 @@ public:
 private:
   using Resource = juce::WebBrowserComponent::Resource;
   std::optional<Resource> getResource(const juce::String& url) const;
-  void nativeFunction(
-      const juce::Array<juce::var>& args,
-      juce::WebBrowserComponent::NativeFunctionCompletion completion);
-
-
-  juce::TextButton runJavaScriptButton{"Run some JavaScript"};
-  juce::TextButton emitJavaScriptEventButton{"Emit JavaScript event"};
-  juce::Label labelUpdatedFromJavaScript{"label",
-                                         "To be updated from JavaScript"};
 
   SkeletonAudioProcessor& processorRef;
 

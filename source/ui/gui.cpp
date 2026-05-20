@@ -112,27 +112,6 @@ VueProcessorEditor::VueProcessorEditor(
 
    webView.goToURL(LOCAL_DEV_SERVER_ADDRESS);
 
-  runJavaScriptButton.onClick = [this] {
-    constexpr auto JAVASCRIPT_TO_RUN{"console.log(\"Hello from C++!\");"};
-    webView.evaluateJavascript(
-        JAVASCRIPT_TO_RUN,
-        [](juce::WebBrowserComponent::EvaluationResult result) {
-          if (const auto* resultPtr = result.getResult()) {
-            std::cout << "JavaScript evaluation result: "
-                      << resultPtr->toString() << std::endl;
-          } else {
-            std::cout << "JavaScript evaluation failed because "
-                      << result.getError()->message << std::endl;
-          }
-        });
-  };
-
-  emitJavaScriptEventButton.onClick = [this] {
-    static const juce::var valueToEmit{42.0};
-    webView.emitEventIfBrowserIsVisible(getExampleEventId(), valueToEmit);
-  };
-
-
   setResizable(true, true);
 
   setSize(800, 630);
@@ -180,16 +159,6 @@ auto VueProcessorEditor::getResource(const juce::String& url) const
   const auto resourceToRetrieve =
       url == "/" ? "index.html" : url.fromFirstOccurrenceOf("/", false, false);
 
-  if (resourceToRetrieve == "outputLevel.json") {
-    juce::DynamicObject::Ptr levelData{new juce::DynamicObject{}};
-    levelData->setProperty("left", processorRef.outputLevelLeft.load());
-    const auto jsonString = juce::JSON::toString(levelData.get());
-    juce::MemoryInputStream stream{jsonString.getCharPointer(),
-                                   jsonString.getNumBytesAsUTF8(), false};
-    return juce::WebBrowserComponent::Resource{
-        streamToVector(stream), juce::String{"application/json"}};
-  }
-
   const auto resource = getWebViewFileAsBytes(resourceToRetrieve);
   if (!resource.empty()) {
     const auto extension =
@@ -201,19 +170,5 @@ auto VueProcessorEditor::getResource(const juce::String& url) const
   DBG("✗ Resource NOT found: " << resourceToRetrieve);
   std::cout << "[JUCE] ✗ Resource NOT FOUND: " << resourceToRetrieve << std::endl;
   return std::nullopt;
-}
-
-void VueProcessorEditor::nativeFunction(
-    const juce::Array<juce::var>& args,
-    juce::WebBrowserComponent::NativeFunctionCompletion completion) {
-  using namespace std::views;
-  juce::String concatenatedString;
-  for (const auto& string : args | transform(&juce::var::toString)) {
-    concatenatedString += string;
-  }
-  labelUpdatedFromJavaScript.setText(
-      "Native function called with args: " + concatenatedString,
-      juce::dontSendNotification);
-  completion("nativeFunction callback: All OK!");
 }
   // namespace webview_plugin

@@ -2,637 +2,694 @@
 
 class WebSliderAttachments {
 public:
-    WebSliderAttachments(SkeletonAudioProcessor& p) :
-        processorRef(p),
+    WebSliderAttachments(SkeletonAudioProcessor &p) : processorRef(p),
+                                                      // Global Parameters
+                                                      webGainRelay{id::GAIN.getParamID()},
+                                                      webBypassRelay{id::BYPASS.getParamID()},
+                                                      webInputGainRelay{id::INPUT_GAIN.getParamID()},
+                                                      webOutputGainRelay{id::OUTPUT_GAIN.getParamID()},
+                                                      webMixRelay{id::MIX.getParamID()},
+                                                      webFeedbackRelay{id::FEEDBACK.getParamID()},
+                                                      webSyncTempoRelay{id::SYNC_TEMPO.getParamID()},
+                                                      webDuckingRelay{id::DUCKING.getParamID()},
+                                                      webDuckingAttackRelay{id::DUCKING_ATTACK.getParamID()},
+                                                      webDuckingReleaseRelay{id::DUCKING_RELEASE.getParamID()},
+                                                      webDuckingThresholdRelay{id::DUCKING_THRESHOLD.getParamID()},
+                                                      webDuckingRatioRelay{id::DUCKING_RATIO.getParamID()},
+                                                      webWidthRelay{id::WIDTH.getParamID()},
+                                                      webLpFilterFreqRelay{id::LP_FILTER_FREQ.getParamID()},
+                                                      webHpFilterFreqRelay{id::HP_FILTER_FREQ.getParamID()},
+                                                      webHpBpRelay{id::HP_FILTER_BYPASS.getParamID()},
+                                                      webLpBpRelay{id::LP_FILTER_BYPASS.getParamID()},
+                                                      webBpmFromHostRelay{id::BPM_FROM_HOST.getParamID()},
+                                                      webBpmRelay{id::USER_BPM.getParamID()},
+                                                      webGlobalTimeRelay(id::GLOBAL_TIME.getParamID()),
+                                                      webGlobalTimeNoSyncRelay(id::GLOBAL_TIME_NO_SYNC.getParamID()),
+
+                                                      // Head 1 Parameters
+                                                      webHead1BypassRelay{id::HEAD_1_ON.getParamID()},
+                                                      webHead1FeedbackRelay{id::HEAD_1_FEEDBACK.getParamID()},
+                                                      webHead1PanRelay{id::HEAD_1_PAN.getParamID()},
+                                                      webHead1TimeRelay{id::HEAD_1_TIME.getParamID()},
+                                                      webHead1TimeNoSyncRelay{id::HEAD_1_TIME_NO_SYNC.getParamID()},
+                                                      webHead1GainRelay{id::HEAD_1_GAIN.getParamID()},
+                                                      webHead1MovementPeriodDurationRelay{
+                                                          id::HEAD_1_MOVEMENT_PERIOD_DURATION.getParamID()
+                                                      },
+                                                      webHead1MovementPeriodDurationNoSyncRelay{
+                                                          id::HEAD_1_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()
+                                                      },
+                                                      webHead1MovementFunctionRelay{
+                                                          id::HEAD_1_MOVEMENT_FUNCTION.getParamID()
+                                                      },
+                                                      webHead1MovementWidthRelay{
+                                                          id::HEAD_1_MOVEMENT_WIDTH.getParamID()
+                                                      },
+                                                      webHead1MovementPeriodStartRelay{
+                                                          id::HEAD_1_MOVEMENT_PERIOD_STARTING_POINT.getParamID()
+                                                      },
+                                                      webHead1MovementOnRelay{id::HEAD_1_MOVEMENT_ON.getParamID()},
+                                                      webHead1MovementWidthSlaveRelay{
+                                                          id::HEAD_1_MOVEMENT_WIDTH_SLAVE.getParamID()
+                                                      },
+                                                      webHead1LpFilterFreqRelay{id::HEAD_1_LP_FILTER_FREQ.getParamID()},
+                                                      webHead1HpFilterFreqRelay{id::HEAD_1_HP_FILTER_FREQ.getParamID()},
+                                                      webHead1FeedbackSlaveRelay{
+                                                          id::HEAD_1_FEEDBACK_SLAVE.getParamID()
+                                                      },
+                                                      webHead1HpBpRelay{id::HEAD_1_HP_FILTER_BYPASS.getParamID()},
+                                                      webHead1LpBpRelay{id::HEAD_1_LP_FILTER_BYPASS.getParamID()},
+                                                      webHead1MovementSyncRelay(
+                                                          id::HEAD_1_MOVEMENT_BPM_SYNC.getParamID()),
+                                                      webHead1TimeSlaveRelay(id::HEAD_1_TIME_SLAVE.getParamID()),
+                                                      // Head 2 Parameters
+                                                      webHead2BypassRelay{id::HEAD_2_ON.getParamID()},
+                                                      webHead2FeedbackRelay{id::HEAD_2_FEEDBACK.getParamID()},
+                                                      webHead2PanRelay{id::HEAD_2_PAN.getParamID()},
+                                                      webHead2TimeRelay{id::HEAD_2_TIME.getParamID()},
+                                                      webHead2TimeNoSyncRelay{id::HEAD_2_TIME_NO_SYNC.getParamID()},
+                                                      webHead2GainRelay{id::HEAD_2_GAIN.getParamID()},
+                                                      webHead2MovementPeriodDurationRelay{
+                                                          id::HEAD_2_MOVEMENT_PERIOD_DURATION.getParamID()
+                                                      },
+                                                      webHead2MovementPeriodDurationNoSyncRelay{
+                                                          id::HEAD_2_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()
+                                                      },
+                                                      webHead2MovementFunctionRelay{
+                                                          id::HEAD_2_MOVEMENT_FUNCTION.getParamID()
+                                                      },
+                                                      webHead2MovementWidthRelay{
+                                                          id::HEAD_2_MOVEMENT_WIDTH.getParamID()
+                                                      },
+                                                      webHead2MovementPeriodStartRelay{
+                                                          id::HEAD_2_MOVEMENT_PERIOD_STARTING_POINT.getParamID()
+                                                      },
+                                                      webHead2MovementOnRelay{id::HEAD_2_MOVEMENT_ON.getParamID()},
+                                                      webHead2MovementWidthSlaveRelay{
+                                                          id::HEAD_2_MOVEMENT_WIDTH_SLAVE.getParamID()
+                                                      },
+                                                      webHead2LpFilterFreqRelay{id::HEAD_2_LP_FILTER_FREQ.getParamID()},
+                                                      webHead2HpFilterFreqRelay{id::HEAD_2_HP_FILTER_FREQ.getParamID()},
+                                                      webHead2FeedbackSlaveRelay{
+                                                          id::HEAD_2_FEEDBACK_SLAVE.getParamID()
+                                                      },
+                                                      webHead2HpBpRelay{id::HEAD_2_HP_FILTER_BYPASS.getParamID()},
+                                                      webHead2LpBpRelay{id::HEAD_2_LP_FILTER_BYPASS.getParamID()},
+                                                      webHead2MovementSyncRelay(
+                                                          id::HEAD_2_MOVEMENT_BPM_SYNC.getParamID()),
+                                                      webHead2TimeSlaveRelay(id::HEAD_2_TIME_SLAVE.getParamID()),
+
+                                                      // Head 3 Parameters
+                                                      webHead3BypassRelay{id::HEAD_3_ON.getParamID()},
+                                                      webHead3FeedbackRelay{id::HEAD_3_FEEDBACK.getParamID()},
+                                                      webHead3PanRelay{id::HEAD_3_PAN.getParamID()},
+                                                      webHead3TimeRelay{id::HEAD_3_TIME.getParamID()},
+                                                      webHead3TimeNoSyncRelay{id::HEAD_3_TIME_NO_SYNC.getParamID()},
+                                                      webHead3GainRelay{id::HEAD_3_GAIN.getParamID()},
+                                                      webHead3MovementPeriodDurationRelay{
+                                                          id::HEAD_3_MOVEMENT_PERIOD_DURATION.getParamID()
+                                                      },
+                                                      webHead3MovementPeriodDurationNoSyncRelay{
+                                                          id::HEAD_3_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()
+                                                      },
+                                                      webHead3MovementFunctionRelay{
+                                                          id::HEAD_3_MOVEMENT_FUNCTION.getParamID()
+                                                      },
+                                                      webHead3MovementWidthRelay{
+                                                          id::HEAD_3_MOVEMENT_WIDTH.getParamID()
+                                                      },
+                                                      webHead3MovementPeriodStartRelay{
+                                                          id::HEAD_3_MOVEMENT_PERIOD_STARTING_POINT.getParamID()
+                                                      },
+                                                      webHead3MovementOnRelay{id::HEAD_3_MOVEMENT_ON.getParamID()},
+                                                      webHead3MovementWidthSlaveRelay{
+                                                          id::HEAD_3_MOVEMENT_WIDTH_SLAVE.getParamID()
+                                                      },
+                                                      webHead3LpFilterFreqRelay{id::HEAD_3_LP_FILTER_FREQ.getParamID()},
+                                                      webHead3HpFilterFreqRelay{id::HEAD_3_HP_FILTER_FREQ.getParamID()},
+                                                      webHead3FeedbackSlaveRelay{
+                                                          id::HEAD_3_FEEDBACK_SLAVE.getParamID()
+                                                      },
+                                                      webHead3HpBpRelay{id::HEAD_3_HP_FILTER_BYPASS.getParamID()},
+                                                      webHead3LpBpRelay{id::HEAD_3_LP_FILTER_BYPASS.getParamID()},
+                                                      webHead3MovementSyncRelay(
+                                                          id::HEAD_3_MOVEMENT_BPM_SYNC.getParamID()),
+                                                      webHead3TimeSlaveRelay(id::HEAD_3_TIME_SLAVE.getParamID()),
+
+
+                                                      // Head 4 Parameters
+                                                      webHead4BypassRelay{id::HEAD_4_ON.getParamID()},
+                                                      webHead4FeedbackRelay{id::HEAD_4_FEEDBACK.getParamID()},
+                                                      webHead4PanRelay{id::HEAD_4_PAN.getParamID()},
+                                                      webHead4TimeRelay{id::HEAD_4_TIME.getParamID()},
+                                                      webHead4TimeNoSyncRelay{id::HEAD_4_TIME_NO_SYNC.getParamID()},
+                                                      webHead4GainRelay{id::HEAD_4_GAIN.getParamID()},
+                                                      webHead4MovementPeriodDurationRelay{
+                                                          id::HEAD_4_MOVEMENT_PERIOD_DURATION.getParamID()
+                                                      },
+                                                      webHead4MovementPeriodDurationNoSyncRelay{
+                                                          id::HEAD_4_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()
+                                                      },
+                                                      webHead4MovementFunctionRelay{
+                                                          id::HEAD_4_MOVEMENT_FUNCTION.getParamID()
+                                                      },
+                                                      webHead4MovementWidthRelay{
+                                                          id::HEAD_4_MOVEMENT_WIDTH.getParamID()
+                                                      },
+                                                      webHead4MovementPeriodStartRelay{
+                                                          id::HEAD_4_MOVEMENT_PERIOD_STARTING_POINT.getParamID()
+                                                      },
+                                                      webHead4MovementOnRelay{id::HEAD_4_MOVEMENT_ON.getParamID()},
+                                                      webHead4MovementWidthSlaveRelay{
+                                                          id::HEAD_4_MOVEMENT_WIDTH_SLAVE.getParamID()
+                                                      },
+                                                      webHead4LpFilterFreqRelay{id::HEAD_4_LP_FILTER_FREQ.getParamID()},
+                                                      webHead4HpFilterFreqRelay{id::HEAD_4_HP_FILTER_FREQ.getParamID()},
+                                                      webHead4FeedbackSlaveRelay{
+                                                          id::HEAD_4_FEEDBACK_SLAVE.getParamID()
+                                                      },
+                                                      webHead4HpBpRelay{id::HEAD_4_HP_FILTER_BYPASS.getParamID()},
+                                                      webHead4LpBpRelay{id::HEAD_4_LP_FILTER_BYPASS.getParamID()},
+                                                      webHead4MovementSyncRelay(
+                                                          id::HEAD_4_MOVEMENT_BPM_SYNC.getParamID()),
+                                                      webHead4TimeSlaveRelay(id::HEAD_4_TIME_SLAVE.getParamID()) {
+    }
+
+    void createAttachments() {
+        auto &state = processorRef.getState();
+        if (auto *param = state.getParameter(id::GLOBAL_TIME.getParamID()))
+            webGlobalTimeAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webGlobalTimeRelay, nullptr);
+        if (auto *param = state.getParameter(id::GLOBAL_TIME_NO_SYNC.getParamID()))
+            webGlobalTimeNoSyncAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webGlobalTimeNoSyncRelay, nullptr);
         // Global Parameters
-        webGainRelay{id::GAIN.getParamID()},
-        webBypassRelay{id::BYPASS.getParamID()},
-        webInputGainRelay{id::INPUT_GAIN.getParamID()},
-        webOutputGainRelay{id::OUTPUT_GAIN.getParamID()},
-        webMixRelay{id::MIX.getParamID()},
-        webFeedbackRelay{id::FEEDBACK.getParamID()},
-        webSyncTempoRelay{id::SYNC_TEMPO.getParamID()},
-        webDuckingRelay{id::DUCKING.getParamID()},
-        webDuckingAttackRelay{id::DUCKING_ATTACK.getParamID()},
-        webDuckingReleaseRelay{id::DUCKING_RELEASE.getParamID()},
-        webDuckingThresholdRelay{id::DUCKING_THRESHOLD.getParamID()},
-        webDuckingRatioRelay{id::DUCKING_RATIO.getParamID()},
-        webWidthRelay{id::WIDTH.getParamID()},
-        webLpFilterFreqRelay{id::LP_FILTER_FREQ.getParamID()},
-        webHpFilterFreqRelay{id::HP_FILTER_FREQ.getParamID()},
-        webHpBpRelay{id::HP_FILTER_BYPASS.getParamID()},
-        webLpBpRelay{id::LP_FILTER_BYPASS.getParamID()},
-        webBpmFromHostRelay{id::BPM_FROM_HOST.getParamID()},
-        webBpmRelay{id::USER_BPM.getParamID()},
-        webGlobalTimeRelay(id::GLOBAL_TIME.getParamID()),
-        webGlobalTimeNoSyncRelay(id::GLOBAL_TIME_NO_SYNC.getParamID()),
+        if (auto *param = state.getParameter(id::GAIN.getParamID()))
+            webGainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webGainRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::BYPASS.getParamID()))
+            webBypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webBypassRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::INPUT_GAIN.getParamID()))
+            webInputGainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webInputGainRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::OUTPUT_GAIN.getParamID()))
+            webOutputGainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webOutputGainRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::MIX.getParamID()))
+            webMixSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webMixRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::FEEDBACK.getParamID()))
+            webFeedbackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webFeedbackRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::SYNC_TEMPO.getParamID()))
+            webSyncTempoToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webSyncTempoRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::DUCKING.getParamID()))
+            webDuckingToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webDuckingRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::DUCKING_ATTACK.getParamID()))
+            webDuckingAttackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webDuckingAttackRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::DUCKING_RELEASE.getParamID()))
+            webDuckingReleaseSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webDuckingReleaseRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::DUCKING_THRESHOLD.getParamID()))
+            webDuckingThresholdSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webDuckingThresholdRelay, nullptr);
+        if (auto *param = state.getParameter(id::DUCKING_RATIO.getParamID()))
+            webDuckingRatioSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webDuckingRatioRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::WIDTH.getParamID()))
+            webWidthSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webWidthRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::LP_FILTER_FREQ.getParamID()))
+            webLpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webLpFilterFreqRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::HP_FILTER_FREQ.getParamID()))
+            webHpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHpFilterFreqRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::LP_FILTER_BYPASS.getParamID()))
+            webLpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webLpBpRelay, nullptr);
+        if (auto *param = state.getParameter(id::HP_FILTER_BYPASS.getParamID()))
+            webHpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHpBpRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::BPM_FROM_HOST.getParamID()))
+            webBpmFromHostToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webBpmFromHostRelay, nullptr);
+
+        if (auto *param = state.getParameter(id::USER_BPM.getParamID()))
+            webBpmSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webBpmRelay, nullptr);
 
         // Head 1 Parameters
-        webHead1BypassRelay{id::HEAD_1_ON.getParamID()},
-        webHead1FeedbackRelay{id::HEAD_1_FEEDBACK.getParamID()},
-        webHead1PanRelay{id::HEAD_1_PAN.getParamID()},
-        webHead1TimeRelay{id::HEAD_1_TIME.getParamID()},
-        webHead1TimeNoSyncRelay{id::HEAD_1_TIME_NO_SYNC.getParamID()},
-        webHead1GainRelay{id::HEAD_1_GAIN.getParamID()},
-        webHead1MovementPeriodDurationRelay{id::HEAD_1_MOVEMENT_PERIOD_DURATION.getParamID()},
-        webHead1MovementPeriodDurationNoSyncRelay{id::HEAD_1_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()},
-        webHead1MovementFunctionRelay{id::HEAD_1_MOVEMENT_FUNCTION.getParamID()},
-        webHead1MovementWidthRelay{id::HEAD_1_MOVEMENT_WIDTH.getParamID()},
-        webHead1MovementPeriodStartRelay{id::HEAD_1_MOVEMENT_PERIOD_STARTING_POINT.getParamID()},
-        webHead1MovementOnRelay{id::HEAD_1_MOVEMENT_ON.getParamID()},
-        webHead1MovementWidthSlaveRelay{id::HEAD_1_MOVEMENT_WIDTH_SLAVE.getParamID()},
-        webHead1LpFilterFreqRelay{id::HEAD_1_LP_FILTER_FREQ.getParamID()},
-        webHead1HpFilterFreqRelay{id::HEAD_1_HP_FILTER_FREQ.getParamID()},
-        webHead1FeedbackSlaveRelay{id::HEAD_1_FEEDBACK_SLAVE.getParamID()},
-        webHead1HpBpRelay{id::HEAD_1_HP_FILTER_BYPASS.getParamID()},
-        webHead1LpBpRelay{id::HEAD_1_LP_FILTER_BYPASS.getParamID()},
-        webHead1MovementSyncRelay(id::HEAD_1_MOVEMENT_BPM_SYNC.getParamID()),
-        webHead1TimeSlaveRelay(id::HEAD_1_TIME_SLAVE.getParamID()),
-        // Head 2 Parameters
-        webHead2BypassRelay{id::HEAD_2_ON.getParamID()},
-        webHead2FeedbackRelay{id::HEAD_2_FEEDBACK.getParamID()},
-        webHead2PanRelay{id::HEAD_2_PAN.getParamID()},
-        webHead2TimeRelay{id::HEAD_2_TIME.getParamID()},
-        webHead2TimeNoSyncRelay{id::HEAD_2_TIME_NO_SYNC.getParamID()},
-        webHead2GainRelay{id::HEAD_2_GAIN.getParamID()},
-        webHead2MovementPeriodDurationRelay{id::HEAD_2_MOVEMENT_PERIOD_DURATION.getParamID()},
-        webHead2MovementPeriodDurationNoSyncRelay{id::HEAD_2_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()},
-        webHead2MovementFunctionRelay{id::HEAD_2_MOVEMENT_FUNCTION.getParamID()},
-        webHead2MovementWidthRelay{id::HEAD_2_MOVEMENT_WIDTH.getParamID()},
-        webHead2MovementPeriodStartRelay{id::HEAD_2_MOVEMENT_PERIOD_STARTING_POINT.getParamID()},
-        webHead2MovementOnRelay{id::HEAD_2_MOVEMENT_ON.getParamID()},
-        webHead2MovementWidthSlaveRelay{id::HEAD_2_MOVEMENT_WIDTH_SLAVE.getParamID()},
-        webHead2LpFilterFreqRelay{id::HEAD_2_LP_FILTER_FREQ.getParamID()},
-        webHead2HpFilterFreqRelay{id::HEAD_2_HP_FILTER_FREQ.getParamID()},
-        webHead2FeedbackSlaveRelay{id::HEAD_2_FEEDBACK_SLAVE.getParamID()},
-        webHead2HpBpRelay{id::HEAD_2_HP_FILTER_BYPASS.getParamID()},
-        webHead2LpBpRelay{id::HEAD_2_LP_FILTER_BYPASS.getParamID()},
-        webHead2MovementSyncRelay(id::HEAD_2_MOVEMENT_BPM_SYNC.getParamID()),
-        webHead2TimeSlaveRelay(id::HEAD_2_TIME_SLAVE.getParamID()),
+        if (auto *param = state.getParameter(id::HEAD_1_ON.getParamID()))
+            webHead1BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead1BypassRelay, nullptr);
 
-        // Head 3 Parameters
-        webHead3BypassRelay{id::HEAD_3_ON.getParamID()},
-        webHead3FeedbackRelay{id::HEAD_3_FEEDBACK.getParamID()},
-        webHead3PanRelay{id::HEAD_3_PAN.getParamID()},
-        webHead3TimeRelay{id::HEAD_3_TIME.getParamID()},
-        webHead3TimeNoSyncRelay{id::HEAD_3_TIME_NO_SYNC.getParamID()},
-        webHead3GainRelay{id::HEAD_3_GAIN.getParamID()},
-        webHead3MovementPeriodDurationRelay{id::HEAD_3_MOVEMENT_PERIOD_DURATION.getParamID()},
-        webHead3MovementPeriodDurationNoSyncRelay{id::HEAD_3_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()},
-        webHead3MovementFunctionRelay{id::HEAD_3_MOVEMENT_FUNCTION.getParamID()},
-        webHead3MovementWidthRelay{id::HEAD_3_MOVEMENT_WIDTH.getParamID()},
-        webHead3MovementPeriodStartRelay{id::HEAD_3_MOVEMENT_PERIOD_STARTING_POINT.getParamID()},
-        webHead3MovementOnRelay{id::HEAD_3_MOVEMENT_ON.getParamID()},
-        webHead3MovementWidthSlaveRelay{id::HEAD_3_MOVEMENT_WIDTH_SLAVE.getParamID()},
-        webHead3LpFilterFreqRelay{id::HEAD_3_LP_FILTER_FREQ.getParamID()},
-        webHead3HpFilterFreqRelay{id::HEAD_3_HP_FILTER_FREQ.getParamID()},
-        webHead3FeedbackSlaveRelay{id::HEAD_3_FEEDBACK_SLAVE.getParamID()},
-        webHead3HpBpRelay{id::HEAD_3_HP_FILTER_BYPASS.getParamID()},
-        webHead3LpBpRelay{id::HEAD_3_LP_FILTER_BYPASS.getParamID()},
-        webHead3MovementSyncRelay(id::HEAD_3_MOVEMENT_BPM_SYNC.getParamID()),
-        webHead3TimeSlaveRelay(id::HEAD_3_TIME_SLAVE.getParamID()),
+        if (auto *param = state.getParameter(id::HEAD_1_FEEDBACK.getParamID()))
+            webHead1FeedbackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead1FeedbackRelay, nullptr);
 
+        if (auto *param = state.getParameter(id::HEAD_1_PAN.getParamID()))
+            webHead1PanSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead1PanRelay, nullptr);
 
-        // Head 4 Parameters
-        webHead4BypassRelay{id::HEAD_4_ON.getParamID()},
-        webHead4FeedbackRelay{id::HEAD_4_FEEDBACK.getParamID()},
-        webHead4PanRelay{id::HEAD_4_PAN.getParamID()},
-        webHead4TimeRelay{id::HEAD_4_TIME.getParamID()},
-        webHead4TimeNoSyncRelay{id::HEAD_4_TIME_NO_SYNC.getParamID()},
-        webHead4GainRelay{id::HEAD_4_GAIN.getParamID()},
-        webHead4MovementPeriodDurationRelay{id::HEAD_4_MOVEMENT_PERIOD_DURATION.getParamID()},
-        webHead4MovementPeriodDurationNoSyncRelay{id::HEAD_4_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()},
-        webHead4MovementFunctionRelay{id::HEAD_4_MOVEMENT_FUNCTION.getParamID()},
-        webHead4MovementWidthRelay{id::HEAD_4_MOVEMENT_WIDTH.getParamID()},
-        webHead4MovementPeriodStartRelay{id::HEAD_4_MOVEMENT_PERIOD_STARTING_POINT.getParamID()},
-        webHead4MovementOnRelay{id::HEAD_4_MOVEMENT_ON.getParamID()},
-        webHead4MovementWidthSlaveRelay{id::HEAD_4_MOVEMENT_WIDTH_SLAVE.getParamID()},
-        webHead4LpFilterFreqRelay{id::HEAD_4_LP_FILTER_FREQ.getParamID()},
-        webHead4HpFilterFreqRelay{id::HEAD_4_HP_FILTER_FREQ.getParamID()},
-        webHead4FeedbackSlaveRelay{id::HEAD_4_FEEDBACK_SLAVE.getParamID()},
-        webHead4HpBpRelay{id::HEAD_4_HP_FILTER_BYPASS.getParamID()},
-        webHead4LpBpRelay{id::HEAD_4_LP_FILTER_BYPASS.getParamID()},
-        webHead4MovementSyncRelay(id::HEAD_4_MOVEMENT_BPM_SYNC.getParamID()),
-        webHead4TimeSlaveRelay(id::HEAD_4_TIME_SLAVE.getParamID())
-    {}
+        if (auto *param = state.getParameter(id::HEAD_1_GAIN.getParamID()))
+            webHead1GainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead1GainRelay, nullptr);
 
-   void createAttachments() {
-    auto& state = processorRef.getState();
-    if (auto* param = state.getParameter(id::GLOBAL_TIME.getParamID()))
-        webGlobalTimeAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webGlobalTimeRelay, nullptr);
-    if (auto* param = state.getParameter(id::GLOBAL_TIME_NO_SYNC.getParamID()))
-        webGlobalTimeNoSyncAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webGlobalTimeNoSyncRelay, nullptr);
-    // Global Parameters
-    if (auto* param = state.getParameter(id::GAIN.getParamID()))
-        webGainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webGainRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_MOVEMENT_PERIOD_DURATION.getParamID()))
+            webHead1MovementPeriodDurationSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead1MovementPeriodDurationRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::BYPASS.getParamID()))
-        webBypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webBypassRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()))
+            webHead1MovementPeriodDurationNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead1MovementPeriodDurationNoSyncRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::INPUT_GAIN.getParamID()))
-        webInputGainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webInputGainRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_MOVEMENT_PERIOD_STARTING_POINT.getParamID()))
+            webHead1MovementPeriodStartingPointSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead1MovementPeriodStartRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::OUTPUT_GAIN.getParamID()))
-        webOutputGainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webOutputGainRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_MOVEMENT_FUNCTION.getParamID()))
+            webHead1MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead1MovementFunctionRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::MIX.getParamID()))
-        webMixSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webMixRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_MOVEMENT_WIDTH.getParamID()))
+            webHead1MovementWidthSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead1MovementWidthRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::FEEDBACK.getParamID()))
-        webFeedbackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webFeedbackRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_MOVEMENT_ON.getParamID()))
+            webHead1MovementOnToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead1MovementOnRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::SYNC_TEMPO.getParamID()))
-        webSyncTempoToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webSyncTempoRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_MOVEMENT_WIDTH_SLAVE.getParamID()))
+            webHead1MovementWidthSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead1MovementWidthSlaveRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::DUCKING.getParamID()))
-        webDuckingToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webDuckingRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_LP_FILTER_FREQ.getParamID()))
+            webHead1LpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead1LpFilterFreqRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::DUCKING_ATTACK.getParamID()))
-        webDuckingAttackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webDuckingAttackRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_HP_FILTER_FREQ.getParamID()))
+            webHead1HpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead1HpFilterFreqRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::DUCKING_RELEASE.getParamID()))
-        webDuckingReleaseSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webDuckingReleaseRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_FEEDBACK_SLAVE.getParamID()))
+            webHead1FeedbackSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead1FeedbackSlaveRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::DUCKING_THRESHOLD.getParamID()))
-        webDuckingThresholdSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webDuckingThresholdRelay, nullptr);
-    if (auto* param = state.getParameter(id::DUCKING_RATIO.getParamID()))
-        webDuckingRatioSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webDuckingRatioRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::WIDTH.getParamID()))
-        webWidthSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webWidthRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::LP_FILTER_FREQ.getParamID()))
-        webLpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webLpFilterFreqRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HP_FILTER_FREQ.getParamID()))
-        webHpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHpFilterFreqRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::LP_FILTER_BYPASS.getParamID()))
-        webLpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webLpBpRelay, nullptr);
-    if (auto* param = state.getParameter(id::HP_FILTER_BYPASS.getParamID()))
-        webHpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHpBpRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::BPM_FROM_HOST.getParamID()))
-        webBpmFromHostToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webBpmFromHostRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::USER_BPM.getParamID()))
-        webBpmSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webBpmRelay, nullptr);
-
-    // Head 1 Parameters
-    if (auto* param = state.getParameter(id::HEAD_1_ON.getParamID()))
-        webHead1BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead1BypassRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_FEEDBACK.getParamID()))
-        webHead1FeedbackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead1FeedbackRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_PAN.getParamID()))
-        webHead1PanSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead1PanRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_GAIN.getParamID()))
-        webHead1GainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead1GainRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_MOVEMENT_PERIOD_DURATION.getParamID()))
-        webHead1MovementPeriodDurationSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead1MovementPeriodDurationRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()))
-        webHead1MovementPeriodDurationNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead1MovementPeriodDurationNoSyncRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_MOVEMENT_PERIOD_STARTING_POINT.getParamID()))
-        webHead1MovementPeriodStartingPointSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead1MovementPeriodStartRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_MOVEMENT_FUNCTION.getParamID()))
-        webHead1MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead1MovementFunctionRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_MOVEMENT_WIDTH.getParamID()))
-        webHead1MovementWidthSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead1MovementWidthRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_MOVEMENT_ON.getParamID()))
-        webHead1MovementOnToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead1MovementOnRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_MOVEMENT_WIDTH_SLAVE.getParamID()))
-        webHead1MovementWidthSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead1MovementWidthSlaveRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_LP_FILTER_FREQ.getParamID()))
-        webHead1LpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead1LpFilterFreqRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_HP_FILTER_FREQ.getParamID()))
-        webHead1HpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead1HpFilterFreqRelay, nullptr);
-
-    if (auto* param = state.getParameter(id::HEAD_1_FEEDBACK_SLAVE.getParamID()))
-        webHead1FeedbackSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead1FeedbackSlaveRelay, nullptr);
-
-        if (auto* param = state.getParameter(id::HEAD_1_TIME_SLAVE.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_1_TIME_SLAVE.getParamID()))
             webHead1TimeSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
                 *param, webHead1TimeSlaveRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_1_HP_FILTER_BYPASS.getParamID()))
-        webHead1HpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead1HpBpRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_HP_FILTER_BYPASS.getParamID()))
+            webHead1HpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead1HpBpRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_1_LP_FILTER_BYPASS.getParamID()))
-        webHead1LpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead1LpBpRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_LP_FILTER_BYPASS.getParamID()))
+            webHead1LpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead1LpBpRelay, nullptr);
 
-    // Head 2 Parameters
-    if (auto* param = state.getParameter(id::HEAD_2_ON.getParamID()))
-        webHead2BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead2BypassRelay, nullptr);
+        // Head 2 Parameters
+        if (auto *param = state.getParameter(id::HEAD_2_ON.getParamID()))
+            webHead2BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead2BypassRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_FEEDBACK.getParamID()))
-        webHead2FeedbackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead2FeedbackRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_FEEDBACK.getParamID()))
+            webHead2FeedbackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2FeedbackRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_PAN.getParamID()))
-        webHead2PanSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead2PanRelay, nullptr);
-    if (auto* param = state.getParameter(id::HEAD_1_TIME.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_2_PAN.getParamID()))
+            webHead2PanSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2PanRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_TIME.getParamID()))
             webHead1TimeSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
                 *param, webHead1TimeRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_TIME.getParamID()))
-        webHead2TimeSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead2TimeRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_TIME.getParamID()))
+            webHead2TimeSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2TimeRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_TIME.getParamID()))
-        webHead3TimeSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead3TimeRelay, nullptr);
-    if (auto* param = state.getParameter(id::HEAD_4_TIME.getParamID()))
-        webHead4TimeSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead4TimeRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_TIME.getParamID()))
+            webHead3TimeSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead3TimeRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_TIME.getParamID()))
+            webHead4TimeSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead4TimeRelay, nullptr);
 
-        if (auto* param = state.getParameter(id::HEAD_1_TIME_NO_SYNC.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_1_TIME_NO_SYNC.getParamID()))
             webHead1TimeNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
                 *param, webHead1TimeNoSyncRelay, nullptr);
 
-        if (auto* param = state.getParameter(id::HEAD_2_TIME_NO_SYNC.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_2_TIME_NO_SYNC.getParamID()))
             webHead2TimeNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
                 *param, webHead2TimeNoSyncRelay, nullptr);
 
-        if (auto* param = state.getParameter(id::HEAD_3_TIME_NO_SYNC.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_3_TIME_NO_SYNC.getParamID()))
             webHead3TimeNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
                 *param, webHead3TimeNoSyncRelay, nullptr);
-        if (auto* param = state.getParameter(id::HEAD_4_TIME_NO_SYNC.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_4_TIME_NO_SYNC.getParamID()))
             webHead4TimeNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
                 *param, webHead4TimeNoSyncRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_GAIN.getParamID()))
-        webHead2GainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead2GainRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_GAIN.getParamID()))
+            webHead2GainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2GainRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_MOVEMENT_PERIOD_DURATION.getParamID()))
-        webHead2MovementPeriodDurationSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead2MovementPeriodDurationRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_MOVEMENT_PERIOD_DURATION.getParamID()))
+            webHead2MovementPeriodDurationSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2MovementPeriodDurationRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()))
-        webHead2MovementPeriodDurationNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead2MovementPeriodDurationNoSyncRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()))
+            webHead2MovementPeriodDurationNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2MovementPeriodDurationNoSyncRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_MOVEMENT_PERIOD_STARTING_POINT.getParamID()))
-        webHead2MovementPeriodStartingPointSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead2MovementPeriodStartRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_MOVEMENT_PERIOD_STARTING_POINT.getParamID()))
+            webHead2MovementPeriodStartingPointSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2MovementPeriodStartRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_MOVEMENT_FUNCTION.getParamID()))
-        webHead2MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead2MovementFunctionRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_MOVEMENT_FUNCTION.getParamID()))
+            webHead2MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2MovementFunctionRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_MOVEMENT_WIDTH.getParamID()))
-        webHead2MovementWidthSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead2MovementWidthRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_MOVEMENT_WIDTH.getParamID()))
+            webHead2MovementWidthSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2MovementWidthRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_MOVEMENT_ON.getParamID()))
-        webHead2MovementOnToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead2MovementOnRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_MOVEMENT_ON.getParamID()))
+            webHead2MovementOnToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead2MovementOnRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_MOVEMENT_WIDTH_SLAVE.getParamID()))
-        webHead2MovementWidthSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead2MovementWidthSlaveRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_MOVEMENT_WIDTH_SLAVE.getParamID()))
+            webHead2MovementWidthSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead2MovementWidthSlaveRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_LP_FILTER_FREQ.getParamID()))
-        webHead2LpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead2LpFilterFreqRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_LP_FILTER_FREQ.getParamID()))
+            webHead2LpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2LpFilterFreqRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_HP_FILTER_FREQ.getParamID()))
-        webHead2HpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead2HpFilterFreqRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_HP_FILTER_FREQ.getParamID()))
+            webHead2HpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead2HpFilterFreqRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_FEEDBACK_SLAVE.getParamID()))
-        webHead2FeedbackSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead2FeedbackSlaveRelay, nullptr);
-        if (auto* param = state.getParameter(id::HEAD_2_TIME_SLAVE.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_2_FEEDBACK_SLAVE.getParamID()))
+            webHead2FeedbackSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead2FeedbackSlaveRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_TIME_SLAVE.getParamID()))
             webHead2TimeSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
                 *param, webHead2TimeSlaveRelay, nullptr);
-        if (auto* param = state.getParameter(id::HEAD_2_HP_FILTER_BYPASS.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_2_HP_FILTER_BYPASS.getParamID()))
             webHead2HpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
                 *param, webHead2HpBpRelay, nullptr);
 
-        if (auto* param = state.getParameter(id::HEAD_2_LP_FILTER_BYPASS.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_2_LP_FILTER_BYPASS.getParamID()))
             webHead2LpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
                 *param, webHead2LpBpRelay, nullptr);
 
-    // Head 3 Parameters
-    if (auto* param = state.getParameter(id::HEAD_3_ON.getParamID()))
-        webHead3BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead3BypassRelay, nullptr);
+        // Head 3 Parameters
+        if (auto *param = state.getParameter(id::HEAD_3_ON.getParamID()))
+            webHead3BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead3BypassRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_FEEDBACK.getParamID()))
-        webHead3FeedbackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead3FeedbackRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_FEEDBACK.getParamID()))
+            webHead3FeedbackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead3FeedbackRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_PAN.getParamID()))
-        webHead3PanSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead3PanRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_PAN.getParamID()))
+            webHead3PanSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead3PanRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_GAIN.getParamID()))
-        webHead3GainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead3GainRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_GAIN.getParamID()))
+            webHead3GainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead3GainRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_MOVEMENT_PERIOD_DURATION.getParamID()))
-        webHead3MovementPeriodDurationSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead3MovementPeriodDurationRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_MOVEMENT_PERIOD_DURATION.getParamID()))
+            webHead3MovementPeriodDurationSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead3MovementPeriodDurationRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()))
-        webHead3MovementPeriodDurationNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead3MovementPeriodDurationNoSyncRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()))
+            webHead3MovementPeriodDurationNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead3MovementPeriodDurationNoSyncRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_MOVEMENT_PERIOD_STARTING_POINT.getParamID()))
-        webHead3MovementPeriodStartingPointSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead3MovementPeriodStartRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_MOVEMENT_PERIOD_STARTING_POINT.getParamID()))
+            webHead3MovementPeriodStartingPointSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead3MovementPeriodStartRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_MOVEMENT_FUNCTION.getParamID()))
-        webHead3MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead3MovementFunctionRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_MOVEMENT_FUNCTION.getParamID()))
+            webHead3MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead3MovementFunctionRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_MOVEMENT_WIDTH.getParamID()))
-        webHead3MovementWidthSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead3MovementWidthRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_MOVEMENT_WIDTH.getParamID()))
+            webHead3MovementWidthSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead3MovementWidthRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_MOVEMENT_ON.getParamID()))
-        webHead3MovementOnToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead3MovementOnRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_MOVEMENT_ON.getParamID()))
+            webHead3MovementOnToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead3MovementOnRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_MOVEMENT_WIDTH_SLAVE.getParamID()))
-        webHead3MovementWidthSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead3MovementWidthSlaveRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_MOVEMENT_WIDTH_SLAVE.getParamID()))
+            webHead3MovementWidthSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead3MovementWidthSlaveRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_LP_FILTER_FREQ.getParamID()))
-        webHead3LpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead3LpFilterFreqRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_LP_FILTER_FREQ.getParamID()))
+            webHead3LpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead3LpFilterFreqRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_HP_FILTER_FREQ.getParamID()))
-        webHead3HpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead3HpFilterFreqRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_HP_FILTER_FREQ.getParamID()))
+            webHead3HpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead3HpFilterFreqRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_FEEDBACK_SLAVE.getParamID()))
-        webHead3FeedbackSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead3FeedbackSlaveRelay, nullptr);
-        if (auto* param = state.getParameter(id::HEAD_3_TIME_SLAVE.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_3_FEEDBACK_SLAVE.getParamID()))
+            webHead3FeedbackSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead3FeedbackSlaveRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_TIME_SLAVE.getParamID()))
             webHead3TimeSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
                 *param, webHead3TimeSlaveRelay, nullptr);
-        if (auto* param = state.getParameter(id::HEAD_3_HP_FILTER_BYPASS.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_3_HP_FILTER_BYPASS.getParamID()))
             webHead3HpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
                 *param, webHead3HpBpRelay, nullptr);
 
-        if (auto* param = state.getParameter(id::HEAD_3_LP_FILTER_BYPASS.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_3_LP_FILTER_BYPASS.getParamID()))
             webHead3LpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
                 *param, webHead3LpBpRelay, nullptr);
-    // Head 4 Parameters
-    if (auto* param = state.getParameter(id::HEAD_4_ON.getParamID()))
-        webHead4BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead4BypassRelay, nullptr);
+        // Head 4 Parameters
+        if (auto *param = state.getParameter(id::HEAD_4_ON.getParamID()))
+            webHead4BypassToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead4BypassRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_FEEDBACK.getParamID()))
-        webHead4FeedbackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead4FeedbackRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_FEEDBACK.getParamID()))
+            webHead4FeedbackSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead4FeedbackRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_PAN.getParamID()))
-        webHead4PanSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead4PanRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_PAN.getParamID()))
+            webHead4PanSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead4PanRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_GAIN.getParamID()))
-        webHead4GainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead4GainRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_GAIN.getParamID()))
+            webHead4GainSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead4GainRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_MOVEMENT_PERIOD_DURATION.getParamID()))
-        webHead4MovementPeriodDurationSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead4MovementPeriodDurationRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_MOVEMENT_PERIOD_DURATION.getParamID()))
+            webHead4MovementPeriodDurationSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead4MovementPeriodDurationRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()))
-        webHead4MovementPeriodDurationNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead4MovementPeriodDurationNoSyncRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_MOVEMENT_PERIOD_DURATION_NO_SYNC.getParamID()))
+            webHead4MovementPeriodDurationNoSyncSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead4MovementPeriodDurationNoSyncRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_MOVEMENT_PERIOD_STARTING_POINT.getParamID()))
-        webHead4MovementPeriodStartingPointSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead4MovementPeriodStartRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_MOVEMENT_PERIOD_STARTING_POINT.getParamID()))
+            webHead4MovementPeriodStartingPointSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead4MovementPeriodStartRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_MOVEMENT_FUNCTION.getParamID()))
-        webHead4MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead4MovementFunctionRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_MOVEMENT_FUNCTION.getParamID()))
+            webHead4MovementFunctionComboBoxAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead4MovementFunctionRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_MOVEMENT_WIDTH.getParamID()))
-        webHead4MovementWidthSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead4MovementWidthRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_MOVEMENT_WIDTH.getParamID()))
+            webHead4MovementWidthSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead4MovementWidthRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_MOVEMENT_ON.getParamID()))
-        webHead4MovementOnToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead4MovementOnRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_MOVEMENT_ON.getParamID()))
+            webHead4MovementOnToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead4MovementOnRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_MOVEMENT_WIDTH_SLAVE.getParamID()))
-        webHead4MovementWidthSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead4MovementWidthSlaveRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_MOVEMENT_WIDTH_SLAVE.getParamID()))
+            webHead4MovementWidthSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead4MovementWidthSlaveRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_LP_FILTER_FREQ.getParamID()))
-        webHead4LpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead4LpFilterFreqRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_LP_FILTER_FREQ.getParamID()))
+            webHead4LpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead4LpFilterFreqRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_HP_FILTER_FREQ.getParamID()))
-        webHead4HpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
-            *param, webHead4HpFilterFreqRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_HP_FILTER_FREQ.getParamID()))
+            webHead4HpFilterFreqSliderAttachment = std::make_unique<juce::WebSliderParameterAttachment>(
+                *param, webHead4HpFilterFreqRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_FEEDBACK_SLAVE.getParamID()))
-        webHead4FeedbackSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead4FeedbackSlaveRelay, nullptr);
-        if (auto* param = state.getParameter(id::HEAD_4_TIME_SLAVE.getParamID()))
+        if (auto *param = state.getParameter(id::HEAD_4_FEEDBACK_SLAVE.getParamID()))
+            webHead4FeedbackSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead4FeedbackSlaveRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_TIME_SLAVE.getParamID()))
             webHead4TimeSlaveToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
                 *param, webHead4TimeSlaveRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_HP_FILTER_BYPASS.getParamID()))
-        webHead4HpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead4HpBpRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_HP_FILTER_BYPASS.getParamID()))
+            webHead4HpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead4HpBpRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_LP_FILTER_BYPASS.getParamID()))
-        webHead4LpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead4LpBpRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_4_LP_FILTER_BYPASS.getParamID()))
+            webHead4LpBpToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead4LpBpRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_1_MOVEMENT_BPM_SYNC.getParamID()))
-        webHead1MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead1MovementSyncRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_1_MOVEMENT_BPM_SYNC.getParamID()))
+            webHead1MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead1MovementSyncRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_2_MOVEMENT_BPM_SYNC.getParamID()))
-        webHead2MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead2MovementSyncRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_2_MOVEMENT_BPM_SYNC.getParamID()))
+            webHead2MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead2MovementSyncRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_3_MOVEMENT_BPM_SYNC.getParamID()))
-        webHead3MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead3MovementSyncRelay, nullptr);
+        if (auto *param = state.getParameter(id::HEAD_3_MOVEMENT_BPM_SYNC.getParamID()))
+            webHead3MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead3MovementSyncRelay, nullptr);
 
-    if (auto* param = state.getParameter(id::HEAD_4_MOVEMENT_BPM_SYNC.getParamID()))
-        webHead4MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
-            *param, webHead4MovementSyncRelay, nullptr);
-
-}
+        if (auto *param = state.getParameter(id::HEAD_4_MOVEMENT_BPM_SYNC.getParamID()))
+            webHead4MovementSyncToggleAttachment = std::make_unique<juce::WebToggleButtonParameterAttachment>(
+                *param, webHead4MovementSyncRelay, nullptr);
+    }
 
     juce::WebBrowserComponent::Options addSlidersOptions(juce::WebBrowserComponent::Options options) {
         return options
-            // Global Parameters
-            .withOptionsFrom(webGlobalTimeRelay)
-        .withOptionsFrom(webGlobalTimeNoSyncRelay)
-        .withOptionsFrom(webGainRelay)
-            .withOptionsFrom(webBypassRelay)
-            .withOptionsFrom(webInputGainRelay)
-            .withOptionsFrom(webOutputGainRelay)
-            .withOptionsFrom(webMixRelay)
-            .withOptionsFrom(webFeedbackRelay)
-            .withOptionsFrom(webSyncTempoRelay)
-            .withOptionsFrom(webDuckingRelay)
-            .withOptionsFrom(webDuckingAttackRelay)
-            .withOptionsFrom(webDuckingReleaseRelay)
-            .withOptionsFrom(webDuckingThresholdRelay)
-            .withOptionsFrom(webDuckingRatioRelay)
-            .withOptionsFrom(webWidthRelay)
-            .withOptionsFrom(webLpFilterFreqRelay)
-            .withOptionsFrom(webHpFilterFreqRelay)
-            .withOptionsFrom(webHpBpRelay)
-            .withOptionsFrom(webLpBpRelay)
-            .withOptionsFrom(webBpmFromHostRelay)
-            .withOptionsFrom(webBpmRelay)
-            // Head 1 Parameters
-            .withOptionsFrom(webHead1BypassRelay)
-            .withOptionsFrom(webHead1FeedbackRelay)
-            .withOptionsFrom(webHead1PanRelay)
-            .withOptionsFrom(webHead1TimeRelay)
-            .withOptionsFrom(webHead1TimeNoSyncRelay)
-            .withOptionsFrom(webHead1MovementSyncRelay)
-            .withOptionsFrom(webHead1GainRelay)
-            .withOptionsFrom(webHead1MovementPeriodDurationRelay)
-            .withOptionsFrom(webHead1MovementPeriodDurationNoSyncRelay)
-            .withOptionsFrom(webHead1MovementPeriodStartRelay)
-            .withOptionsFrom(webHead1MovementFunctionRelay)
-            .withOptionsFrom(webHead1MovementWidthRelay)
-            .withOptionsFrom(webHead1MovementOnRelay)
-            .withOptionsFrom(webHead1MovementWidthSlaveRelay)
-            .withOptionsFrom(webHead1LpFilterFreqRelay)
-            .withOptionsFrom(webHead1HpFilterFreqRelay)
-            .withOptionsFrom(webHead1FeedbackSlaveRelay)
-            .withOptionsFrom(webHead1HpBpRelay)
-            .withOptionsFrom(webHead1LpBpRelay)
-            .withOptionsFrom(webHead1TimeSlaveRelay)
+                // Global Parameters
+                .withOptionsFrom(webGlobalTimeRelay)
+                .withOptionsFrom(webGlobalTimeNoSyncRelay)
+                .withOptionsFrom(webGainRelay)
+                .withOptionsFrom(webBypassRelay)
+                .withOptionsFrom(webInputGainRelay)
+                .withOptionsFrom(webOutputGainRelay)
+                .withOptionsFrom(webMixRelay)
+                .withOptionsFrom(webFeedbackRelay)
+                .withOptionsFrom(webSyncTempoRelay)
+                .withOptionsFrom(webDuckingRelay)
+                .withOptionsFrom(webDuckingAttackRelay)
+                .withOptionsFrom(webDuckingReleaseRelay)
+                .withOptionsFrom(webDuckingThresholdRelay)
+                .withOptionsFrom(webDuckingRatioRelay)
+                .withOptionsFrom(webWidthRelay)
+                .withOptionsFrom(webLpFilterFreqRelay)
+                .withOptionsFrom(webHpFilterFreqRelay)
+                .withOptionsFrom(webHpBpRelay)
+                .withOptionsFrom(webLpBpRelay)
+                .withOptionsFrom(webBpmFromHostRelay)
+                .withOptionsFrom(webBpmRelay)
+                // Head 1 Parameters
+                .withOptionsFrom(webHead1BypassRelay)
+                .withOptionsFrom(webHead1FeedbackRelay)
+                .withOptionsFrom(webHead1PanRelay)
+                .withOptionsFrom(webHead1TimeRelay)
+                .withOptionsFrom(webHead1TimeNoSyncRelay)
+                .withOptionsFrom(webHead1MovementSyncRelay)
+                .withOptionsFrom(webHead1GainRelay)
+                .withOptionsFrom(webHead1MovementPeriodDurationRelay)
+                .withOptionsFrom(webHead1MovementPeriodDurationNoSyncRelay)
+                .withOptionsFrom(webHead1MovementPeriodStartRelay)
+                .withOptionsFrom(webHead1MovementFunctionRelay)
+                .withOptionsFrom(webHead1MovementWidthRelay)
+                .withOptionsFrom(webHead1MovementOnRelay)
+                .withOptionsFrom(webHead1MovementWidthSlaveRelay)
+                .withOptionsFrom(webHead1LpFilterFreqRelay)
+                .withOptionsFrom(webHead1HpFilterFreqRelay)
+                .withOptionsFrom(webHead1FeedbackSlaveRelay)
+                .withOptionsFrom(webHead1HpBpRelay)
+                .withOptionsFrom(webHead1LpBpRelay)
+                .withOptionsFrom(webHead1TimeSlaveRelay)
 
-        .withOptionsFrom(webHead2BypassRelay)
-            .withOptionsFrom(webHead2FeedbackRelay)
-            .withOptionsFrom(webHead2PanRelay)
-            .withOptionsFrom(webHead2TimeRelay)
-        .withOptionsFrom(webHead2TimeNoSyncRelay)
-        .withOptionsFrom(webHead2MovementSyncRelay)
+                .withOptionsFrom(webHead2BypassRelay)
+                .withOptionsFrom(webHead2FeedbackRelay)
+                .withOptionsFrom(webHead2PanRelay)
+                .withOptionsFrom(webHead2TimeRelay)
+                .withOptionsFrom(webHead2TimeNoSyncRelay)
+                .withOptionsFrom(webHead2MovementSyncRelay)
 
-            .withOptionsFrom(webHead2GainRelay)
-            .withOptionsFrom(webHead2MovementPeriodDurationRelay)
-            .withOptionsFrom(webHead2MovementPeriodDurationNoSyncRelay)
-            .withOptionsFrom(webHead2MovementPeriodStartRelay)
-            .withOptionsFrom(webHead2MovementFunctionRelay)
-            .withOptionsFrom(webHead2MovementWidthRelay)
-            .withOptionsFrom(webHead2MovementOnRelay)
-            .withOptionsFrom(webHead2MovementWidthSlaveRelay)
-            .withOptionsFrom(webHead2LpFilterFreqRelay)
-            .withOptionsFrom(webHead2HpFilterFreqRelay)
-            .withOptionsFrom(webHead2FeedbackSlaveRelay)
-            .withOptionsFrom(webHead2HpBpRelay)
-            .withOptionsFrom(webHead2LpBpRelay)
-        .withOptionsFrom(webHead2TimeSlaveRelay)
+                .withOptionsFrom(webHead2GainRelay)
+                .withOptionsFrom(webHead2MovementPeriodDurationRelay)
+                .withOptionsFrom(webHead2MovementPeriodDurationNoSyncRelay)
+                .withOptionsFrom(webHead2MovementPeriodStartRelay)
+                .withOptionsFrom(webHead2MovementFunctionRelay)
+                .withOptionsFrom(webHead2MovementWidthRelay)
+                .withOptionsFrom(webHead2MovementOnRelay)
+                .withOptionsFrom(webHead2MovementWidthSlaveRelay)
+                .withOptionsFrom(webHead2LpFilterFreqRelay)
+                .withOptionsFrom(webHead2HpFilterFreqRelay)
+                .withOptionsFrom(webHead2FeedbackSlaveRelay)
+                .withOptionsFrom(webHead2HpBpRelay)
+                .withOptionsFrom(webHead2LpBpRelay)
+                .withOptionsFrom(webHead2TimeSlaveRelay)
 
-            // Head 3 Parameters
-            .withOptionsFrom(webHead3BypassRelay)
-            .withOptionsFrom(webHead3FeedbackRelay)
-            .withOptionsFrom(webHead3PanRelay)
-            .withOptionsFrom(webHead3TimeRelay)
-            .withOptionsFrom(webHead3TimeNoSyncRelay)
-            .withOptionsFrom(webHead3GainRelay)
-            .withOptionsFrom(webHead3MovementPeriodDurationRelay)
-            .withOptionsFrom(webHead3MovementPeriodDurationNoSyncRelay)
-            .withOptionsFrom(webHead3MovementPeriodStartRelay)
-            .withOptionsFrom(webHead3MovementFunctionRelay)
-            .withOptionsFrom(webHead3MovementWidthRelay)
-            .withOptionsFrom(webHead3MovementOnRelay)
-            .withOptionsFrom(webHead3MovementWidthSlaveRelay)
-            .withOptionsFrom(webHead3LpFilterFreqRelay)
-            .withOptionsFrom(webHead3HpFilterFreqRelay)
-            .withOptionsFrom(webHead3FeedbackSlaveRelay)
-            .withOptionsFrom(webHead3HpBpRelay)
-            .withOptionsFrom(webHead3LpBpRelay)
-        .withOptionsFrom(webHead3MovementSyncRelay)
-        .withOptionsFrom(webHead3TimeSlaveRelay)
+                // Head 3 Parameters
+                .withOptionsFrom(webHead3BypassRelay)
+                .withOptionsFrom(webHead3FeedbackRelay)
+                .withOptionsFrom(webHead3PanRelay)
+                .withOptionsFrom(webHead3TimeRelay)
+                .withOptionsFrom(webHead3TimeNoSyncRelay)
+                .withOptionsFrom(webHead3GainRelay)
+                .withOptionsFrom(webHead3MovementPeriodDurationRelay)
+                .withOptionsFrom(webHead3MovementPeriodDurationNoSyncRelay)
+                .withOptionsFrom(webHead3MovementPeriodStartRelay)
+                .withOptionsFrom(webHead3MovementFunctionRelay)
+                .withOptionsFrom(webHead3MovementWidthRelay)
+                .withOptionsFrom(webHead3MovementOnRelay)
+                .withOptionsFrom(webHead3MovementWidthSlaveRelay)
+                .withOptionsFrom(webHead3LpFilterFreqRelay)
+                .withOptionsFrom(webHead3HpFilterFreqRelay)
+                .withOptionsFrom(webHead3FeedbackSlaveRelay)
+                .withOptionsFrom(webHead3HpBpRelay)
+                .withOptionsFrom(webHead3LpBpRelay)
+                .withOptionsFrom(webHead3MovementSyncRelay)
+                .withOptionsFrom(webHead3TimeSlaveRelay)
 
-            // Head 4 Parameters
-            .withOptionsFrom(webHead4BypassRelay)
-            .withOptionsFrom(webHead4FeedbackRelay)
-            .withOptionsFrom(webHead4PanRelay)
-            .withOptionsFrom(webHead4TimeRelay)
-            .withOptionsFrom(webHead4TimeNoSyncRelay)
-        .withOptionsFrom(webHead4MovementSyncRelay)
+                // Head 4 Parameters
+                .withOptionsFrom(webHead4BypassRelay)
+                .withOptionsFrom(webHead4FeedbackRelay)
+                .withOptionsFrom(webHead4PanRelay)
+                .withOptionsFrom(webHead4TimeRelay)
+                .withOptionsFrom(webHead4TimeNoSyncRelay)
+                .withOptionsFrom(webHead4MovementSyncRelay)
 
-            .withOptionsFrom(webHead4GainRelay)
-            .withOptionsFrom(webHead4MovementPeriodDurationRelay)
-            .withOptionsFrom(webHead4MovementPeriodDurationNoSyncRelay)
-            .withOptionsFrom(webHead4MovementPeriodStartRelay)
-            .withOptionsFrom(webHead4MovementFunctionRelay)
-            .withOptionsFrom(webHead4MovementWidthRelay)
-            .withOptionsFrom(webHead4MovementOnRelay)
-            .withOptionsFrom(webHead4MovementWidthSlaveRelay)
-            .withOptionsFrom(webHead4LpFilterFreqRelay)
-            .withOptionsFrom(webHead4HpFilterFreqRelay)
-            .withOptionsFrom(webHead4FeedbackSlaveRelay)
-            .withOptionsFrom(webHead4HpBpRelay)
-            .withOptionsFrom(webHead4LpBpRelay)
-        .withOptionsFrom(webHead4TimeSlaveRelay);
-
+                .withOptionsFrom(webHead4GainRelay)
+                .withOptionsFrom(webHead4MovementPeriodDurationRelay)
+                .withOptionsFrom(webHead4MovementPeriodDurationNoSyncRelay)
+                .withOptionsFrom(webHead4MovementPeriodStartRelay)
+                .withOptionsFrom(webHead4MovementFunctionRelay)
+                .withOptionsFrom(webHead4MovementWidthRelay)
+                .withOptionsFrom(webHead4MovementOnRelay)
+                .withOptionsFrom(webHead4MovementWidthSlaveRelay)
+                .withOptionsFrom(webHead4LpFilterFreqRelay)
+                .withOptionsFrom(webHead4HpFilterFreqRelay)
+                .withOptionsFrom(webHead4FeedbackSlaveRelay)
+                .withOptionsFrom(webHead4HpBpRelay)
+                .withOptionsFrom(webHead4LpBpRelay)
+                .withOptionsFrom(webHead4TimeSlaveRelay);
     }
 
 private:
-    SkeletonAudioProcessor& processorRef;
+    SkeletonAudioProcessor &processorRef;
 
     // ============================================================================
     // Relays - Global Parameters
@@ -794,7 +851,6 @@ private:
 
     std::unique_ptr<juce::WebToggleButtonParameterAttachment> webBpmFromHostToggleAttachment;
     std::unique_ptr<juce::WebSliderParameterAttachment> webBpmSliderAttachment;
-
 
 
     // ============================================================================

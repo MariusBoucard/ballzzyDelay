@@ -11,6 +11,5 @@
 //==============================================================================
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    //return new FaustPlugInAudioProcessor();
     return new PluginAudioProcessor();
 }

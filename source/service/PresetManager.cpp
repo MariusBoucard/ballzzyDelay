@@ -1,14 +1,14 @@
 #include "PresetManager.h"
 
 PresetManager::PresetManager(juce::AudioProcessorValueTreeState& apvts)
-    : mApvts(apvts)
+    : mParameters(apvts)
 {}
 
 void PresetManager::savePreset(const juce::String& presetName)
 {
     if (presetName.isEmpty()) return;
 
-    const auto state = mApvts.copyState();
+    const auto state = mParameters.copyState();
     const auto xml = state.createXml();
 
     if (xml == nullptr) return;
@@ -41,7 +41,7 @@ void PresetManager::loadPreset(const juce::String& presetName)
     const auto newState = juce::ValueTree::fromXml(*xml);
     if (newState.isValid())
     {
-        mApvts.replaceState(newState);
+        mParameters.replaceState(newState);
         mCurrentPresetName = presetName;
     }
 }

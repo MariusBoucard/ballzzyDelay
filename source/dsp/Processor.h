@@ -4,7 +4,6 @@
 #include "ParameterSetup.h"
 #include "paramsDeclaration.h"
 #include "Bones/GainBone.h"
-#include "Processor.hpp"
 #include "../service/PresetManager.h"
 #include "Bones/FaustMultiheadFeedback.h"
 #include "Bones/FaustHpLp.h"
@@ -66,7 +65,6 @@ public:
 
     void releaseResources() override {
         mProcessorGraph.releaseResources();
-       // delete mFaustProcessor; // TODO THIS CAUSES CRASH ON EXIT
         delete fUI;
         delete fDuckingUI;
         delete fLpHpUi;
@@ -108,7 +106,7 @@ public:
     bool hasEditor() const override { return false; }
 
     //==============================================================================
-    const juce::String getName() const override { return "template"; }
+    const juce::String getName() const override { return "BallzzyDelayProcessor"; }
     bool acceptsMidi() const override { return false; }
     bool producesMidi() const override { return false; }
     double getTailLengthSeconds() const override { return 0; }
@@ -136,7 +134,6 @@ public:
 
     //==============================================================================
     bool isBusesLayoutSupported(const BusesLayout &layouts) const override {
-        // TODO test, je rajoute ca mais jsp si c etait appelé ca peut faire peter le vst3 host
         const auto &mainInLayout = layouts.getChannelSet(true, 0);
         const auto &mainOutLayout = layouts.getChannelSet(false, 0);
 
@@ -159,27 +156,6 @@ public:
         auto newState = juce::ValueTree::readFromStream(stream);
     }
 
-    //==============================================================================
-    void initialiseGraph() {
-        // TODO : Est ce qu'on peut mettre faust dans le graph ?
-        mInputNode = mProcessorGraph.addNode(std::make_unique<AudioInputNode>(AudioInputNode::audioInputNode));
-        mOutputNode = mProcessorGraph.addNode(std::make_unique<AudioOutputNode>(AudioOutputNode::audioOutputNode));
-        mGainNode = mProcessorGraph.addNode(std::make_unique<GainProcessor>(mParameters));
-
-        for (int channel = 0; channel < 2; ++channel)
-        {
-            mProcessorGraph.addConnection({
-                {mInputNode->nodeID, channel},
-                {mGainNode->nodeID, channel}
-            });
-
-            mProcessorGraph.addConnection({
-                {mGainNode->nodeID, channel},
-                {mOutputNode->nodeID, channel}
-            });
-        }
-    }
-
     void setMapUI(MapUI *inUI) {
         fUI = inUI;
     }
@@ -195,7 +171,6 @@ public:
         mSampleRate = sampleRate;
         mBlockSize = bufferSize;
     }
-    std::atomic<float> outputLevelLeft;
 
 private:
 

@@ -26,9 +26,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   JUCE_PRODUCT_VERSION="${PROJECT_VERSION}")
 
 # Sets the source files of the plugin project.
-set(SOURCES
-        source/PluginEditor.cpp
-        source/PluginProcessor.cpp)
+
 
 # Adding a directory with the library/application name as a subfolder of the
 # include folder is a good practice. It helps avoid name clashes later on.
@@ -40,7 +38,6 @@ target_sources(${PROJECT_NAME}
         source/Main.cpp
         source/PluginAudioProcessor.cpp
         source/PluginAudioProcessor.h
-        source/PluginAudioProcessor.hpp
         # DSP files
         source/dsp/faustParameterMappers/faustParameterMap.h
         source/dsp/faustParameterMappers/hpLpFaustParameterMap.h
@@ -49,7 +46,6 @@ target_sources(${PROJECT_NAME}
         source/dsp/ParameterSetup.cpp
         source/dsp/Processor.cpp
         source/dsp/Processor.h
-        source/dsp/Processor.hpp
         source/dsp/ParameterIDs.hpp
         source/dsp/paramsDeclaration.h
 
@@ -62,7 +58,6 @@ target_sources(${PROJECT_NAME}
         # UI
         source/ui/gui.cpp
         source/ui/gui.h
-        source/ui/gui.hpp
 
         source/ui/webSliderAttachments.h
 
