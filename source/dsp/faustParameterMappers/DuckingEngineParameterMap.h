@@ -6,7 +6,6 @@
 
 namespace FaustParameterMapping {
     inline const std::unordered_map<juce::String, std::string>& getDuckingEngineParameterMap() {
-        // TODO
         static const std::unordered_map<juce::String, std::string> map = {
             {"DUCKING_ATTACK" , "/duckingEngine/Attack"},
             {"DUCKING_GR", "/duckingEngine/Gain_Reduction"},

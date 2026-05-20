@@ -5,7 +5,7 @@
 #include <mutex>
 #include <deque>
 #include <functional>
-#include "Mappers.h"
+
 #include "ParameterIDs.hpp"
 #include "Bones/FaustMultiheadFeedback.h"
 
@@ -39,14 +39,12 @@ public:
     // Pass the Faust UI to enable parameter updates
     void setFaustUI(MapUI* faustUI);
 
-    ParameterSetupData createSetupData();
-
     void parameterChanged(const juce::String& parameterID, float newValue) override;
 
-    const ParameterSetupData* getAudioThreadParams() const;
     void initParametersListener(juce::AudioProcessor& inProcessor);
 
     void setPlayTime(double playTime, double bpm);
+
     float getTimeFromIndex(float index) {
     double bpm =  100;
     bool hostTempoBpm = mParameters.getRawParameterValue(id::BPM_FROM_HOST.getParamID())->load();
@@ -91,24 +89,10 @@ private:
     void run() override;
     void timerCallback() override;
 
-    void initializeParameters();
-    void performSwap();
     void updateFaustHeadPan(int headIndex, double playTime);
 
 private:
-    ParameterSetupData mSetupData1;
-    ParameterSetupData mSetupData2;
-
     juce::AudioProcessorValueTreeState& mParameters;
-
-    std::atomic<ParameterSetupData*> mCurrentParamsForAudio;
-    ParameterSetupData* mNextParamsForProcessing;
-
-    std::mutex mUpdateMutex;
-
-    std::deque<MapperTask> mTaskQueue;
-    std::mutex mTasksQueueMutex;
-    juce::WaitableEvent mTasksEvent;
 
     MapUI* mFaustUI;
 

@@ -8,7 +8,6 @@ void PresetManager::savePreset(const juce::String& presetName)
 {
     if (presetName.isEmpty()) return;
 
-    // Serialize the entire APVTS state to XML
     const auto state = mApvts.copyState();
     const auto xml = state.createXml();
 

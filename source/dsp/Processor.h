@@ -25,7 +25,6 @@ public:
         mBlockSize = inBlockSize;
         mParameterSetup.initParametersListener(*this);
 
-        Mappers::getMapperInstance().setSampleRate(mSampleRate);
         mProcessorGraph.prepareToPlay(mSampleRate, mBlockSize);
 
         mFaustProcessor = new mydsp();

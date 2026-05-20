@@ -14,7 +14,7 @@ namespace FaustParameterMapping {
             {"HEAD_1_FEEDBACK",          "/multiheadFeedback/Head_0/Feedback"},
             {"HEAD_1_GAIN",              "/multiheadFeedback/Head_0/Level"},
             {"HEAD_1_PAN",               "/multiheadFeedback/Head_0/Pan"},
-            {"HEAD_1_TIME_NO_SYNC",              "/multiheadFeedback/Head_0/Time"},
+            {"HEAD_1_TIME_NO_SYNC",      "/multiheadFeedback/Head_0/Time"},
             {"HEAD_1_TIME",              "/multiheadFeedback/Head_0/Time"},
             {"HEAD_1_HP_FILTER_FREQ",    "/multiheadFeedback/Head_0/Filters_HPF"},
             {"HEAD_1_HP_FILTER_BYPASS",  "/multiheadFeedback/Head_0/Filters_HP_Bp"},
@@ -28,7 +28,7 @@ namespace FaustParameterMapping {
             {"HEAD_2_FEEDBACK",          "/multiheadFeedback/Head_1/Feedback"},
             {"HEAD_2_GAIN",              "/multiheadFeedback/Head_1/Level"},
             {"HEAD_2_PAN",               "/multiheadFeedback/Head_1/Pan"},
-            {"HEAD_2_TIME_NO_SYNC",              "/multiheadFeedback/Head_1/Time"},
+            {"HEAD_2_TIME_NO_SYNC",      "/multiheadFeedback/Head_1/Time"},
             {"HEAD_2_TIME",              "/multiheadFeedback/Head_1/Time"},
             {"HEAD_2_HP_FILTER_FREQ",    "/multiheadFeedback/Head_1/Filters_HPF"},
             {"HEAD_2_HP_FILTER_BYPASS",  "/multiheadFeedback/Head_1/Filters_HP_Bp"},
@@ -44,7 +44,6 @@ namespace FaustParameterMapping {
             {"HEAD_3_PAN",               "/multiheadFeedback/Head_2/Pan"},
             {"HEAD_3_TIME_NO_SYNC",      "/multiheadFeedback/Head_2/Time"},
             {"HEAD_3_TIME",              "/multiheadFeedback/Head_2/Time"},
-
             {"HEAD_3_HP_FILTER_FREQ",    "/multiheadFeedback/Head_2/Filters_HPF"},
             {"HEAD_3_HP_FILTER_BYPASS",  "/multiheadFeedback/Head_2/Filters_HP_Bp"},
             {"HEAD_3_LP_FILTER_FREQ",    "/multiheadFeedback/Head_2/Filters_LPF"},
@@ -72,5 +71,4 @@ namespace FaustParameterMapping {
         auto it = map.find(parameterID);
         return (it != map.end()) ? it->second : "";
     }
-
 }

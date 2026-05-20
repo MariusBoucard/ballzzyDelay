@@ -45,8 +45,6 @@ target_sources(${PROJECT_NAME}
         source/dsp/faustParameterMappers/faustParameterMap.h
         source/dsp/faustParameterMappers/hpLpFaustParameterMap.h
         source/dsp/faustParameterMappers/DuckingEngineParameterMap.h
-        source/dsp/Mappers.cpp
-        source/dsp/Mappers.h
         source/dsp/ParameterSetup.h
         source/dsp/ParameterSetup.cpp
         source/dsp/Processor.cpp

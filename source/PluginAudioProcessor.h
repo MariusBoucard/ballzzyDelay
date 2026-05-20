@@ -134,7 +134,6 @@ void addHeadLayout(juce::AudioProcessorValueTreeState::ParameterLayout& layout,
     auto headGain = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_GAIN", 1}, "Gain Head "+prefix, -12.f, 12.f, 0.f);
     head.gain = headGain.get();
     layout.add(std::move(headGain));
-// TODO : attention pour mouvement : le pan a l air d etre en mode 0 / 1
     auto headPan = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{prefix + "_PAN", 1}, "Pan Head "+prefix, 0.f, 1.f, 0.5f);
     head.pan = headPan.get();
     layout.add(std::move(headPan));
